@@ -6,8 +6,8 @@ export const Layout = () => {
   return (
     <>
 <Navbar />
-            <div>
-        <Outlet/>
+            <div className=" mt-5">
+        <Outlet />
 
     </div>
     </>

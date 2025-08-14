@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="200" cy="200" r="190" fill="#F0F4FF"/>
+  <circle cx="150" cy="140" r="40" fill="#B5EAD7"/>
+  <circle cx="150" cy="135" r="30" fill="#E2F3EB"/>
+  <path d="M130 180C130 136.863 164.863 102 208 102V102C251.137 102 286 136.863 286 180V200H130V180Z" fill="#00D1B2"/>
+  <rect x="170" y="160" width="80" height="100" rx="10" fill="#00D1B2"/>
+  <rect x="180" y="170" width="60" height="80" rx="5" fill="#33DBC0"/>
+  <circle cx="190" cy="150" r="5" fill="#333333"/>
+  <circle cx="230" cy="150" r="5" fill="#333333"/>
+  <path d="M180 170L160 190C160 190 165 195 170 190L190 170" stroke="#333333" stroke-width="2"/>
+  <path d="M240 170L260 190C260 190 255 195 250 190L230 170" stroke="#333333" stroke-width="2"/>
+  <path d="M190 280H230V300C230 311.046 221.046 320 210 320V320C198.954 320 190 311.046 190 300V280Z" fill="#FF6584"/>
+  <path d="M190 220H230V240H190V220Z" fill="#FFB8C6"/>
+  <path d="M210 180V160" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Plus sign for registration -->
+  <rect x="300" y="100" width="40" height="20" rx="5" fill="#6C63FF"/>
+  <rect x="320" y="80" width="20" height="60" rx="5" fill="#6C63FF"/>
+  
+  <!-- Book icon -->
+  <path d="M300 240H340V280H300V240Z" fill="#FFD1DC"/>
+  <path d="M305 245H335V275H305V245Z" fill="white"/>
+  <path d="M315 245V275" stroke="#FF6584" stroke-width="2"/>
+  
+  <!-- Pencil icon -->
+  <path d="M280 280L300 260L320 280L300 300L280 280Z" fill="#FFD1DC"/>
+  <path d="M290 270L300 280L290 290V270Z" fill="#FF6584"/>
+</svg>

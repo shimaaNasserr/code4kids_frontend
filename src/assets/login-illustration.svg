@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="200" cy="200" r="190" fill="#F0F4FF"/>
+  <circle cx="140" cy="160" r="40" fill="#FFD1DC"/>
+  <circle cx="140" cy="155" r="30" fill="#FFE6ED"/>
+  <path d="M120 200C120 156.863 154.863 122 198 122V122C241.137 122 276 156.863 276 200V220H120V200Z" fill="#6C63FF"/>
+  <rect x="160" y="180" width="80" height="100" rx="10" fill="#6C63FF"/>
+  <rect x="170" y="190" width="60" height="80" rx="5" fill="#8D86FF"/>
+  <circle cx="180" cy="170" r="5" fill="#333333"/>
+  <circle cx="220" cy="170" r="5" fill="#333333"/>
+  <path d="M170 190L150 210C150 210 155 215 160 210L180 190" stroke="#333333" stroke-width="2"/>
+  <path d="M230 190L250 210C250 210 245 215 240 210L220 190" stroke="#333333" stroke-width="2"/>
+  <path d="M180 300H220V320C220 331.046 211.046 340 200 340V340C188.954 340 180 331.046 180 320V300Z" fill="#FF6584"/>
+  <path d="M180 240H220V260H180V240Z" fill="#FFB8C6"/>
+  <path d="M200 200V180" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+  <path d="M140 280H120V300H140V280Z" fill="#6C63FF"/>
+  <path d="M260 280H280V300H260V280Z" fill="#6C63FF"/>
+  <path d="M140 300H120V320H140V300Z" fill="#8D86FF"/>
+  <path d="M280 300H260V320H280V300Z" fill="#8D86FF"/>
+</svg>

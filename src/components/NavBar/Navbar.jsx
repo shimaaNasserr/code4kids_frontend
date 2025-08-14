@@ -19,14 +19,14 @@ const Navbar = () => {
   const navItems = [
     { to: "/", text: "Home", icon: <FaHome className="nav-icon" /> },
     { to: "/courses", text: "Courses", icon: <FaGraduationCap className="nav-icon" /> },
-    ...(userId ? [{ to: "/create-campaign", text: "My Profile", icon: <FaUserAstronaut className="nav-icon" /> }] : [])
+    ...(userId ? [{ to: "/profile", text: "Profile", icon: <FaUserAstronaut className="nav-icon" /> }] : [])
   ];
 
   const authItems = userId 
     ? [{ text: "Logout", onClick: handleLogout, icon: <FaSignOutAlt className="nav-icon" /> }]
     : [
-        { to: "/login", text: "Login", icon: <FaSignInAlt className="nav-icon" /> },
-        { to: "/register", text: "Register", icon: <FaUserPlus className="nav-icon" /> }
+        { to: "/login", text: "Login" , icon: <FaSignInAlt className="nav-icon loginBtn" /> },
+        { to: "/register", text: "Register" , icon: <FaUserPlus className="nav-icon " /> }
       ];
 
   return (

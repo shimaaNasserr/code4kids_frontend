@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import axiosInstance from '../../apis/config'
-import './Register.css' 
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import axiosInstance from '../../apis/config';
+import './Register.css';
+import googleIcon from '../../assets/google-icon.svg';
+import registerIllustration from '../../assets/register-illustration.svg';
+import img1 from '../../assets/loginandregister.jpeg';
+
 
 const Register = () => {
   let navigate = useNavigate()
@@ -22,7 +26,7 @@ const Register = () => {
   const [apiError, setApiError] = useState(null)
   const [isloading, setIsloading] = useState(false)
   const roles = [
-    { value: 'Admin', label: 'Admin' },
+    // { value: 'Admin', label: 'Admin' },
     { value: 'Parent', label: 'Parent' },
     { value: 'Kid', label: 'Kid' }
   ]
@@ -66,16 +70,45 @@ const Register = () => {
     onSubmit: handelRegister
   })
 
+  const handleGoogleRegister = () => {
+    // TODO: Implement Google OAuth for registration
+    window.location.href = 'http://localhost:8000/accounts/google/login/';
+  };
+
   return (
     <div className="register-page">
       <div className="register-container">
+        {/* Illustration Section - Hidden on mobile */}
+        <div className="register-illustration">
+          <img 
+            src={img1} 
+            alt="Kids learning to code" 
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = {img1};
+            }}
+          />
+        </div>
+
         <div className="register-card">
           <div className="register-header">
             <h2>Create Your Account</h2>
-            <p>Join our coding adventure! 🚀</p>
+            <p className='fw-bold'>Join our coding adventure! 💻</p>
           </div>
           
           {apiError && <div className="alert alert-danger" role="alert">{apiError}</div>}
+          
+          {/* Google Sign In Button */}
+          <button 
+            type="button" 
+            className="google-signin" 
+            onClick={handleGoogleRegister}
+          >
+            <img src={googleIcon} alt="Google" />
+            Continue with Google
+          </button>
+
+          <div className="divider">or sign up with email</div>
           
           <form onSubmit={formik.handleSubmit} className="register-form">
             <div className="form-group">
@@ -173,7 +206,7 @@ const Register = () => {
                 value={formik.values.role}
                 className={`form-control ${formik.touched.role && formik.errors.role ? 'is-invalid' : ''}`}
               >
-                <option value="">Select your role</option>
+                <option value="">Select a role</option>
                 {roles.map((role) => (
                   <option key={role.value} value={role.value}>
                     {role.label}
@@ -185,18 +218,21 @@ const Register = () => {
               )}
             </div>
 
-            <button type="submit" className="submit-btn" disabled={isloading}>
-              {isloading ? (
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              ) : (
-                'Start Coding!'
-              )}
-            </button>
-          </form>
+            <div className="form-group">
+              <button 
+                type="submit" 
+                className="btn-primary w-100" 
+                disabled={isloading}
+              >
+                {isloading ? 'Creating Account...' : 'Create Account'}
+              </button>
+            </div>
 
-          <div className="login-link">
-            Already have an account? <Link to="/login">Log in here</Link>
-          </div>
+            <div className="login-link">
+              <span className='fw-bold'>Already part of our learning community?</span>
+              <Link to="/login" className='fs-500'>Sign in to your account</Link>
+            </div>
+          </form>
         </div>
       </div>
     </div>
