@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -25,7 +25,7 @@ export const Courses = () => {
   }, []);
 
   return (
-    <div>
+    <>
       <div className="text-center mb-5 " style={{ marginTop: "8rem" }}>
         <h2 className="fs-.5 fw-bold mb-3">Let's start learning!</h2>
       </div>
@@ -66,7 +66,17 @@ export const Courses = () => {
                 )}
               </div>
               <div className="p-4">
-                <span className="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-normal mb-3">
+                <span
+                  className={`badge bg-success bg-opacity-10 text-dark px-3 py-2 rounded-pill fw-bold mb-3 ${
+                    course.level === "beginner"
+                      ? "bg-success"
+                      : course.level === "intermediate"
+                      ? "bg-warning text-dark"
+                      : course.level === "advanced"
+                      ? "bg-danger"
+                      : "bg-secondary"
+                  }`}
+                >
                   {course.level ? `Level: ${course.level}` : "Level: N/A"}
                 </span>
                 <h3 className="h5 fw-bold mb-3">{course.title}</h3>
@@ -98,6 +108,6 @@ export const Courses = () => {
           );
         })}
       </div>
-    </div>
+    </>
   );
 };

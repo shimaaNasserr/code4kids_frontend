@@ -1,11 +1,82 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import "./Courses.css";
 
 function CourseDetails() {
   const [course, setCourse] = useState({});
   const [loading, setLoading] = useState(true);
+  const [btnLoading, setbtnLoading] = useState(false);
+  const [lessons, setLessons] = useState([]);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const id = useParams().id;
+  const navigate = useNavigate();
+
+  const checkEnrollment = async () => {
+    try {
+      const token = localStorage.getItem("userToken");
+      const res = await axios.get(`http://127.0.0.1:8000/api/my-enrollments/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+      const alreadyEnrolled = res.data.some(
+        (enrollment) => enrollment.course.id === Number(id)
+      );
+
+      setIsEnrolled(alreadyEnrolled);
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    }
+  };
+
+  const enrollInCourse = async () => {
+    try {
+      setbtnLoading(true);
+      const token = localStorage.getItem("userToken");
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/enroll/`,
+        {
+          course_id: id,
+          user_id: localStorage.getItem("userId"),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setIsEnrolled(true);
+      navigate(`/courses/${id}/lessons`);
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    } finally {
+      setbtnLoading(false);
+    }
+  };
+
+  const unenrollFromCourse = async () => {
+    try {
+      const token = localStorage.getItem("userToken");
+      const res = await axios.post(
+        `http://127.0.0.1:8000/api/unenroll/`,
+        {
+          course_id: id, // current course id
+          user_id: localStorage.getItem("userId"), // only if your API needs it
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(res.data);
+      setIsEnrolled(false);
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    }
+  };
 
   const fetchCourseDetails = async () => {
     try {
@@ -19,8 +90,22 @@ function CourseDetails() {
     }
   };
 
+  const fetchLessonsOfCourse = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/lessons/`);
+      const filteredLessons = response.data.filter(
+        (lesson) => lesson.course === Number(id)
+      );
+      setLessons(filteredLessons);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
+
   useEffect(() => {
     fetchCourseDetails();
+    fetchLessonsOfCourse();
+    checkEnrollment();
   }, []);
 
   {
@@ -59,17 +144,74 @@ function CourseDetails() {
             className="d-flex flex-column justify-content-around align-items-center h-100"
           >
             <h1>{course.title}</h1>
+            <button
+              className="p-2 rounded-5 fw-bold outline-0  enrol-btn"
+              onClick={isEnrolled ? unenrollFromCourse : enrollInCourse}
+            >
+              {isEnrolled ? (
+                "Enrolled"
+              ) : btnLoading ? (
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              ) : (
+                "Enroll in this course"
+              )}
+            </button>
           </div>
         </div>
-        <div className="container mt-3">
-          <h4>Course Description</h4>
-          <p>{course.description}</p>
-          <span
-            className="p-2 text-white rounded-3"
-            style={{ backgroundColor: "#6e48aa " }}
-          >
-            {course.level ? `Level: ${course.level}` : "Level: N/A"}
-          </span>
+        <div className="container my-4">
+          <div className="row g-4 rounded-3  p-4">
+            {/* Left: Course Description */}
+            <div className="col-md-5">
+              <h2 className="fw-bold mb-3">Course Description</h2>
+              <p className="text-muted">{course.description}</p>
+              <span
+                className={`badge px-3 py-2 ${
+                  course.level === "beginner"
+                    ? "bg-success"
+                    : course.level === "intermediate"
+                    ? "bg-warning text-dark"
+                    : course.level === "advanced"
+                    ? "bg-danger"
+                    : "bg-secondary"
+                }`}
+              >
+                {course.level ? `Level: ${course.level}` : "Level: N/A"}
+              </span>
+            </div>
+
+            {/* Right: Lessons */}
+            <div className="col-md-7">
+              <div className="row g-3">
+                {lessons.length > 0 ? (
+                  lessons.map((lesson) => (
+                    <div className="col-md-12" key={lesson.id}>
+                      {/* Lesson Card */}
+                      <div className="card shadow-sm h-100">
+                        <div className="card-body d-flex align-items-start">
+                          <div className="me-3 fs-4 text-primary">📄</div>
+                          <div>
+                            <h5 className="card-title fw-semibold">
+                              {lesson.title}
+                            </h5>
+                            <p className="card-text text-muted">
+                              {lesson.description ||
+                                "No description available."}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No lessons available for this course.</p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </>
     );

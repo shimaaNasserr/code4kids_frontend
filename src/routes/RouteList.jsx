@@ -7,6 +7,7 @@ import { Layout } from "../pages/Layout/Layout";
 import { Courses } from "../pages/Courses/Courses";
 import { Profile } from "../pages/Profile/Profile";
 import CourseDetails from "../pages/Courses/CourseDetails";
+import Lessons from "../pages/Lessons/Lessons";
 
 const route = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const route = createBrowserRouter([
       {
         path: "course-details/:id",
         element: <CourseDetails />,
+      },
+      {
+        path: "courses/:id/lessons",
+        element: <Lessons />,
       },
       {
         path: "profile",
