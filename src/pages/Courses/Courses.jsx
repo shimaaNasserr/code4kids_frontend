@@ -57,15 +57,19 @@ export const Courses = () => {
               style={{ height: "min-content" }}
             >
               <div className="bg-success bg-opacity-10 text-center">
-                {course.image && (
+                {course.image_url && (
                   <img
-                    src={course.image}
+                    src={course.image_url}
                     alt={course.title}
-                    style={{ height: "100%" }}
+                    style={{
+                      height: "200px",
+                      width: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 )}
               </div>
-              <div className="p-4">
+              <div className="p-2">
                 <span
                   className={`badge bg-success bg-opacity-10 text-dark px-3 py-2 rounded-pill fw-bold mb-3 ${
                     course.level === "beginner"
@@ -83,7 +87,7 @@ export const Courses = () => {
                 <p className="text-muted mb-4">
                   {handleText(course.description, 30)}
                 </p>
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex justify-content-between align-items-center p-2">
                   <div className="d-flex align-items-center">
                     <svg
                       width="16"

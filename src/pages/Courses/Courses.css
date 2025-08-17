@@ -1,11 +1,14 @@
 .enrol-btn {
-  background-color: rgb(110, 72, 170);
+  background-color: #ffd700;
   width: 20%;
   transition: background-color 0.3s ease;
   width: fit-content;
-  border: 2px solid #ffd700;
-  color: #ffd700;
+  color: rgb(110, 72, 170);
+  border: none;
+  font-weight: 500;
+  padding: 0.6rem 3rem;
+  border: 2px solid rgb(110, 72, 170);
 }
 .enrol-btn:hover {
-  background-color: rgb(134, 102, 194) !important;
+  background-color: #f8e576 !important;
 }
