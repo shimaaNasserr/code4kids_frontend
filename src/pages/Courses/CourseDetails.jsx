@@ -98,7 +98,7 @@ function CourseDetails() {
       );
       setLessons(filteredLessons);
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching lessons:", error);
     }
   };
 
@@ -106,9 +106,9 @@ function CourseDetails() {
     fetchCourseDetails();
     fetchLessonsOfCourse();
     checkEnrollment();
-  }, []);
+  }, [id]);
 
-  {
+  
     return loading ? (
       <div
         className="d-flex justify-content-center align-items-center "
@@ -216,6 +216,6 @@ function CourseDetails() {
       </>
     );
   }
-}
+
 
 export default CourseDetails;
