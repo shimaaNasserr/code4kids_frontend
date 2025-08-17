@@ -12,3 +12,10 @@
 .enrol-btn:hover {
   background-color: #f8e576 !important;
 }
+.text-gradient {
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}

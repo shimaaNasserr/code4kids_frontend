@@ -27,7 +27,7 @@ export const Courses = () => {
   return (
     <>
       <div className="text-center mb-5 " style={{ marginTop: "8rem" }}>
-        <h2 className="fs-.5 fw-bold mb-3">Let's start learning!</h2>
+        <h2 className="fs-1 fw-bold mb-3 text-gradient">Let's start learning!</h2>
       </div>
       <div
         style={{
@@ -75,7 +75,7 @@ export const Courses = () => {
                     course.level === "beginner"
                       ? "bg-success"
                       : course.level === "intermediate"
-                      ? "bg-warning text-dark"
+                      ? "bg-warning text-warning"
                       : course.level === "advanced"
                       ? "bg-danger"
                       : "bg-secondary"
