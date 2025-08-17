@@ -19,3 +19,9 @@
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+}
