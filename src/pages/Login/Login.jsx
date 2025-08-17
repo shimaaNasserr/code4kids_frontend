@@ -145,7 +145,7 @@ const Login = () => {
               )}
             </div>
 
-            <div className="form-group">
+            <div className="form-group m-auto">
               <button
                 type="submit"
                 className="btn-primary w-100 m-auto"
@@ -155,16 +155,16 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="text-center mt-3">
+            <div className="text-center ">
               <p>
                 Don't have an account?{' '}
-                <Link to="/register" className="signup-link">
+                <Link to="/register" className="signup-link text-center">
                   Sign up
                 </Link>
               </p>
             </div>
 
-            <div className="forgot-password">
+            <div className="forgot-password text-center ">
               <Link to="/forgot-password">Forgot your password?</Link>
             </div>
           </form>
