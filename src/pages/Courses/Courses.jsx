@@ -101,7 +101,7 @@ export const Courses = () => {
                     <span className="small text-muted">4.8 (980)</span>
                   </div>
                   <NavLink
-                    to="/courses/python"
+                    to={`/course-details/${course.id}`}
                     className="btn btn-sm btn-outline-success px-3 m-0"
                   >
                     Start Now
