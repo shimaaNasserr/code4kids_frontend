@@ -247,13 +247,18 @@ function CourseDetails() {
                       <div
                         key={lesson.id}
                         className="d-flex align-items-start mb-3 pb-3 border-bottom"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => navigate(`/courses/${id}/lessons/${lesson.id}`)}
                       >
                         <div className="me-3 fs-4 text-primary">📄</div>
-                        <div>
+                        <div className="flex-grow-1">
                           <h5 className="fw-semibold mb-1">{lesson.title}</h5>
                           <p className="text-muted mb-0">
                             {lesson.description || "No description available."}
                           </p>
+                        </div>
+                        <div className="text-primary">
+                          <i className="fas fa-chevron-right"></i>
                         </div>
                       </div>
                     ))

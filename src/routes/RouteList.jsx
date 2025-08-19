@@ -7,7 +7,8 @@ import { Layout } from "../pages/Layout/Layout";
 import { Courses } from "../pages/Courses/Courses";
 import { Profile } from "../pages/Profile/Profile";
 import CourseDetails from "../pages/Courses/CourseDetails";
-import Lessons from "../pages/Lessons/Lessons";
+import Lessons from "../pages/Lessons/LessonsApp";
+import LessonsList from "../pages/Lessons/LessonsList";
 
 const route = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const route = createBrowserRouter([
       },
       {
         path: "courses/:id/lessons",
+        element: <LessonsList />,
+      },
+      {
+        path: "courses/:courseId/lessons/:lessonId",
         element: <Lessons />,
       },
       {
