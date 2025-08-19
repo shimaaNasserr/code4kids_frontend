@@ -8,6 +8,8 @@ import { Courses } from "../pages/Courses/Courses";
 import { Profile } from "../pages/Profile/Profile";
 import CourseDetails from "../pages/Courses/CourseDetails";
 import Lessons from "../pages/Lessons/Lessons";
+import ParentDashboard from "../pages/Dashboard/ParentDashboard";
+import KidDashboard from "../pages/Dashboard/KidDashboard";
 
 const route = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ const route = createBrowserRouter([
       {
         path: "courses/:id/lessons",
         element: <Lessons />,
+      },
+      {
+        path: "/parent-dashboard",
+        element: <ParentDashboard />,
+      },
+      {
+        path: "/kid-dashboard",
+        element: <KidDashboard />,
       },
       {
         path: "profile",

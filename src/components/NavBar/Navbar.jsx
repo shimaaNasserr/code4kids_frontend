@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import React, { useState, useRef } from "react";
-import { FaHome, FaGraduationCap, FaUserAstronaut, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaLaptopCode } from "react-icons/fa";
+import { FaHome, FaGraduationCap, FaUserAstronaut, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaLaptopCode, FaUserAlt, FaUserLock, FaUserCheck, FaUsers, FaUserAltSlash, FaUserMd, FaUsersCog, FaUserFriends, FaAddressCard, FaArchive, FaUserGraduate } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import "./Navbar.css";
@@ -19,6 +19,8 @@ const Navbar = () => {
   const navItems = [
     { to: "/", text: "Home", icon: <FaHome className="nav-icon" /> },
     { to: "/courses", text: "Courses", icon: <FaGraduationCap className="nav-icon" /> },
+    { to: "/parent-dashboard", text: "Parent Dashboard", icon: <FaUserGraduate className="nav-icon" /> },
+    { to: "/kid-dashboard", text: "Kid Dashboard", icon: <FaUserGraduate className="nav-icon" /> },
     ...(userId ? [{ to: "/profile", text: "Profile", icon: <FaUserAstronaut className="nav-icon" /> }] : [])
   ];
 
