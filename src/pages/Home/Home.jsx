@@ -14,6 +14,8 @@ import img7 from '../../assets/printing.avif';
 
 const Home = () => {
   const [courses, setCourses] = useState([]);
+  const token = localStorage.getItem("userToken");
+
 
    const handleCourses = async()=>{
     let response = await  axiosInstance
@@ -44,6 +46,8 @@ handleCourses()
               <h1 className="display-4 fw-bold mb-4">Coding is <span className="text-gradient">Super Fun!</span> <span className="emoji">🚀</span></h1>
               <p className="lead mb-4">Learn to code through games, stories, and creative projects. Perfect for kids aged 7-14!</p>
               <div className="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+              {!token ?(
+                <>
                 <NavLink
                   to="/register"
                   type="button"
@@ -59,7 +63,18 @@ handleCourses()
                 >
                   Explore Courses
                 </NavLink>
-
+                </>
+              ):
+              (
+                <NavLink
+                to="/courses"
+                type="button"
+                className="btn btn-success btn-lg px-4 py-3 fw-bold "
+              >
+                Explore Courses   <i className="fas fa-arrow-right"></i>
+              </NavLink>
+              )
+            }
 
 
               </div>

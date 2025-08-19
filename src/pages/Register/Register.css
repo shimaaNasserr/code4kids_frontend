@@ -74,7 +74,7 @@
   background: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 2.5rem 2rem;
+  padding: 1.5rem 2rem;
   position: relative;
   width: 100%;
   max-width: 500px;
@@ -104,7 +104,7 @@
 /* Header styles */
 .register-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.7rem;
 }
 
 .register-header h2 {
@@ -130,17 +130,17 @@
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  /* gap: 0.7rem; */
   width: 100%;
 }
 
 /* Form group styles */
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   width: 100%;
   display: grid;
   grid-template-columns: 120px 1fr;
-  gap: 0.75rem;
+  gap: 2rem;
   align-items: center;
   position: relative;
 }
@@ -167,7 +167,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin: 2rem 0 0;
+  margin: 1rem 0 0;
   gap: 1rem;
 }
 
@@ -175,7 +175,7 @@
 .login-link {
   text-align: center;
   width: 100%;
-  margin: 0.5rem 0 0;
+  /* margin: 0.2rem 0 0; */
 }
 
 .login-link a {
@@ -194,7 +194,7 @@
 /* Input field styles */
 .form-control {
   width: 100%;
-  padding: 0.85rem 1.25rem;
+  /* padding: 0.85rem 1.25rem; */
   font-size: 1rem;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
@@ -230,17 +230,20 @@
 .error-message {
   color: var(--error-color);
   font-size: 0.85rem;
-  margin-top: 0.4rem;
+  /* margin-top: 0.2rem auto; */
   display: block;
   font-weight: 400;
+  text-align: center;
 }
 
 /* Button styles */
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-color), #00b39e);
+  /* grid-column: span 2; */
   color: white;
   border: none;
-  padding: 0.9rem 2.5rem;
+  /* padding: 0.9rem 0rem; */
+  padding: 0.9rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 12px;
@@ -248,13 +251,21 @@
   transition: all 0.3s ease;
   width: auto;
   min-width: 200px;
-  margin: 1.5rem auto 1rem;
-  display: block;
+  margin: 1.5rem 0 ;
+  text-align: center;
+  display: inline-block;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
+  /* position: relative; */
   overflow: hidden;
+  justify-self: center;
 }
+.btn-wrapper {
+  grid-column: span 2;   /* لو عندك عمودين وعايزة الزرار يبقى في النص */
+  display: flex;
+  justify-content: center;
+}
+
 
 .btn-primary:hover {
   transform: translateY(-2px);
@@ -286,7 +297,7 @@
 .register-illustration {
   position: sticky;
   top: 0;
-  width: 65%;
+  width: 60%;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -312,8 +323,8 @@
 
 .register-illustration img {
   width: auto;
-  height: 90%;
-  max-width: 100%;
+  height: 100%;
+  max-width: 90%;
   max-height: 90vh;
   object-fit: contain;
   border-radius: 15px;
@@ -440,17 +451,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  /* gap: 12px; */
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 0.9rem 1.5rem;
+  /* padding: 0.9rem 1.5rem; */
   font-size: 0.95rem;
   font-weight: 500;
   color: #334155;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 0.5rem 0;
+  /* margin: 0.2rem 0; */
   width: 100%;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   position: relative;
@@ -481,7 +492,7 @@
   align-items: center;
   text-align: center;
   color: #94a3b8;
-  margin: 1.5rem 0;
+  /* margin: 1.5rem 0; */
   font-size: 0.9rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -605,8 +616,10 @@ select.form-control {
 .error-message {
   color: var(--error-color);
   font-size: 0.85rem;
-  margin-top: 0.3rem;
+  /* margin-top: 0rem; */
   font-weight: 500;
+    grid-column: span 2;
+
 }
 
 .is-invalid {
@@ -794,7 +807,7 @@ select.form-control {
 /* Creative Login Link */
 .login-link {
   text-align: center;
-  margin: 2rem 0 0.5rem;
+  /* margin: 2rem 0 0.5rem; */
   font-size: 0.95rem;
   color: #64748b;
   position: relative;
