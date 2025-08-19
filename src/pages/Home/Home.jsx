@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import axiosInstance from "../../apis/config";
 
 import img1 from '../../assets/scratch.jpg';
@@ -14,27 +14,44 @@ import img7 from '../../assets/printing.avif';
 
 const Home = () => {
   const [courses, setCourses] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const access = params.get("access");
+    const refresh = params.get("refresh");
+
+    if (access) {
+      localStorage.setItem("userToken", access);
+      localStorage.setItem("refreshToken", refresh);
+      // نشيل الـ query من اللينك بعد التخزين
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
   const token = localStorage.getItem("userToken");
 
 
-   const handleCourses = async()=>{
-    let response = await  axiosInstance
-    .get("courses/")
-    .then((response) => {
-      console.log(response.data);
-       setCourses(response.data);
-    })
-    .catch((error) => {
+
+  const handleCourses = async () => {
+    try {
+      const response = await axiosInstance.get("courses/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCourses(response.data);
+    } catch (error) {
       console.log(error);
-      // setIsloading(false);
-      // setLoginerror(error.response?.data?.message || 'Login failed. Please check your credentials and try again.');
-    });
-  }
+    }
+  };
 
   useEffect(() => {
+    if (token) {
+
 handleCourses()
+    }
  
-  }, []);
+  }, [token]);
 
   return (
     <div className="home-page">
