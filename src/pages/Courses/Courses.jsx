@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import axiosInstance from "../../apis/config";
 
 export const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -12,9 +13,10 @@ export const Courses = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/courses/");
-      setLoading(false);
-      setCourses(response.data);
+      const response = await axiosInstance.get("courses/").then((response) => {
+        setLoading(false);
+        setCourses(response.data);
+      });
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -27,7 +29,9 @@ export const Courses = () => {
   return (
     <>
       <div className="text-center mb-5 " style={{ marginTop: "8rem" }}>
-        <h2 className="fs-1 fw-bold mb-3 text-gradient">Let's start learning!</h2>
+        <h2 className="fs-1 fw-bold mb-3 text-gradient">
+          Let's start learning!
+        </h2>
       </div>
       <div
         style={{
@@ -101,7 +105,7 @@ export const Courses = () => {
                     <span className="small text-muted">4.8 (980)</span>
                   </div>
                   <NavLink
-                    to="/courses/python"
+                    to={`/course-details/${course.id}`}
                     className="btn btn-sm btn-outline-success px-3 m-0"
                   >
                     Start Now

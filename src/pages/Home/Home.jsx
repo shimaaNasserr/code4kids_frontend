@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import axiosInstance from "../../apis/config";
 
 import img1 from '../../assets/scratch.jpg';
@@ -14,25 +14,44 @@ import img7 from '../../assets/printing.avif';
 
 const Home = () => {
   const [courses, setCourses] = useState([]);
-
-   const handleCourses = async()=>{
-    let response = await  axiosInstance
-    .get("courses/")
-    .then((response) => {
-      console.log(response.data);
-       setCourses(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-      // setIsloading(false);
-      // setLoginerror(error.response?.data?.message || 'Login failed. Please check your credentials and try again.');
-    });
-  }
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const access = params.get("access");
+    const refresh = params.get("refresh");
+
+    if (access) {
+      localStorage.setItem("userToken", access);
+      localStorage.setItem("refreshToken", refresh);
+      // نشيل الـ query من اللينك بعد التخزين
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
+  const token = localStorage.getItem("userToken");
+
+
+
+  const handleCourses = async () => {
+    try {
+      const response = await axiosInstance.get("courses/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCourses(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+
 handleCourses()
+    }
  
-  }, []);
+  }, [token]);
 
   return (
     <div className="home-page">
@@ -44,6 +63,8 @@ handleCourses()
               <h1 className="display-4 fw-bold mb-4">Coding is <span className="text-gradient">Super Fun!</span> <span className="emoji">🚀</span></h1>
               <p className="lead mb-4">Learn to code through games, stories, and creative projects. Perfect for kids aged 7-14!</p>
               <div className="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+              {!token ?(
+                <>
                 <NavLink
                   to="/register"
                   type="button"
@@ -59,7 +80,18 @@ handleCourses()
                 >
                   Explore Courses
                 </NavLink>
-
+                </>
+              ):
+              (
+                <NavLink
+                to="/courses"
+                type="button"
+                className="btn btn-success btn-lg px-4 py-3 fw-bold "
+              >
+                Explore Courses   <i className="fas fa-arrow-right"></i>
+              </NavLink>
+              )
+            }
 
 
               </div>

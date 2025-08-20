@@ -71,7 +71,6 @@ const Register = () => {
   })
 
   const handleGoogleRegister = () => {
-    // TODO: Implement Google OAuth for registration
     window.location.href = 'http://localhost:8000/accounts/google/login/';
   };
 
@@ -90,7 +89,7 @@ const Register = () => {
           />
         </div>
 
-        <div className="register-card">
+        <div className="register-card mt-1">
           <div className="register-header">
             <h2>Create Your Account</h2>
             <p className='fw-bold'>Join our coding adventure! 💻</p>
@@ -218,14 +217,17 @@ const Register = () => {
               )}
             </div>
 
-            <div className="form-group">
+            <div className="">
+            <div class="btn-wrapper">
               <button 
                 type="submit" 
-                className="btn-primary w-100" 
+                className="btn-primary w-100 " 
                 disabled={isloading}
               >
+
                 {isloading ? 'Creating Account...' : 'Create Account'}
               </button>
+              </div>
             </div>
 
             <div className="login-link">

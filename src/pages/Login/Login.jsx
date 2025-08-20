@@ -60,10 +60,9 @@ const Login = () => {
   });
 
   const handleGoogleLogin = () => {
-    // window.location.href = 'http://localhost:8000/accounts/google/login/';
-    window.location.href = 'www.google.com';
-
+    window.location.href = 'http://localhost:8000/accounts/google/login/';
   };
+
 
   return (
     <div className="login-page">
