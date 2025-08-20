@@ -1,10 +1,9 @@
-// services/profileAPI.js
 
+// services/profileAPI.js
 const BASE_URL = 'http://localhost:8000/api/accounts';
 
-// Helper function to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('userToken');
   return {
     'Content-Type': 'application/json',
     'Authorization': token ? `Bearer ${token}` : '',
@@ -12,15 +11,44 @@ const getAuthHeaders = () => {
 };
 
 const getAuthHeadersForFile = () => {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('userToken');
   return {
     'Authorization': token ? `Bearer ${token}` : '',
   };
 };
 
+const isAuthenticated = () => {
+  const token = localStorage.getItem('userToken');
+  return !!token;
+};
+
+const handleApiError = (error) => {
+  if (error.status === 401) {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('userId');
+    window.location.href = '/login';
+    throw new Error('Session expired. Please log in again.');
+  }
+  
+  if (error.status === 403) {
+    throw new Error('You do not have permission to access this data.');
+  }
+  
+  if (error.status >= 500) {
+    throw new Error('Server error. Please try again later.');
+  }
+  
+  throw error;
+};
+
 class ProfileAPI {
   
   static async getProfile() {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/profile/`, {
         method: 'GET',
@@ -28,7 +56,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
@@ -39,6 +67,10 @@ class ProfileAPI {
   }
 
   static async getProfileDashboard() {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/profile/dashboard/`, {
         method: 'GET',
@@ -46,7 +78,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
@@ -57,6 +89,10 @@ class ProfileAPI {
   }
 
   static async updateProfile(profileData) {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/profile/update/`, {
         method: 'PATCH',
@@ -65,7 +101,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
@@ -76,6 +112,10 @@ class ProfileAPI {
   }
 
   static async uploadAvatar(avatarFile) {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const formData = new FormData();
       formData.append('avatar', avatarFile);
@@ -87,7 +127,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
@@ -98,6 +138,10 @@ class ProfileAPI {
   }
 
   static async getAchievements() {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/profile/achievements/`, {
         method: 'GET',
@@ -105,7 +149,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
@@ -116,6 +160,10 @@ class ProfileAPI {
   }
 
   static async getCourseProgress(courseId) {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/profile/course/${courseId}/`, {
         method: 'GET',
@@ -123,7 +171,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
@@ -134,6 +182,10 @@ class ProfileAPI {
   }
 
   static async addPoints(points) {
+    if (!isAuthenticated()) {
+      throw new Error('You must be logged in first.');
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/profile/add-points/`, {
         method: 'POST',
@@ -142,7 +194,7 @@ class ProfileAPI {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await handleApiError(response);
       }
 
       return await response.json();
