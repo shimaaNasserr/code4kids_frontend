@@ -30,11 +30,23 @@ const Login = () => {
       })
       .catch((error) => {
         console.error(error);
-        setLoginError(
-          error.response?.data?.message ||
-            "Login failed. Please check your credentials and try again."
-        );
+      
+        if (error.response && error.response.data) {
+          const data = error.response.data;
+                Object.keys(data).forEach((field) => {
+            const message = Array.isArray(data[field]) ? data[field][0] : data[field];
+      
+            if (formik.errors[field] !== undefined) {
+              formik.setFieldError(field, message);
+            } else {
+              setLoginError(message);
+            }
+          });
+        } else {
+          setLoginError("Login failed. Please check your credentials and try again.");
+        }
       })
+      
       .finally(() => setIsLoading(false));
   };
 

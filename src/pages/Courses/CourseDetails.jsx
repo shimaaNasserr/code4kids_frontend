@@ -232,7 +232,7 @@ function CourseDetails() {
                     ))}
                   </div>
 
-                  {course.instructors.length > 1 && (
+                  {course?.instructors?.length > 1 && (
                     <>
                       <button
                         className="carousel-control-prev"

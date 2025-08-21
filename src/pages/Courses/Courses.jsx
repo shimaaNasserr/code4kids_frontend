@@ -33,6 +33,27 @@ export const Courses = () => {
           Let's start learning!
         </h2>
       </div>
+
+
+      {!loading && courses?.length === 0 && (
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "40vh", width: "100%" }}
+    >
+      <div
+        className="card shadow-sm text-center"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
+        <div className="card-body">
+          <h5 className="card-title mb-3">📚 No Courses Yet</h5>
+          <p className="card-text text-muted">
+            Start by creating your first course and begin your journey!
+          </p>
+        </div>
+      </div>
+    </div>
+  )}
+
       <div
         style={{
           display: "grid",
@@ -41,18 +62,8 @@ export const Courses = () => {
           padding: "20px",
         }}
       >
-        {loading && (
-          <div
-            className="d-flex justify-content-center align-items-center "
-            style={{ height: "50vh", width: "95vw", overflowY: "hidden" }}
-          >
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        )}
 
-        {courses.map((course) => {
+        {courses?.map((course) => {
           return (
             <NavLink
               className=" course-card rounded-4 overflow-hidden shadow-sm border-0 position-relative text-decoration-none"
