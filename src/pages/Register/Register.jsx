@@ -46,6 +46,7 @@ const Register = () => {
       })
       .catch((error) => {
         setIsloading(false);
+        console.error(error);
       
         if (error.response && error.response.data) {
           const data = error.response.data;
@@ -54,6 +55,8 @@ const Register = () => {
       
           Object.keys(data).forEach((field) => {
             const message = Array.isArray(data[field]) ? data[field][0] : data[field];
+            formik.setFieldError(field, message);
+
       
             if (formik.errors[field] !== undefined) {
               formik.setFieldError(field, message);
@@ -62,18 +65,18 @@ const Register = () => {
           });
       
           if (!hasFieldError) {
-            setApiError(
-              data.non_field_errors?.[0] ||
-              data.message ||
-              data.error ||
-              "Registration failed. Please try again."
-            );
+            const generalError =
+              data.non_field_errors?.[0] || 
+              data.detail ||               
+              data.message ||              
+              data.error ||            
+              "Registration failed. Please try again.";
+      
+            setApiError(generalError);
           }
         } else {
           setApiError("Registration failed. Please try again.");
         }
-      
-        console.error(error);
       });
       
   }
