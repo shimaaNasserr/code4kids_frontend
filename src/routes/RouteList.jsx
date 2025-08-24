@@ -11,6 +11,7 @@ import Lessons from "../pages/Lessons/Lessons";
 import ParentDashboard from "../pages/Dashboard/ParentDashboard";
 import KidDashboard from "../pages/Dashboard/KidDashboard";
 
+
 const route = createBrowserRouter([
   {
     path: "/",
