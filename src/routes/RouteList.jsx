@@ -7,7 +7,8 @@ import { Layout } from "../pages/Layout/Layout";
 import { Courses } from "../pages/Courses/Courses";
 import Profile from "../pages/Profile/Profile";
 import CourseDetails from "../pages/Courses/CourseDetails";
-import Lessons from "../pages/Lessons/Lessons";
+import LessonsList from "../pages/Lessons/LessonsList";
+import LessonsApp from "../pages/Lessons/LessonsApp";
 import ParentDashboard from "../pages/Dashboard/ParentDashboard";
 import KidDashboard from "../pages/Dashboard/KidDashboard";
 
@@ -30,7 +31,11 @@ const route = createBrowserRouter([
       },
       {
         path: "courses/:id/lessons",
-        element: <Lessons />,
+        element: <LessonsList />,
+      },
+      {
+        path: "courses/:courseId/lessons/:lessonId",
+        element: <LessonsApp />,
       },
       {
         path: "/parent-dashboard",

@@ -26,6 +26,11 @@ function CourseDetails() {
   };
 
   const enrollInCourse = async () => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     try {
       setbtnLoading(true);
 
