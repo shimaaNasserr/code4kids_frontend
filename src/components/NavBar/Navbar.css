@@ -1,14 +1,33 @@
 /* Navbar Container */
 .navbar-kids {
-  background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+  background: linear-gradient(135deg, #E6396A 0%, #009688 50%, #20C997 100%);
   padding: 0.8rem 2rem;
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
-  
+  backdrop-filter: blur(10px);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+/* RTL Support */
+.navbar-kids.rtl {
+  direction: rtl;
+}
+
+.navbar-kids.rtl .navbar-container {
+  flex-direction: row-reverse;
+}
+
+.navbar-kids.rtl .nav-menu {
+  flex-direction: row-reverse;
+}
+
+.navbar-kids.rtl .auth-buttons {
+  margin-right: 1rem;
+  margin-left: 0;
 }
 
 .navbar-container {
@@ -18,6 +37,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
+  position: relative;
 }
 
 /* Logo/Brand */
@@ -32,7 +52,7 @@
   font-size: 2.2rem;
   color: #ffd700;
   filter: drop-shadow(2px 2px 0 #ff6b6b);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .navbar-logo {
@@ -47,29 +67,69 @@
 
 .navbar-brand:hover .logo-icon {
   transform: rotate(15deg) scale(1.1);
+  color: #fff;
 }
 
 .navbar-brand:hover .navbar-logo {
   text-shadow: 3px 3px 0 #ff9e7d;
   transform: translateY(-2px);
+  color: #ffd700;
+}
+
+/* Control Buttons */
+.navbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.control-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  backdrop-filter: blur(10px);
+}
+
+.control-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffd700;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.lang-text {
+  font-size: 0.8rem;
+  font-weight: bold;
 }
 
 /* Menu Button */
 .menu-button {
   display: none;
-  background: none;
-  border: none;
+  background: rgba(255, 107, 107, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
-  font-size: 2rem;
+  font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
+  border-radius: 50px;
   transition: all 0.3s ease;
   z-index: 1001;
+  backdrop-filter: blur(10px);
 }
 
 .menu-button:hover {
+  background: rgba(255, 107, 107, 1);
   color: #ffd700;
   transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5);
 }
 
 /* Navigation Links */
@@ -108,12 +168,33 @@
   border-radius: 50px;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.nav-link:hover::before {
+  left: 100%;
 }
 
 .nav-link:hover, .nav-link.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffd700;
+  background: var(--item-color, rgba(255, 255, 255, 0.2));
+  color: white;
   transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .nav-icon {
@@ -146,31 +227,46 @@
   border: 2px solid transparent;
 }
 
-.auth-button.login {
-  background: #337357;
+.auth-button.login,
+.auth-button.تسجيل-الدخول {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
   color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.auth-button.register {
-  background: #0A1D56;
+.auth-button.register,
+.auth-button.إنشاء-حساب {
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.auth-button.logout {
-  background: #C93A4C;
+.auth-button.logout,
+.auth-button.تسجيل-الخروج {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
   color: white;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .auth-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
+
 
 /* Responsive Styles */
 @media (max-width: 992px) {
   .menu-button {
-    display: block;
+    display: flex;
+  }
+
+  .navbar-controls {
+    gap: 0.5rem;
+  }
+
+  .control-button {
+    padding: 0.4rem;
+    font-size: 1rem;
   }
 
   .nav-links {
@@ -178,14 +274,28 @@
     top: 0;
     right: -100%;
     height: 100vh;
-    width: 80%;
-    max-width: 350px;
-    background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+    width: 85%;
+    max-width: 400px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
     flex-direction: column;
     justify-content: flex-start;
     padding: 6rem 2rem 2rem;
     transition: right 0.4s ease-in-out;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px);
+    border-left: 3px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .navbar-kids.rtl .nav-links {
+    right: auto;
+    left: -100%;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+    border-right: 3px solid rgba(255, 255, 255, 0.2);
+    border-left: none;
+  }
+
+  .navbar-kids.rtl .nav-links.show {
+    left: 0;
   }
 
   .nav-links.show {
@@ -196,23 +306,125 @@
     flex-direction: column;
     width: 100%;
     margin-bottom: 2rem;
+    gap: 1rem;
+  }
+
+  .nav-item {
+    width: 100%;
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 1rem 1.5rem;
+    font-size: 1.2rem;
+    border-radius: 15px;
   }
 
   .auth-buttons {
     flex-direction: column;
     width: 100%;
     margin-left: 0;
+    gap: 1rem;
   }
 
   .auth-button {
     justify-content: center;
     width: 100%;
-    margin-bottom: 0.5rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 15px;
   }
 
   .navbar-brand {
     z-index: 1002;
   }
+
+  .floating-chatbot {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .chatbot-button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Floating Chatbot */
+.floating-chatbot {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1100;
+}
+
+.chatbot-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  border: 3px solid white;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: rgba(255, 107, 107, 0.3);
+  pointer-events: none;
+}
+
+.chat-tooltip {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  padding: 0.8rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 200px;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #4ecdc4;
+}
+
+/* Menu Overlay */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(5px);
 }
 
 /* Animation for nav items */
@@ -221,8 +433,18 @@
   50% { transform: translateY(-5px); }
 }
 
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+}
+
 .nav-item:hover {
   animation: bounce 0.5s ease;
+}
+
+.nav-icon {
+  animation: sparkle 3s ease-in-out infinite;
+  animation-delay: calc(var(--index, 0) * 0.2s);
 }
 
 /* Special effect for active link */
@@ -230,36 +452,125 @@
   position: relative;
   overflow: hidden;
   z-index: 1;
+  background: var(--item-color, rgba(255, 215, 0, 0.3)) !important;
+  border-color: rgba(255, 215, 0, 0.5) !important;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3) !important;
 }
 
-/* .nav-link.active::after {
-  content: '';
+.nav-link.active::before {
+  content: '✨';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: #ffd700;
-  border-radius: 3px;
-  transform: scaleX(0.9);
-  transition: transform 0.3s ease;
-} */
-
-.nav-link.active:hover::after {
-  transform: scaleX(1);
+  top: -5px;
+  right: -5px;
+  font-size: 0.8rem;
+  animation: sparkle 1s ease-in-out infinite;
 }
 
-/* Responsive adjustments */
+/* Small Mobile Adjustments */
 @media (max-width: 480px) {
   .navbar-kids {
     padding: 0.8rem 1rem;
   }
   
   .navbar-logo {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
   }
   
   .logo-icon {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
+
+  .navbar-controls {
+    gap: 0.3rem;
+  }
+
+  .control-button {
+    padding: 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  .lang-text {
+    display: none;
+  }
+
+  .nav-links {
+    width: 95%;
+    padding: 5rem 1.5rem 2rem;
+  }
+
+  .floating-chatbot {
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .chatbot-button {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+
+  .chat-tooltip {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    max-width: 150px;
+  }
+}
+
+/* Extra animations and effects */
+@keyframes rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.navbar-kids:hover {
+  animation: rainbow 3s linear infinite;
+}
+
+.nav-link.active {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Success animations */
+@keyframes success {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.nav-link:active {
+  animation: success 0.3s ease;
+}
+
+/* Loading shimmer effect */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-link:hover::after {
+  opacity: 1;
 }

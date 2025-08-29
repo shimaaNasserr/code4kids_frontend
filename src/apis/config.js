@@ -8,9 +8,10 @@ const axiosInstance = axios.create({
   },
 });
 
+// Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('userToken');
+    const token = localStorage.getItem('userToken'); //統一 الاسم userToken
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,6 +20,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -35,7 +37,7 @@ axiosInstance.interceptors.response.use(
 
         const res = await axios.post(
           'http://127.0.0.1:8000/api/token/refresh/',
-          { refresh: refreshToken }, 
+          { refresh: refreshToken },
           {
             headers: {
               'Content-Type': 'application/json',
@@ -44,7 +46,7 @@ axiosInstance.interceptors.response.use(
         );
 
         const newAccessToken = res.data.access;
-        localStorage.setItem('access_token', newAccessToken);
+        localStorage.setItem('userToken', newAccessToken); // نحفظه بنفس الاسم
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -54,7 +56,7 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('userToken');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('userId');
-        window.location.replace = '/accounts/login'; 
+        window.location.replace('/accounts/login'); 
         return Promise.reject(refreshError);
       }
     }
@@ -62,6 +64,5 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export default axiosInstance;

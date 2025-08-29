@@ -113,7 +113,7 @@ const Register = () => {
           />
         </div>
 
-        <div className="register-card mt-1">
+        <div className="register-card mt-0">
           <div className="register-header">
             <h2>Create Your Account</h2>
             <p className='fw-bold'>Join our coding adventure! 💻</p>
@@ -124,7 +124,7 @@ const Register = () => {
           {/* Google Sign In Button */}
           <button 
             type="button" 
-            className="google-signin" 
+            className="google-signin-btn" 
             onClick={handleGoogleRegister}
           >
             <img src={googleIcon} alt="Google" />

@@ -4,7 +4,7 @@ import Login from "../pages/Login/Login";
 import { NotFoundPage } from "../pages/NotFoundPage/NotFoundPage";
 import Register from "../pages/Register/Register";
 import { Layout } from "../pages/Layout/Layout";
-import { Courses } from "../pages/Courses/Courses";
+import  Courses  from "../pages/Courses/Courses";
 import Profile from "../pages/Profile/Profile";
 import CourseDetails from "../pages/Courses/CourseDetails";
 import LessonsList from "../pages/Lessons/LessonsList";

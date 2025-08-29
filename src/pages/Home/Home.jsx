@@ -1,462 +1,849 @@
-import React, { useEffect, useState } from 'react';
-import './Home.css';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
+import { FaRocket, FaGamepad, FaTrophy, FaRobot, FaStar, FaHeart, FaCode, FaPuzzlePiece, FaUsers, FaGift, FaSpinner, FaExclamationTriangle, FaChild, FaGraduationCap, FaGlobe } from 'react-icons/fa';
+import { useLanguage } from '../../components/NavBar/Navbar';
+import SimpleDragDemo from '../../components/DragDropDemo/SimpleDragDemo';
+import FloatingChatbot from '../../components/FloatingChatbot/FloatingChatbot';
 import axiosInstance from "../../apis/config";
+import './Home.css';
 
-import img1 from '../../assets/scratch.jpg';
-import img2 from '../../assets/robot.jpg';
-import img3 from '../../assets/children.jpg';
-import img4 from '../../assets/calculator.avif';
-import img5 from '../../assets/codingg.avif';
-import img6 from '../../assets/lap.avif';
-import img7 from '../../assets/printing.avif';
-
-
-const Home = () => {
+const EnhancedHome = () => {
   const [courses, setCourses] = useState([]);
+  const [userProgress, setUserProgress] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showDailyTip, setShowDailyTip] = useState(false);
   const navigate = useNavigate();
+  
+  // Add error boundary for useLanguage hook
+  let languageContext;
+  try {
+    languageContext = useLanguage();
+  } catch (err) {
+    console.error('Language context error:', err);
+    // Fallback values
+    languageContext = {
+      language: 'en',
+      translations: {},
+      playSound: () => {},
+      isRTL: false
+    };
+  }
+  
+  const { translations, language, playSound, isRTL } = languageContext;
+
+  const token = localStorage.getItem("userToken");
+  const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName") || (language === 'en' ? 'Young Coder' : 'المبرمج الصغير');
+
+  // Mascot messages
+  const mascotMessages = {
+    en: [
+      "Hi there, young coder! 🚀",
+      "Ready for an amazing coding adventure? ✨",
+      "Let's build something awesome together! 🎮",
+      "Coding is like magic - let me show you! 🪄"
+    ],
+    ar: [
+      "مرحباً أيها المبرمج الصغير! 🚀",
+      "هل أنت مستعد لمغامرة برمجة رائعة؟ ✨", 
+      "دعنا نبني شيئاً رائعاً معاً! 🎮",
+      "البرمجة مثل السحر - دعني أريك! 🪄"
+    ]
+  };
+
+  const [currentMascotMessage, setCurrentMascotMessage] = useState(0);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const access = params.get("access");
-    const refresh = params.get("refresh");
-
-    if (access) {
-      localStorage.setItem("userToken", access);
-      localStorage.setItem("refreshToken", refresh);
-      // نشيل الـ query من اللينك بعد التخزين
-      navigate("/", { replace: true });
-    }
-  }, [navigate]);
-  const token = localStorage.getItem("userToken");
-
-
-
-  const handleCourses = async () => {
-    try {
-      const response = await axiosInstance.get("courses/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setCourses(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const interval = setInterval(() => {
+      setCurrentMascotMessage(prev => 
+        (prev + 1) % mascotMessages[language].length
+      );
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [language]);
 
   useEffect(() => {
     if (token) {
-
-handleCourses()
+      fetchUserData();
     }
- 
+    
+    // Show daily tip after 3 seconds if not shown today
+    const lastTipDate = localStorage.getItem('lastDailyTip');
+    const today = new Date().toDateString();
+    if (lastTipDate !== today) {
+      setTimeout(() => {
+        setShowDailyTip(true);
+        localStorage.setItem('lastDailyTip', today);
+      }, 3000);
+    }
   }, [token]);
 
+  const fetchUserData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const [coursesRes, progressRes] = await Promise.all([
+        axiosInstance.get("courses/", {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        userId ? axiosInstance.get(`users/${userId}/progress/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }) : Promise.resolve({ data: null })
+      ]);
+      
+      setCourses(coursesRes.data);
+      setUserProgress(progressRes.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setError(language === 'en' ? 'Oops! Loading your adventure...' : 'عذراً! جاري تحميل مغامرتك...');
+    } finally {
+      setLoading(false);
+    }
+  }, [token, userId, language]);
+
+  const handleStartAdventure = () => {
+    playSound('success');
+    if (token) {
+      navigate('/courses');
+    } else {
+      navigate('/register');
+    }
+  };
+
+  const learningPaths = useMemo(() => [
+    {
+      id: 'beginner',
+      title: language === 'en' ? 'Beginner Island' : 'جزيرة المبتدئين',
+      description: language === 'en' ? 'Start your coding journey here!' : 'ابدأ رحلة البرمجة هنا!',
+      icon: '🏝️',
+      color: '#81C784',
+      level: language === 'en' ? 'Beginner' : 'مبتدئ',
+      lessons: 12,
+      unlocked: true,
+      progress: userProgress?.beginnerProgress || 0
+    },
+    {
+      id: 'intermediate', 
+      title: language === 'en' ? 'Space Station' : 'محطة الفضاء',
+      description: language === 'en' ? 'Advanced coding adventures!' : 'مغامرات برمجة متقدمة!',
+      icon: '🚀',
+      color: '#64B5F6', 
+      level: language === 'en' ? 'Intermediate' : 'متوسط',
+      lessons: 18,
+      unlocked: (userProgress?.completedLessons || 0) >= 10,
+      progress: userProgress?.intermediateProgress || 0
+    },
+    {
+      id: 'advanced',
+      title: language === 'en' ? 'Mystery World' : 'عالم الغموض',
+      description: language === 'en' ? 'Coming soon!' : 'قريباً!',
+      icon: '🌟',
+      color: '#FFB74D',
+      level: language === 'en' ? 'Advanced' : 'متقدم', 
+      lessons: 24,
+      unlocked: (userProgress?.completedLessons || 0) >= 25,
+      progress: userProgress?.advancedProgress || 0
+    }
+  ], [language, userProgress]);
+
   return (
-    <div className="home-page">
+    <div className={`enhanced-home ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Hero Section */}
-      <header className="hero-section py-5 position-relative overflow-hidden">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
-              <h1 className="display-4 fw-bold mb-4">Coding is <span className="text-gradient">Super Fun!</span> <span className="emoji">🚀</span></h1>
-              <p className="lead mb-4">Learn to code through games, stories, and creative projects. Perfect for kids aged 7-14!</p>
-              <div className="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-              {!token ?(
+      <motion.section 
+        className="hero-section"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="hero-background">
+          <div className="floating-particles">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="particle"
+                animate={{
+                  y: [0, -100, 0],
+                  x: [0, Math.random() * 100 - 50, 0],
+                  rotate: [0, 360]
+                }}
+                transition={{
+                  duration: Math.random() * 3 + 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 2
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="hero-content">
+          <div className="hero-left">
+            <motion.div
+              className="mascot-container"
+              animate={{ 
+                y: [0, -20, 0],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{ 
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <div className="mascot-robot">
+                <FaRobot />
+                <motion.div 
+                  className="mascot-speech"
+                  key={currentMascotMessage}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {mascotMessages[language][currentMascotMessage]}
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="hero-right">
+            <motion.h1
+              className="hero-title"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+            >
+              {token ? (
                 <>
-                <NavLink
-                  to="/register"
-                  type="button"
-                  className="btn btn-lg px-4 py-3 fw-bold get-started-btn"
-                >
-                  Get Started
-                </NavLink>
-
-                <NavLink
-                  to="/courses"
-                  type="button"
-                  className="btn btn-success btn-lg px-4 py-3 fw-bold"
-                >
-                  Explore Courses
-                </NavLink>
+                  {language === 'en' ? `Hi ${userName}!` : `مرحباً ${userName}!`}
+                  <br />
+                  <span className="title-subtitle">
+                    {language === 'en' ? 'Ready for more coding fun?' : 'مستعد للمزيد من متعة البرمجة؟'}
+                  </span>
                 </>
-              ):
-              (
-                <NavLink
-                to="/courses"
-                type="button"
-                className="btn btn-success btn-lg px-4 py-3 fw-bold "
-              >
-                Explore Courses   <i className="fas fa-arrow-right"></i>
-              </NavLink>
-              )
-            }
+              ) : (
+                <>
+                  {language === 'en' ? 'Code4Kids' : 'كود للأطفال'}
+                  <br />
+                  <span className="title-subtitle">
+                    {language === 'en' ? 'Learn Programming the Fun Way!' : 'تعلم البرمجة بطريقة ممتعة!'}
+                  </span>
+                </>
+              )}
+            </motion.h1>
 
+            <motion.p
+              className="hero-description"
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+            >
+              {language === 'en' 
+                ? 'Learn coding with games, quizzes, and your AI friend!'
+                : 'تعلم البرمجة مع الألعاب والاختبارات وصديقك الذكي!'}
+            </motion.p>
 
-              </div>
-              <div className="mt-4 d-flex align-items-center justify-content-center justify-content-lg-start">
-                <div className="d-flex me-3">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} width="20" height="20" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" className="me-1">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
-                </div>
-                <span>Trusted by 50,000+ young coders</span>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <div className="hero-illustration position-relative">
-                <div className="character character-1">
-                  <img
-                    src={img1}
-                    alt="Happy kid coding"
-                    className="img-fluid"
-                    style={{ maxWidth: '250px' }}
-                  />
-                </div>
-                <div className="floating-element el-1">
-                  <img
-                    src={img2}
-                    alt="Science elements"
-                    width="80"
-                  />
-                </div>
-                <div className="floating-element el-2">
-                  <img
-                    src={img3}
-                    alt="Learning elements"
-                    width="90"
-                  />
-                </div>
-                <div className="floating-element el-3">
-                  <img
-                    src={img4}
-                    alt="Math elements"
-                    width="70"
-                  />
-                </div>
-                <div className="code-window p-4">
-                  <div className="window-controls d-flex gap-2 mb-3">
-                    <span className="window-dot bg-danger"></span>
-                    <span className="window-dot bg-warning"></span>
-                    <span className="window-dot bg-success"></span>
-                  </div>
-                  <pre className="mb-0">
-                    <code style={{ fontSize: "1.1rem", fontFamily: "monospace" }}>
-                      <span className="text-secondary"># 🐍 Print Hello World</span>
-                      <br />
-                      <span className="text-success">print</span>(<span className="text-danger">"Hello World 🌍"</span>)
-                      <br /><br />
-                      <span className="text-secondary"># 🎯 Count from 1 to 5</span>
-                      <br />
-                      <span className="text-success">for</span> i <span className="text-success">in</span> <span className="text-warning">range</span>(<span className="text-danger">1</span>, <span className="text-danger">6</span>):
-                      <br />&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-success">print</span>(i, <span className="text-danger">"⭐"</span>)
-                    </code>
-                  </pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-
-   {/* Features Section */}
-   <section className="features-section py-5 bg-light">
-        <div className="container">
-          <div className="text-center mb-5">
-            <h2 className="display-5 fw-bold mb-3">Why Kids Love Learning With Us</h2>
-            <p className="lead text-muted">We make coding fun, engaging, and rewarding for young minds</p>
-          </div>
-          <div className="row g-4">
-            <div className="col-md-4">
-              <div className="feature-card h-100 p-4 rounded-4 bg-white shadow-sm border-0 position-relative overflow-hidden">
-                <div className="icon-wrapper mb-3">
-                  <img
-                    src={img7}
-                    alt="Game controller"
-                    className="img-fluid"
-                    style={{ width: '80px', height: '80px', objectFit: 'contain' }}
-                  />
-                </div>
-                <h4 className="h5 fw-bold mb-3">Learn Through Play</h4>
-                <p className="text-muted mb-0">Fun games and interactive challenges make learning to code exciting and engaging for kids of all ages.</p>
-                <div className="feature-decoration"></div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="feature-card h-100 p-4 rounded-4 bg-white shadow-sm border-0 position-relative overflow-hidden">
-                <div className="icon-wrapper mb-3">
-                  <img
-                    src={img5}
-                    alt="Real coding"
-                    className="img-fluid"
-                    style={{ width: '80px', height: '80px', objectFit: 'contain' }}
-                  />
-                </div>
-                <h4 className="h5 fw-bold mb-3">Real Coding Skills</h4>
-                <p className="text-muted mb-0">From block-based to text-based coding, we teach real programming languages used by professionals.</p>
-                <div className="feature-decoration"></div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="feature-card h-100 p-4 rounded-4 bg-white shadow-sm border-0 position-relative overflow-hidden">
-                <div className="icon-wrapper mb-3">
-                  <img
-                    src={img6}
-                    alt="AI Assistant"
-                    className="img-fluid"
-                    style={{ width: '80px', height: '80px', objectFit: 'contain' }}
-                  />
-                </div>
-                <h4 className="h5 fw-bold mb-3">AI Assistant</h4>
-                <p className="text-muted mb-0">Our friendly AI tutor provides instant help and encouragement whenever you're stuck.</p>
-                <div className="feature-decoration"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* Popular Courses */}
-      <section className="courses-section py-5">
-        <div className="container">
-          <div className="text-center mb-5">
-            <h2 className="display-5 fw-bold mb-3">Popular Courses</h2>
-            <p className="lead text-muted">Start your coding journey with our most popular courses</p>
-          </div>
-          <div className="row g-4">
-            <div className="col-md-4">
-              <div className="course-card h-100 rounded-4 overflow-hidden shadow-sm border-0 position-relative">
-                <div className="course-thumbnail bg-primary bg-opacity-10 p-5 text-center">
-                  <svg width="80" height="80" viewBox="0 0 24 24" fill="#4F46E5" className="course-icon">
-                    <path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
-                    <path d="M6 9h12v2H6zm0 3h8v2H6z" />
-                  </svg>
-                </div>
-                <div className="p-4">
-                  <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-normal mb-3">Beginner</span>
-                  <h3 className="h5 fw-bold mb-3">Adventures in Scratch</h3>
-                  <p className="text-muted mb-4">Create your first game with block-based coding in this fun, interactive course designed for young coders.</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" className="me-1">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                      <span className="small text-muted">4.9 (1.2k)</span>
-                    </div>
-                    <NavLink to="/courses/scratch" className="btn btn-sm btn-outline-primary px-3">Start Now</NavLink>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="course-card h-100 rounded-4 overflow-hidden shadow-sm border-0 position-relative">
-                <div className="course-thumbnail bg-success bg-opacity-10 p-5 text-center">
-                  <svg width="80" height="80" viewBox="0 0 24 24" fill="#10B981" className="course-icon">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
-                  </svg>
-                </div>
-                <div className="p-4">
-                  <span className="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-normal mb-3">Intermediate</span>
-                  <h3 className="h5 fw-bold mb-3">Python for Kids</h3>
-                  <p className="text-muted mb-4">Learn real programming with Python through fun projects and games. Perfect for young aspiring developers.</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" className="me-1">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                      <span className="small text-muted">4.8 (980)</span>
-                    </div>
-                    <NavLink to="/courses/python" className="btn btn-sm btn-outline-success px-3">Start Now</NavLink>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="course-card h-100 rounded-4 overflow-hidden shadow-sm border-0 position-relative">
-                <div className="course-thumbnail bg-warning bg-opacity-10 p-5 text-center">
-                  <svg width="80" height="80" viewBox="0 0 24 24" fill="#F59E0B" className="course-icon">
-                    <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
-                  </svg>
-                </div>
-                <div className="p-4">
-                  <span className="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-normal mb-3">Beginner</span>
-                  <h3 className="h5 fw-bold mb-3">Web Wizards</h3>
-                  <p className="text-muted mb-4">Build your first website with HTML & CSS. Learn the basics of web development in a fun, interactive way.</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" className="me-1">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                      <span className="small text-muted">4.7 (1.5k)</span>
-                    </div>
-                    <NavLink to="/courses/web" className="btn btn-sm btn-outline-warning px-3">Start Now</NavLink>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="text-center mt-5">
-            <NavLink to="/courses" className="btn btn-outline-primary px-4 py-2 d-inline-flex align-items-center">
-              View All Courses
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="ms-2">
-                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
-              </svg>
-            </NavLink>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section py-5 bg-primary text-white position-relative overflow-hidden">
-        <div className="container position-relative z-2">
-          <div className="row justify-content-center">
-            <div className="col-lg-8 text-center">
-              <h2 className="display-5 fw-bold mb-4">Ready to Start Your Coding Adventure?</h2>
-              <p className="lead mb-5">Join <span className="fw-bold">50,000+</span> young coders who are learning to code with our fun and interactive platform.</p>
-              <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <NavLink to="/register" className="btn btn-light btn-lg px-4 py-3 fw-bold rounded-pill">
-                  Start Free Trial
-                </NavLink>
-                <NavLink to="/courses" className="btn btn-outline-light btn-lg px-4 py-3 fw-bold rounded-pill">
-                  Explore Courses
-                </NavLink>
-              </div>
-              <div className="mt-4 d-flex align-items-center justify-content-center">
-                <div className="d-flex me-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} width="20" height="20" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" className="me-1">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="small">4.9/5 from 2,000+ reviews</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Decorative elements */}
-        <div className="position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
-          <div className="position-absolute top-0 start-0 w-100 h-100 bg-pattern"></div>
-          <div className="position-absolute top-50 start-0 translate-middle-y">
-            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" className="text-primary" style={{ opacity: 0.1 }}>
-              <circle cx="100" cy="100" r="100" fill="currentColor" />
-            </svg>
-          </div>
-          <div className="position-absolute bottom-0 end-0">
-            <svg width="150" height="150" viewBox="0 0 150 150" fill="none" className="text-warning" style={{ opacity: 0.1 }}>
-              <path d="M150 75C150 116.421 116.421 150 75 150C33.5786 150 0 116.421 0 75C0 33.5786 33.5786 0 75 0C116.421 0 150 33.5786 150 75Z" fill="currentColor" />
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer Section */}
-      <footer className="footer-section bg-dark text-white pt-5 pb-4">
-        <div className="container">
-          <div className="row g-4">
-            {/* Logo and Tagline */}
-            <div className="col-lg-4 mb-4">
-              <div className="d-flex align-items-center mb-3">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="me-2">
-                  <rect width="40" height="40" rx="8" fill="#6C63FF"/>
-                  <path d="M20 10C14.48 10 10 14.48 10 20C10 25.52 14.48 30 20 30C25.52 30 30 25.52 30 20C30 14.48 25.52 10 20 10ZM20 28C15.59 28 12 24.41 12 20C12 15.59 15.59 12 20 12C24.41 12 28 15.59 28 20C28 24.41 24.41 28 20 28Z" fill="white"/>
-                  <path d="M20 15C17.24 15 15 17.24 15 20C15 22.76 17.24 25 20 25C22.76 25 25 22.76 25 20C25 17.24 22.76 15 20 15ZM20 23C18.34 23 17 21.66 17 20C17 18.34 18.34 17 20 17C21.66 17 23 18.34 23 20C23 21.66 21.66 23 20 23Z" fill="white"/>
-                </svg>
-                <h2 className="h4 mb-0 fw-bold text-gradient">Code4Kids</h2>
-              </div>
-              <p className="text-white mb-3">Unlock Potential, Shape the Future</p>
-              <p className="small text-white">© {new Date().getFullYear()} Code4Kids</p>
-              <div className="social-links d-flex gap-3 mt-3">
-                <a href="#" className="text-white"><i className="fa-brands fa-facebook"></i></a>
-                <a href="#" className="text-white"><i className="fa-brands fa-instagram"></i></a>
-                <a href="#" className="text-white"><i className="fa-brands fa-x-twitter"></i></a>
-                <a href="#" className="text-white"><i className="fa-brands fa-youtube"></i></a>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div className="col-6 col-md-4 col-lg-2">
-              <h5 className="h6 fw-bold mb-3">Quick Links</h5>
-              <ul className="list-unstyled">
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Home</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Courses</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Pricing</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">About Us</a></li>
-              </ul>
-            </div>
-
-            {/* Resources */}
-            <div className="col-6 col-md-4 col-lg-2">
-              <h5 className="h6 fw-bold mb-3">Resources</h5>
-              <ul className="list-unstyled">
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Blog</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Tutorials</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">FAQs</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Support</a></li>
-              </ul>
-            </div>
-
-            {/* Contact & Legal */}
-            <div className="col-6 col-md-4 col-lg-2">
-              <h5 className="h6 fw-bold mb-3">Contact</h5>
-              <ul className="list-unstyled">
-                <li className="mb-2"><a href="mailto:support@code4kids.com" className="text-muted text-decoration-none hover-text-white">Email support</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Contact us</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Composer Program</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Partnership & Affiliate</a></li>
-              </ul>
-            </div>
-
-            {/* Legal & Language */}
-            <div className="col-6 col-md-4 col-lg-2">
-              <h5 className="h6 fw-bold mb-3">Legal</h5>
-              <ul className="list-unstyled">
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Terms of use</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Privacy policy</a></li>
-                <li className="mb-2"><a href="#" className="text-white text-decoration-none hover-text-white">Payment policy</a></li>
-              </ul>
-              
-              <div className="mt-4">
-                <h5 className="h6 fw-bold mb-2">Language & Social</h5>
-                <div className="dropdown d-inline-block">
-                  <button className="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    English
+            <motion.div
+              className="hero-buttons"
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.9, duration: 0.8 }}
+            >
+              {loading ? (
+                <motion.div
+                  className="loading-state"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <FaSpinner className="spinner" />
+                  <span>{language === 'en' ? 'Loading your adventure...' : 'جاري تحميل مغامرتك...'}</span>
+                </motion.div>
+              ) : error ? (
+                <motion.div
+                  className="error-state"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <FaExclamationTriangle />
+                  <span>{error}</span>
+                  <button onClick={fetchUserData} className="retry-btn">
+                    {language === 'en' ? 'Try Again' : 'حاول مرة أخرى'}
                   </button>
-                  <ul className="dropdown-menu" aria-labelledby="languageDropdown">
-                    <li><a className="dropdown-item" href="#">English</a></li>
-                    <li><a className="dropdown-item" href="#">العربية</a></li>
-                    <li><a className="dropdown-item" href="#">Français</a></li>
-                    <li><a className="dropdown-item" href="#">Español</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
+                </motion.div>
+              ) : (
+                <>
+                  <motion.button
+                    className="start-adventure-btn"
+                    onClick={handleStartAdventure}
+                    whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(255, 107, 107, 0.4)" }}
+                    whileTap={{ scale: 0.95 }}
+                    onMouseEnter={() => playSound('hover')}
+                  >
+                    <FaRocket />
+                    {token 
+                      ? (language === 'en' ? 'Continue Learning' : 'واصل التعلم')
+                      : (language === 'en' ? 'Start Adventure' : 'ابدأ المغامرة')
+                    }
+                  </motion.button>
 
-          <div className="row mt-5 pt-4 border-top border-secondary">
-            <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
-              <p className="mb-0 small text-white">© {new Date().getFullYear()} Code4Kids. All rights reserved.</p>
-            </div>
-            <div className="col-md-6 text-center text-md-end">
-              <div className="d-flex justify-content-center justify-content-md-end gap-3">
-                <a href="#" className="text-white hover-text-white"><i className="bi bi-facebook"></i></a>
-                <a href="#" className="text-white hover-text-white"><i className="bi bi-twitter"></i></a>
-                <a href="#" className="text-white hover-text-white"><i className="bi bi-instagram"></i></a>
-                <a href="#" className="text-white hover-text-white"><i className="bi bi-youtube"></i></a>
-                <a href="#" className="text-white hover-text-white"><i className="bi bi-linkedin"></i></a>
-              </div>
-            </div>
+                  {userProgress && (
+                    <motion.div
+                      className="progress-welcome"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 1.2 }}
+                    >
+                      <FaTrophy />
+                      <span>
+                        {language === 'en' 
+                          ? `${userProgress.badges || 0} badges earned! ${userProgress.completedLessons || 0} lessons completed!`
+                          : `حصلت على ${userProgress.badges || 0} شارات! أكملت ${userProgress.completedLessons || 0} درس!`}
+                      </span>
+                    </motion.div>
+                  )}
+                </>
+              )}
+            </motion.div>
           </div>
         </div>
-      </footer>
+      </motion.section>
+
+      {/* Learning Paths Section */}
+      <motion.section 
+        className="learning-paths-section"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="section-header">
+          <h2>{language === 'en' ? 'Choose Your Adventure Path!' : 'اختر مسار مغامرتك!'}</h2>
+          <p>{language === 'en' ? 'Each path is designed for different skill levels' : 'كل مسار مصمم لمستويات مهارة مختلفة'}</p>
+        </div>
+
+        <div className="paths-grid">
+          {learningPaths.map((path, index) => (
+            <motion.div
+              key={path.id}
+              className={`path-card ${!path.unlocked ? 'locked' : ''}`}
+              style={{ '--path-color': path.color }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2, duration: 0.6 }}
+              whileHover={path.unlocked ? { 
+                scale: 1.05, 
+                y: -10,
+                boxShadow: `0 20px 40px ${path.color}40`
+              } : {}}
+              onClick={() => {
+                if (path.unlocked) {
+                  playSound('success');
+                  navigate('/courses');
+                }
+              }}
+            >
+              <div className="path-icon">{path.icon}</div>
+              <h3>{path.title}</h3>
+              <p>{path.description}</p>
+              <div className="path-info">
+                <span className="path-level">{path.level}</span>
+                <span className="path-lessons">
+                  {path.lessons} {language === 'en' ? 'lessons' : 'درس'}
+                </span>
+              </div>
+              
+              {path.unlocked && path.progress > 0 && (
+                <div className="path-progress">
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill" 
+                      style={{ width: `${(path.progress / path.lessons) * 100}%` }}
+                    />
+                  </div>
+                  <span className="progress-text">
+                    {Math.round((path.progress / path.lessons) * 100)}% {language === 'en' ? 'Complete' : 'مكتمل'}
+                  </span>
+                </div>
+              )}
+              <motion.button
+                className={`path-button ${!path.unlocked ? 'locked' : ''}`}
+                disabled={!path.unlocked}
+                whileHover={path.unlocked ? { scale: 1.1 } : {}}
+                whileTap={path.unlocked ? { scale: 0.9 } : {}}
+              >
+                {path.unlocked 
+                  ? (language === 'en' ? 'Explore' : 'استكشف')
+                  : (language === 'en' ? 'Coming Soon' : 'قريباً')}
+              </motion.button>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* Interactive Coding Teaser - Now Working! */}
+      <motion.section 
+        className="coding-teaser-section"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <SimpleDragDemo />
+      </motion.section>
+
+      {/* Features Showcase */}
+      <motion.section 
+        className="features-showcase"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="features-grid">
+          {[
+            {
+              icon: <FaRobot />,
+              title: language === 'en' ? 'AI Buddy' : 'الصديق الذكي',
+              description: language === 'en' ? 'Ask me anything about coding!' : 'اسألني أي شيء عن البرمجة!',
+              color: '#FF6B9D',
+              action: () => playSound('success') // Chatbot is now floating, no modal needed
+            },
+            {
+              icon: <FaTrophy />,
+              title: language === 'en' ? 'Rewards' : 'المكافآت', 
+              description: language === 'en' ? 'Earn Cool Badges!' : 'احصل على شارات رائعة!',
+              color: '#FFD93D',
+              action: () => navigate('/progress')
+            },
+            {
+              icon: <FaGamepad />,
+              title: language === 'en' ? 'Games' : 'الألعاب',
+              description: language === 'en' ? 'Play & Learn!' : 'العب وتعلم!',
+              color: '#4ECDC4',
+              action: () => navigate('/games')
+            },
+            {
+              icon: <FaUsers />,
+              title: language === 'en' ? 'Parents' : 'الوالدين',
+              description: language === 'en' ? 'Track Progress' : 'تتبع التقدم',
+              color: '#A8E6CF',
+              action: () => navigate('/parent-dashboard')
+            }
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              className="feature-card"
+              style={{ '--feature-color': feature.color }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              whileHover={{ 
+                scale: 1.05, 
+                y: -10,
+                boxShadow: `0 15px 30px ${feature.color}40`
+              }}
+              onClick={() => {
+                playSound('success');
+                feature.action();
+              }}
+            >
+              <motion.div 
+                className="feature-icon"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+              >
+                {feature.icon}
+              </motion.div>
+              <h3>{feature.title}</h3>
+              <p>{feature.description}</p>
+              <motion.button
+                className="feature-button"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                {language === 'en' ? 'Try Now' : 'جرب الآن'}
+              </motion.button>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* Modern Features Section - Horizontal Scrolling */}
+      <motion.section 
+        className="modern-features-section"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="section-container">
+          <motion.div
+            className="section-header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2>{language === 'en' ? 'Why Choose Code4Kids?' : 'لماذا تختار Code4Kids؟'}</h2>
+            <p>{language === 'en' ? 'Discover the amazing features that make learning programming fun and engaging!' : 'اكتشف المميزات الرائعة التي تجعل تعلم البرمجة ممتعاً وجذاباً!'}</p>
+          </motion.div>
+
+          <div className="features-scroll-container">
+            <motion.div 
+              className="features-scroll-track"
+              drag="x"
+              dragConstraints={{ left: -800, right: 0 }}
+              dragElastic={0.1}
+            >
+              {[
+                {
+                  icon: <FaChild />,
+                  title: language === 'en' ? 'Kid-Friendly Interface' : 'واجهة صديقة للأطفال',
+                  description: language === 'en' ? 'Colorful and animated visuals designed specifically for young learners with intuitive navigation and engaging elements.' : 'رسوم ملونة ومتحركة مصممة خصيصاً للمتعلمين الصغار مع تنقل بديهي وعناصر جذابة.',
+                  color: '#FF6B9D',
+                  gradient: 'linear-gradient(135deg, #FF6B9D, #FF8E9B)'
+                },
+                {
+                  icon: <FaGraduationCap />,
+                  title: language === 'en' ? 'Structured Learning Paths' : 'مسارات تعلم منظمة',
+                  description: language === 'en' ? 'Age and skill-based learning paths from Beginner to Intermediate levels, ensuring progressive skill development.' : 'مسارات تعلم مبنية على العمر والمهارة من المبتدئ إلى المتوسط، مما يضمن تطوير المهارات التدريجي.',
+                  color: '#4ECDC4',
+                  gradient: 'linear-gradient(135deg, #4ECDC4, #45B7D1)'
+                },
+                {
+                  icon: <FaPuzzlePiece />,
+                  title: language === 'en' ? 'Interactive Lessons & Quizzes' : 'دروس تفاعلية واختبارات',
+                  description: language === 'en' ? 'Engaging interactive lessons with short quizzes after each topic to reinforce learning and track understanding.' : 'دروس تفاعلية جذابة مع اختبارات قصيرة بعد كل موضوع لتعزيز التعلم وتتبع الفهم.',
+                  color: '#FFD93D',
+                  gradient: 'linear-gradient(135deg, #FFD93D, #F8B500)'
+                },
+                {
+                  icon: <FaGamepad />,
+                  title: language === 'en' ? 'Game-Based Learning' : 'تعلم قائم على الألعاب',
+                  description: language === 'en' ? 'Learn programming through drag-and-drop coding blocks similar to Scratch, making coding feel like playing games.' : 'تعلم البرمجة من خلال كتل برمجة بالسحب والإفلات مشابهة لـ Scratch، مما يجعل البرمجة تبدو مثل اللعب.',
+                  color: '#A8E6CF',
+                  gradient: 'linear-gradient(135deg, #A8E6CF, #7FCDCD)'
+                },
+                {
+                  icon: <FaRobot />,
+                  title: language === 'en' ? 'AI-Powered Assistant' : 'مساعد ذكي مدعوم بالذكاء الاصطناعي',
+                  description: language === 'en' ? 'Smart chatbot assistant providing real-time guidance, answering questions, and helping kids navigate lessons and challenges.' : 'مساعد ذكي يوفر إرشادات فورية ويجيب على الأسئلة ويساعد الأطفال في التنقل عبر الدروس والتحديات.',
+                  color: '#C44569',
+                  gradient: 'linear-gradient(135deg, #C44569, #F8B500)'
+                },
+                {
+                  icon: <FaUsers />,
+                  title: language === 'en' ? 'Parent/Teacher Dashboard' : 'لوحة تحكم الوالدين/المعلمين',
+                  description: language === 'en' ? 'Comprehensive dashboard for parents and teachers to track children\'s progress, view achievements, and monitor learning activities.' : 'لوحة تحكم شاملة للوالدين والمعلمين لتتبع تقدم الأطفال وعرض الإنجازات ومراقبة أنشطة التعلم.',
+                  color: '#54A0FF',
+                  gradient: 'linear-gradient(135deg, #54A0FF, #5F27CD)'
+                },
+                {
+                  icon: <FaTrophy />,
+                  title: language === 'en' ? 'Badge & Reward System' : 'نظام الشارات والمكافآت',
+                  description: language === 'en' ? 'Motivating badge and reward system that celebrates achievements and encourages continuous learning and skill development.' : 'نظام شارات ومكافآت محفز يحتفل بالإنجازات ويشجع على التعلم المستمر وتطوير المهارات.',
+                  color: '#5F27CD',
+                  gradient: 'linear-gradient(135deg, #5F27CD, #341F97)'
+                }
+              ].map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="modern-feature-card"
+                  style={{ 
+                    '--feature-color': feature.color,
+                    '--feature-gradient': feature.gradient
+                  }}
+                  initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                  whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                  transition={{ delay: index * 0.15, duration: 0.7 }}
+                  viewport={{ once: true }}
+                  whileHover={{ 
+                    scale: 1.05, 
+                    y: -15,
+                    boxShadow: `0 25px 50px ${feature.color}30`,
+                    transition: { duration: 0.3 }
+                  }}
+                >
+                  <div className="feature-card-background"></div>
+                  <motion.div 
+                    className="modern-feature-icon"
+                    whileHover={{ 
+                      rotate: [0, -10, 10, -10, 0],
+                      scale: 1.2
+                    }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    {feature.icon}
+                  </motion.div>
+                  <div className="feature-content">
+                    <h3>{feature.title}</h3>
+                    <p>{feature.description}</p>
+                  </div>
+                  <motion.div 
+                    className="feature-glow"
+                    animate={{
+                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      delay: index * 0.5
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+          
+          <div className="scroll-indicator">
+            <motion.div 
+              className="scroll-hint"
+              animate={{ x: [0, 20, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <span>{language === 'en' ? 'Swipe to explore →' : 'اسحب للاستكشاف ←'}</span>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Dashboard Preview Section */}
+      <motion.section 
+        className="dashboard-preview-section"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="section-container">
+          <motion.div
+            className="section-header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2>{language === 'en' ? 'Track Your Progress!' : 'تتبع تقدمك!'}</h2>
+            <p>{language === 'en' ? 'See how much you\'ve learned and celebrate your achievements!' : 'شاهد كم تعلمت واحتفل بإنجازاتك!'}</p>
+          </motion.div>
+
+          <div className="dashboard-preview-grid">
+            {/* Kid Progress View */}
+            <motion.div
+              className="dashboard-card kid-progress"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="card-header">
+                <FaChild className="card-icon" />
+                <h3>{language === 'en' ? 'My Progress' : 'تقدمي'}</h3>
+              </div>
+              <div className="progress-content">
+                <div className="progress-circle">
+                  <div className="progress-fill" style={{ '--progress': '75%' }}>
+                    <span className="progress-text">75%</span>
+                  </div>
+                </div>
+                <div className="progress-stats">
+                  <div className="stat-item">
+                    <span className="stat-number">12</span>
+                    <span className="stat-label">{language === 'en' ? 'Lessons' : 'دروس'}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">8</span>
+                    <span className="stat-label">{language === 'en' ? 'Badges' : 'شارات'}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Parent Dashboard View */}
+            <motion.div
+              className="dashboard-card parent-dashboard"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="card-header">
+                <FaUsers className="card-icon" />
+                <h3>{language === 'en' ? 'Parent Dashboard' : 'لوحة تحكم الوالدين'}</h3>
+              </div>
+              <div className="dashboard-content">
+                <div className="chart-container">
+                  <div className="chart-title">{language === 'en' ? 'Weekly Activity' : 'النشاط الأسبوعي'}</div>
+                  <div className="chart-bars">
+                    <div className="chart-bar" style={{ height: '60%' }}></div>
+                    <div className="chart-bar" style={{ height: '80%' }}></div>
+                    <div className="chart-bar" style={{ height: '45%' }}></div>
+                    <div className="chart-bar" style={{ height: '90%' }}></div>
+                    <div className="chart-bar" style={{ height: '70%' }}></div>
+                    <div className="chart-bar" style={{ height: '85%' }}></div>
+                    <div className="chart-bar" style={{ height: '75%' }}></div>
+                  </div>
+                  <div className="chart-labels">
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                  </div>
+                </div>
+                <div className="dashboard-stats">
+                  <div className="stat-item">
+                    <span className="stat-number">3.5</span>
+                    <span className="stat-label">{language === 'en' ? 'Hours/week' : 'ساعات/أسبوع'}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Call to Action Card */}
+            <motion.div
+              className="dashboard-card cta-card"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="card-header">
+                <FaRocket className="card-icon" />
+                <h3>{language === 'en' ? 'Ready to Start?' : 'مستعد للبدء؟'}</h3>
+              </div>
+              <div className="cta-content">
+                <p>{language === 'en' ? 'Join thousands of kids learning to code!' : 'انضم إلى آلاف الأطفال الذين يتعلمون البرمجة!'}</p>
+                <motion.button
+                  className="start-trial-btn"
+                  onClick={() => {
+                    playSound && playSound('success');
+                    navigate('/register');
+                  }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FaRocket />
+                  {language === 'en' ? 'Start Free Trial' : 'ابدأ التجربة المجانية'}
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Call to Action */}
+      <motion.section 
+        className="cta-section"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="cta-content">
+          <motion.h2
+            animate={{ 
+              color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd93d', '#ff6b6b']
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            {language === 'en' ? 'Ready to Start Your Coding Journey?' : 'مستعد لبدء رحلة البرمجة؟'}
+          </motion.h2>
+          
+          <div className="cta-buttons">
+            {!token ? (
+              <>
+                <motion.button
+                  className="cta-primary"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    playSound('success');
+                    navigate('/register');
+                  }}
+                >
+                  <FaRocket />
+                  {language === 'en' ? 'Sign Up' : 'اشترك'}
+                </motion.button>
+                
+                <motion.button
+                  className="cta-secondary"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    playSound('click');
+                    navigate('/login');
+                  }}
+                >
+                  {language === 'en' ? 'Log In' : 'تسجيل الدخول'}
+                </motion.button>
+              </>
+            ) : (
+              <motion.button
+                className="cta-primary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  playSound('success');
+                  navigate('/courses');
+                }}
+              >
+                <FaTrophy />
+                {language === 'en' ? 'Continue Learning' : 'واصل التعلم'}
+              </motion.button>
+            )}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Daily Tip Modal */}
+      <AnimatePresence>
+        {showDailyTip && (
+          <motion.div
+            className="daily-tip-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowDailyTip(false)}
+          >
+            <motion.div
+              className="daily-tip-modal"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 180 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="tip-header">
+                <div className="tip-icon">💡</div>
+                <h3>{language === 'en' ? 'Daily Coding Tip!' : 'نصيحة البرمجة اليومية!'}</h3>
+                <button onClick={() => setShowDailyTip(false)}>×</button>
+              </div>
+              <div className="tip-content">
+                <p>
+                  {language === 'en'
+                    ? "Did you know? The best way to learn coding is by practicing a little bit every day! Even 10 minutes can make a big difference! 🚀"
+                    : "هل تعلم؟ أفضل طريقة لتعلم البرمجة هي الممارسة قليلاً كل يوم! حتى 10 دقائق يمكن أن تحدث فرقاً كبيراً! 🚀"}
+                </p>
+                <motion.button
+                  className="tip-button"
+                  onClick={() => setShowDailyTip(false)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {language === 'en' ? 'Got it!' : 'فهمت!'}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+   
+      
+      {/* Floating Chatbot - Single Instance */}
+      <FloatingChatbot />
     </div>
   );
 };
 
-export default Home;
+// Memoize the component for better performance
+export default React.memo(EnhancedHome);
