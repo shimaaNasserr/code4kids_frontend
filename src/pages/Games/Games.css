@@ -1,0 +1,672 @@
+/* Games & Fun Specific Styles */
+.games-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.games-icon {
+  font-size: 3rem;
+  color: #6a11cb;
+  animation: gamesBounce 2s ease-in-out infinite;
+}
+
+@keyframes gamesBounce {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(5deg); }
+  50% { transform: translateY(0px) rotate(0deg); }
+  75% { transform: translateY(-5px) rotate(-5deg); }
+}
+
+/* Game Card - inherits from course-card styles */
+.game-card {
+  border-radius: 20px !important;
+  overflow: hidden;
+  border: none !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.game-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.game-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.game-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Game Image Container */
+.game-image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.5s ease;
+  border-radius: 20px 20px 0 0;
+}
+
+.game-card:hover .game-image {
+  transform: scale(1.05);
+}
+
+.game-icon-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+
+/* Duration Badge */
+.duration-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+/* Rating Badge */
+.rating-badge {
+  position: absolute;
+  top: 60px;
+  left: 15px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #8b5a00;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+/* Players Badge */
+.players-badge {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background: rgba(106, 17, 203, 0.8);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+/* Completion Badge */
+.completion-badge {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: linear-gradient(45deg, #10b981, #34d399);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+  animation: completionGlow 2s ease-in-out infinite;
+}
+
+@keyframes completionGlow {
+  0%, 100% { box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 4px 20px rgba(16, 185, 129, 0.6); }
+}
+
+/* Skills Container */
+.skills-container {
+  margin-top: 1rem;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tag {
+  background: linear-gradient(45deg, #e3f2fd, #bbdefb);
+  color: #1565c0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid #90caf9;
+}
+
+/* Progress Bar Enhancements */
+.game-progress-bar .progress {
+  height: 12px;
+  border-radius: 6px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.game-progress-bar .progress-bar {
+  background: linear-gradient(90deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+  transition: width 0.8s ease;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-progress-bar .progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+  animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Button Styles */
+.start-button {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.continue-button {
+  background: linear-gradient(90deg, #ffa500 0%, #ff6b6b 100%);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+}
+
+.completed-button {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.start-button:hover, .continue-button:hover, .completed-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Stats Container */
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-icon {
+  font-size: 1.2rem;
+  color: #6a11cb;
+}
+
+/* Overall Progress Section */
+.overall-progress-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 25px;
+  padding: 2rem;
+  color: white;
+  margin-top: 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.overall-progress-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.overall-progress-bar .progress {
+  height: 15px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.overall-progress-bar .progress-bar {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+/* Achievement Badge */
+.achievement-badge {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.achievement-icon {
+  font-size: 2.5rem;
+  color: #ffd700;
+  animation: achievementPulse 2s ease-in-out infinite;
+}
+
+@keyframes achievementPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.achievement-text {
+  text-align: left;
+}
+
+.achievement-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.achievement-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Fun Facts Section */
+.fun-facts-section {
+  margin-top: 3rem;
+}
+
+.fun-fact-card {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.fun-fact-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.fun-fact-icon {
+  font-size: 2.5rem;
+  color: #6a11cb;
+  margin-bottom: 1rem;
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.fun-fact-card h5 {
+  color: #2d3748;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.fun-fact-card p {
+  color: #4a5568;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Card Color Variations */
+.card-color-1 {
+  background: linear-gradient(145deg, #fff5f5, #fed7d7);
+}
+
+.card-color-2 {
+  background: linear-gradient(145deg, #f0fff4, #c6f6d5);
+}
+
+.card-color-3 {
+  background: linear-gradient(145deg, #f0f9ff, #bfdbfe);
+}
+
+/* Sparkle Animation */
+.sparkle {
+  animation: sparkleRotate 2s linear infinite;
+  margin-left: 0.5rem;
+}
+
+@keyframes sparkleRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.2); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Inherit gradient text and other styles from Courses.css */
+.gradient-text {
+  background: linear-gradient(90deg, #FF6B6B 0%, #FFA3A3 25%, #FFD166 50%, #06D6A0 75%, #118AB2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: gradientText 8s ease infinite;
+  display: block;
+  width: 100%;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin: 0;
+  line-height: 1.2;
+}
+
+@keyframes gradientText {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.lead.text-muted {
+  background: linear-gradient(90deg, #6A11CB 0%, #2575FC 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  font-size: 1.4rem;
+  margin: 0.5rem 0 0 0;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* Difficulty badges - inherit from Courses.css */
+.difficulty-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.difficulty-easy {
+  background: rgba(16, 185, 129, 0.2);
+  color: #065f46;
+}
+
+.difficulty-medium {
+  background: rgba(245, 158, 11, 0.2);
+  color: #92400e;
+}
+
+.difficulty-hard {
+  background: rgba(239, 68, 68, 0.2);
+  color: #991b1b;
+}
+
+/* RTL Support */
+.rtl .game-card {
+  text-align: right;
+  direction: rtl;
+}
+
+.rtl .duration-badge {
+  left: auto;
+  right: 15px;
+}
+
+.rtl .rating-badge {
+  left: auto;
+  right: 15px;
+}
+
+.rtl .players-badge {
+  left: auto;
+  right: 15px;
+}
+
+.rtl .completion-badge {
+  right: auto;
+  left: 15px;
+}
+
+.rtl .sparkle {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.rtl .achievement-text {
+  text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .games-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .games-icon {
+    font-size: 2rem;
+  }
+  
+  .stats-container {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .stat-item {
+    padding: 0.6rem 1.2rem;
+  }
+  
+  .overall-progress-section {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .achievement-badge {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.8rem;
+  }
+  
+  .achievement-text {
+    text-align: center !important;
+  }
+  
+  .game-card {
+    margin-bottom: 20px;
+  }
+  
+  .game-image-container {
+    height: 160px;
+  }
+  
+  .game-card .card-title {
+    font-size: 1.1rem;
+  }
+  
+  .start-button, .continue-button, .completed-button {
+    padding: 10px 15px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .fun-facts-section {
+    margin-top: 2rem;
+  }
+
+  .fun-fact-card {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .fun-fact-icon {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .game-card {
+    border-radius: 15px !important;
+  }
+  
+  .game-image-container {
+    height: 140px;
+  }
+  
+  .game-card .card-body {
+    padding: 15px;
+  }
+  
+  .skills-tags {
+    gap: 0.3rem;
+  }
+  
+  .skill-tag {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+  }
+
+  .fun-fact-card {
+    padding: 1rem;
+  }
+
+  .fun-fact-icon {
+    font-size: 1.8rem;
+  }
+}
+
+/* Animation for game cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.game-card {
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  opacity: 0;
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Staggered animation for game cards */
+.game-card:nth-child(1) { animation-delay: 0.1s; }
+.game-card:nth-child(2) { animation-delay: 0.2s; }
+.game-card:nth-child(3) { animation-delay: 0.3s; }
+.game-card:nth-child(4) { animation-delay: 0.4s; }
+.game-card:nth-child(5) { animation-delay: 0.5s; }
+.game-card:nth-child(6) { animation-delay: 0.6s; }

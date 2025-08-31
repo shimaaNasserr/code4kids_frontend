@@ -11,6 +11,7 @@ import LessonsList from "../pages/Lessons/LessonsList";
 import LessonsApp from "../pages/Lessons/LessonsApp";
 import ParentDashboard from "../pages/Dashboard/ParentDashboard";
 import KidDashboard from "../pages/Dashboard/KidDashboard";
+import Games from "../pages/Games/Games";
 
 
 const route = createBrowserRouter([
@@ -25,6 +26,10 @@ const route = createBrowserRouter([
       {
         path: "courses",
         element: <Courses />,
+      },
+      {
+        path: "games",
+        element: <Games />,
       },
       {
         path: "course-details/:id",
