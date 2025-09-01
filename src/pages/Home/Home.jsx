@@ -85,17 +85,11 @@ const EnhancedHome = () => {
     setError(null);
     
     try {
-      const [coursesRes, progressRes] = await Promise.all([
-        axiosInstance.get("courses/", {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        userId ? axiosInstance.get(`users/${userId}/progress/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }) : Promise.resolve({ data: null })
-      ]);
-      
+      const coursesRes = await axiosInstance.get("courses/", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    
       setCourses(coursesRes.data);
-      setUserProgress(progressRes.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
       setError(language === 'en' ? 'Oops! Loading your adventure...' : 'عذراً! جاري تحميل مغامرتك...');
@@ -109,7 +103,7 @@ const EnhancedHome = () => {
     if (token) {
       navigate('/courses');
     } else {
-      navigate('/register');
+      navigate('/login');
     }
   };
 

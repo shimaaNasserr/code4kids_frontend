@@ -5,6 +5,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Navbar.css";
+import { useAuth } from "../../context/AuthContext";
 
 // Language Context
 const LanguageContext = createContext();
@@ -12,6 +13,7 @@ const LanguageContext = createContext();
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const [soundEnabled, setSoundEnabled] = useState(true);
+
   
   const translations = {
     en: {
@@ -101,11 +103,11 @@ const Navbar = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const { translations, toggleLanguage, language, soundEnabled, setSoundEnabled, playSound, isRTL } = useLanguage();
+  const { user, logout } = useAuth(); 
 
   const handleLogout = () => {
     playSound('click');
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userToken");
+    logout();
     navigate("/login");
   };
 
@@ -115,50 +117,70 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { 
-      to: "/", 
-      text: translations.home, 
+    {
+      to: "/",
+      text: translations.home,
       icon: <FaHome className="nav-icon" />,
       color: "#ff6b6b",
-      hoverColor: "#ff5252"
+      hoverColor: "#ff5252",
     },
-    { 
-      to: "/courses", 
-      text: translations.startLearning, 
+    {
+      to: "/courses",
+      text: translations.startLearning,
       icon: <FaRocket className="nav-icon" />,
       color: "#4ecdc4",
-      hoverColor: "#26a69a"
+      hoverColor: "#26a69a",
     },
-    { 
-      to: "/games", 
-      text: translations.games, 
-      icon: <FaGamepad className="nav-icon" />,
-      color: "#45b7d1",
-      hoverColor: "#2196f3"
-    },
-    { 
-      to: "/progress", 
-      text: translations.myProgress, 
-      icon: <FaTrophy className="nav-icon" />,
-      color: "#ffd93d",
-      hoverColor: "#ffc107"
-    },
-    ...(userId ? [{ 
-      to: "/profile", 
-      text: translations.profile, 
-      icon: <FaUserAstronaut className="nav-icon" />,
-      color: "#a8e6cf",
-      hoverColor: "#81c784"
-    }] : [])
   ];
 
-  const authItems = userId 
-    ? [{ text: translations.logout, onClick: handleLogout, icon: <FaSignOutAlt className="nav-icon" /> }]
-    : [
-        { to: "/login", text: translations.login, icon: <FaSignInAlt className="nav-icon loginBtn" /> },
-        { to: "/register", text: translations.register, icon: <FaUserPlus className="nav-icon" /> }
-      ];
+  // لو المستخدم عامل لوجن نزود باقي القوائم
+  if (user) {
+    navItems.push(
+      {
+        to: "/games",
+        text: translations.games,
+        icon: <FaGamepad className="nav-icon" />,
+        color: "#45b7d1",
+        hoverColor: "#2196f3",
+      },
+      {
+        to: "/kid-dashboard",
+        text: translations.myProgress,
+        icon: <FaTrophy className="nav-icon" />,
+        color: "#ffd93d",
+        hoverColor: "#ffc107",
+      },
+      {
+        to: "/profile",
+        text: translations.profile,
+        icon: <FaUserAstronaut className="nav-icon" />,
+        color: "#a8e6cf",
+        hoverColor: "#81c784",
+      }
+    );
+  }
 
+  // أزرار تسجيل الدخول/الخروج
+  const authItems = user
+    ? [
+        {
+          text: translations.logout,
+          onClick: handleLogout,
+          icon: <FaSignOutAlt className="nav-icon" />,
+        },
+      ]
+    : [
+        {
+          to: "/login",
+          text: translations.login,
+          icon: <FaSignInAlt className="nav-icon loginBtn" />,
+        },
+        {
+          to: "/register",
+          text: translations.register,
+          icon: <FaUserPlus className="nav-icon" />,
+        },
+      ];
   return (
     <>
       <motion.nav 

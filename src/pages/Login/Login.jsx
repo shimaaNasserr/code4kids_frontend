@@ -7,9 +7,12 @@ import { useLanguage } from '../../components/NavBar/Navbar';
 import RobotCharacter from '../../components/RobotCharacter/RobotCharacter';
 // import RegisterSection from '../../components/RegisterSection/RegisterSection';
 import axiosInstance from "../../apis/config";
+import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
 
 const Login = () => {
+  const { login } = useAuth();
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -102,42 +105,35 @@ const Login = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!validateForm()) {
       playSound && playSound('error');
       return;
     }
-    
+  
     setIsLoading(true);
     setLoginError(null);
     playSound && playSound('click');
-    
+  
     try {
       const response = await axiosInstance.post('accounts/login/', {
         email: formData.email,
         password: formData.password
       });
-      
+  
       if (response.data.message === 'Login successful') {
-        // Store tokens based on remember me preference
-        if (formData.rememberMe) {
-          localStorage.setItem('userToken', response.data.tokens.access);
-          localStorage.setItem('refresh_token', response.data.tokens.refresh);
-          localStorage.setItem('userId', response.data.user.id);
-          localStorage.setItem('userName', response.data.user.username || response.data.user.email);
-          localStorage.setItem('userRole', formData.role);
-          localStorage.setItem('rememberMe', 'true');
-        } else {
-          // Use sessionStorage for temporary storage
-          sessionStorage.setItem('userToken', response.data.tokens.access);
-          sessionStorage.setItem('refresh_token', response.data.tokens.refresh);
-          sessionStorage.setItem('userId', response.data.user.id);
-          sessionStorage.setItem('userName', response.data.user.username || response.data.user.email);
-          sessionStorage.setItem('userRole', formData.role);
-        }
-        
+        login(
+          {
+            id: response.data.user.id,
+            username: response.data.user.username || response.data.user.email,
+            role: formData.role,
+          },
+          response.data.tokens.access,
+          formData.rememberMe
+        );
+  
         playSound && playSound('success');
-        
+  
         // Redirect based on role
         switch (formData.role) {
           case 'Kid':
@@ -153,25 +149,23 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       playSound && playSound('error');
-      
       if (error.response?.data) {
         const errorMsg = error.response.data.message || error.response.data.detail;
-        setLoginError(
-          language === 'en' 
-            ? errorMsg || 'Oops! Wrong email or password. Try again!' 
-            : errorMsg || 'عذراً! البريد الإلكتروني أو كلمة المرور خاطئة. حاول مرة أخرى!'
+        setLoginError(language === 'en'
+          ? errorMsg || 'Oops! Wrong email or password. Try again!'
+          : errorMsg || 'عذراً! البريد الإلكتروني أو كلمة المرور خاطئة. حاول مرة أخرى!'
         );
       } else {
-        setLoginError(
-          language === 'en' 
-            ? 'Something went wrong. Please try again!' 
-            : 'حدث خطأ ما. يرجى المحاولة مرة أخرى!'
+        setLoginError(language === 'en'
+          ? 'Something went wrong. Please try again!'
+          : 'حدث خطأ ما. يرجى المحاولة مرة أخرى!'
         );
       }
     } finally {
       setIsLoading(false);
     }
   };
+  
   
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
