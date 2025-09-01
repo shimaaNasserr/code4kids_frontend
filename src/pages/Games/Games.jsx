@@ -3,114 +3,9 @@ import { Container, Row, Col, Button, ProgressBar, Spinner, Alert, OverlayTrigge
 import { FaPlay, FaClock, FaGamepad, FaCode, FaRobot, FaPuzzlePiece, FaStar, FaTrophy, FaRocket, FaHeart } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../apis/config';
 import './Games.css';
 import { useLanguage } from '../../components/NavBar/Navbar';
-
-// Games & Fun activities data
-const gamesAndFunActivities = [
-  {
-    id: 1,
-    title: "Code Combat",
-    title_ar: "معركة البرمجة",
-    description: "Learn programming through epic RPG adventures! Battle monsters and solve quests using real code.",
-    description_ar: "تعلم البرمجة من خلال مغامرات آر بي جي ملحمية! حارب الوحوش وحل المهام باستخدام كود حقيقي.",
-    duration: 45,
-    difficulty: "intermediate",
-    image_url: "https://res.cloudinary.com/dqiameqyd/image/upload/v1735671600/codecombat-game.jpg",
-    progress: 40,
-    totalSteps: 15,
-    completedSteps: 6,
-    category: "rpg",
-    skills: ["Python", "JavaScript", "Problem Solving"],
-    rating: 4.8,
-    players: "1.2M+"
-  },
-  {
-    id: 2,
-    title: "Scratch Jr Adventures",
-    title_ar: "مغامرات سكراتش الصغير",
-    description: "Create interactive stories and games with colorful blocks! Perfect for young coders to start their journey.",
-    description_ar: "أنشئ قصص وألعاب تفاعلية بكتل ملونة! مثالي للمبرمجين الصغار لبدء رحلتهم.",
-    duration: 30,
-    difficulty: "beginner",
-    image_url: "https://res.cloudinary.com/dqiameqyd/image/upload/v1735671600/scratch-jr-game.jpg",
-    progress: 75,
-    totalSteps: 8,
-    completedSteps: 6,
-    category: "creative",
-    skills: ["Visual Programming", "Storytelling", "Animation"],
-    rating: 4.9,
-    players: "800K+"
-  },
-  {
-    id: 3,
-    title: "Robot Maze Challenge",
-    title_ar: "تحدي متاهة الروبوت",
-    description: "Guide your robot through challenging mazes using programming logic and algorithms!",
-    description_ar: "وجه روبوتك عبر متاهات صعبة باستخدام منطق البرمجة والخوارزميات!",
-    duration: 35,
-    difficulty: "beginner",
-    image_url: "https://res.cloudinary.com/dqiameqyd/image/upload/v1735671600/robot-maze-game.jpg",
-    progress: 100,
-    totalSteps: 10,
-    completedSteps: 10,
-    category: "puzzle",
-    skills: ["Algorithms", "Logic", "Problem Solving"],
-    rating: 4.7,
-    players: "650K+"
-  },
-  {
-    id: 4,
-    title: "Code Monkey Island",
-    title_ar: "جزيرة القرد المبرمج",
-    description: "Help the monkey collect bananas by writing code! Learn loops, functions, and variables in a tropical paradise.",
-    description_ar: "ساعد القرد في جمع الموز بكتابة الكود! تعلم الحلقات والوظائف والمتغيرات في جنة استوائية.",
-    duration: 40,
-    difficulty: "beginner",
-    image_url: "https://res.cloudinary.com/dqiameqyd/image/upload/v1735671600/code-monkey-game.jpg",
-    progress: 20,
-    totalSteps: 12,
-    completedSteps: 2,
-    category: "adventure",
-    skills: ["Loops", "Functions", "Variables"],
-    rating: 4.6,
-    players: "950K+"
-  },
-  {
-    id: 5,
-    title: "Pixel Art Creator",
-    title_ar: "منشئ فن البكسل",
-    description: "Create amazing pixel art while learning about coordinates, loops, and digital art concepts!",
-    description_ar: "أنشئ فن بكسل مذهل أثناء تعلم الإحداثيات والحلقات ومفاهيم الفن الرقمي!",
-    duration: 50,
-    difficulty: "intermediate",
-    image_url: "https://res.cloudinary.com/dqiameqyd/image/upload/v1735671600/pixel-art-game.jpg",
-    progress: 0,
-    totalSteps: 14,
-    completedSteps: 0,
-    category: "creative",
-    skills: ["Coordinates", "Art", "Loops"],
-    rating: 4.5,
-    players: "420K+"
-  },
-  {
-    id: 6,
-    title: "Space Code Explorer",
-    title_ar: "مستكشف كود الفضاء",
-    description: "Navigate through space while learning advanced programming concepts! Build rockets and explore galaxies.",
-    description_ar: "تنقل عبر الفضاء أثناء تعلم مفاهيم البرمجة المتقدمة! ابني صواريخ واستكشف المجرات.",
-    duration: 60,
-    difficulty: "advanced",
-    image_url: "https://res.cloudinary.com/dqiameqyd/image/upload/v1735671600/space-explorer-game.jpg",
-    progress: 85,
-    totalSteps: 18,
-    completedSteps: 15,
-    category: "space",
-    skills: ["Advanced Logic", "Physics", "Game Development"],
-    rating: 4.9,
-    players: "320K+"
-  }
-];
 
 // Get game icon based on category
 const getGameIcon = (category) => {
@@ -138,28 +33,58 @@ const getDifficultyBadge = (difficulty, language) => {
 };
 
 const Games = () => {
-  const [games, setGames] = useState(gamesAndFunActivities);
-  const [loading, setLoading] = useState(false);
+  const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const { translations: t, language, isRTL } = useLanguage();
+  const token = localStorage.getItem("userToken");
 
-  // Simulate loading for demo purposes
+  // Fetch games from API
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchGames = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const headers = {};
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+        
+        const response = await axiosInstance.get("games/", { headers });
+        setGames(response.data);
+      } catch (err) {
+        console.error("Error fetching games:", err);
+        setError(language === 'ar' ? 'خطأ في تحميل الألعاب' : 'Error loading games');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGames();
+  }, [language, token]);
 
   const getGameProgress = (game) => {
-    const percent = Math.round((game.completedSteps / game.totalSteps) * 100);
+    // Use progress data from API if available
+    if (game.progress) {
+      const percent = game.progress.completion_percentage;
+      const completedLevels = game.progress.completed_levels;
+      const totalLevels = game.total_levels;
+      
+      return {
+        percent,
+        text: `${completedLevels} / ${totalLevels} Levels`,
+        completedText: `${Math.round(percent)}% Completed`
+      };
+    }
+    
+    // Fallback for no progress data
     return {
-      percent,
-      text: `${game.completedSteps} / ${game.totalSteps} Levels`,
-      completedText: `${percent}% Completed`
+      percent: 0,
+      text: `0 / ${game.total_levels || 10} Levels`,
+      completedText: "0% Completed"
     };
   };
 
@@ -177,11 +102,27 @@ const Games = () => {
     };
   };
 
-  const handleStartGame = (gameId) => {
-    // For demo purposes, just show an alert
-    // In real implementation, this would navigate to the game
-    alert(`Starting Game ${gameId}!`);
+  const handleStartGame = async (game) => {
+    try {
+      if (token) {
+        // Start a game session if user is authenticated
+        await axiosInstance.post(`games/${game.id}/start-session/`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+  
+      // Open the game URL from backend
+      if (game.game_url) {
+        window.open(game.game_url, "_blank");
+      } else {
+        alert("Game URL not available.");
+      }
+    } catch (error) {
+      console.error('Error starting game:', error);
+      alert('Error starting game. Please try again.');
+    }
   };
+  
 
   if (loading) {
     return (
@@ -200,7 +141,29 @@ const Games = () => {
             <i className="fas fa-exclamation-triangle me-2"></i>
             {error}
           </div>
+          <Button 
+            variant="outline-danger" 
+            className="mt-2" 
+            onClick={() => window.location.reload()}
+          >
+            {language === 'ar' ? 'حاول مرة أخرى' : 'Try Again'}
+          </Button>
         </Alert>
+      </Container>
+    );
+  }
+
+  if (games.length === 0 && !loading) {
+    return (
+      <Container className="py-5 text-center">
+        <motion.div className="empty-state p-5 rounded-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <FaGamepad className="text-muted mb-3" size={64} />
+          <h3>{language === 'ar' ? 'لا توجد ألعاب حالياً' : 'No Games Available'}</h3>
+          <p className="text-muted">{language === 'ar' ? 'المزيد من الألعاب قريباً' : 'More games coming soon'}</p>
+          <Button variant="primary" onClick={() => window.location.reload()}>
+            {language === 'ar' ? 'تحديث' : 'Refresh'}
+          </Button>
+        </motion.div>
       </Container>
     );
   }
@@ -272,7 +235,7 @@ const Games = () => {
                     />
                   ) : (
                     <div className="game-icon-fallback">
-                      {getGameIcon(game.category)}
+                      {getGameIcon(game.category_name?.toLowerCase() || 'adventure')}
                     </div>
                   )}
                   
@@ -282,7 +245,7 @@ const Games = () => {
                   
                   <div className="duration-badge">
                     <FaClock className="me-1" />
-                    {game.duration} min
+                    {game.duration_minutes} min
                   </div>
 
                   <div className="rating-badge">
@@ -292,7 +255,7 @@ const Games = () => {
 
                   <div className="players-badge">
                     <FaGamepad className="me-1" />
-                    {game.players}
+                    {game.player_count}
                   </div>
                   
                   {isCompleted && (
@@ -314,7 +277,7 @@ const Games = () => {
                       {language === 'ar' ? 'المهارات:' : 'Skills:'}
                     </small>
                     <div className="skills-tags mt-1">
-                      {game.skills.map((skill, idx) => (
+                      {(game.skills || []).map((skill, idx) => (
                         <span key={idx} className="skill-tag">
                           {skill}
                         </span>
@@ -341,7 +304,7 @@ const Games = () => {
                   >
                     <Button 
                       className={`w-100 py-2 mt-3 ${isCompleted ? 'completed-button' : isStarted ? 'continue-button' : 'start-button'}`}
-                      onClick={() => handleStartGame(game.id)}
+                      onClick={() => handleStartGame(game)}
                     >
                       <div className="d-flex align-items-center justify-content-center">
                         {isCompleted ? (
