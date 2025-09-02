@@ -5,6 +5,7 @@
   font-family: 'Comic Neue', 'Segoe UI', system-ui, -apple-system, sans-serif;
   padding: 0;
   overflow: hidden;
+  margin-top: 100px;
 }
 
 /* Split Layout */
