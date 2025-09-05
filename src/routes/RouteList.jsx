@@ -12,7 +12,13 @@ import LessonsApp from "../pages/Lessons/LessonsApp";
 import ParentDashboard from "../pages/Dashboard/ParentDashboard";
 import KidDashboard from "../pages/Dashboard/KidDashboard";
 import Games from "../pages/Games/Games";
+import  AdminLogin  from "../pages/AdminLogin/AdminLogin";
+import   AdminDashboard   from "../pages/AdminDashboard/AdminDashboard";
+import { AdminLayout } from "../pages/Layout/AdminLayout";
+import AdminHome from "../pages/Home/AdminHome";
+import { AdminStatisics } from "../pages/AdminStatisics/AdminStatisics";
 
+// const role = localStorage.getItem("role");
 
 const route = createBrowserRouter([
   {
@@ -60,6 +66,28 @@ const route = createBrowserRouter([
     ],
   },
   { path: "*", element: <NotFoundPage /> },
+
+//admin
+{ path: "admin/login", element: <AdminLogin /> },
+
+
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element:    
+ <AdminHome /> ,
+      },
+      { path: "dashboard", element: <AdminDashboard /> },
+      { path: "statistics", element: <AdminStatisics /> },
+    ],
+  },
+
+  { path: "*", element: <NotFoundPage /> },
+
+
 ]);
 
 export default route;

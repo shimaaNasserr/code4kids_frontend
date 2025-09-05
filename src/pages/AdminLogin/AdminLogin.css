@@ -1,0 +1,29 @@
+.admin-login {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a2540, #134e6f, #1b6ca8);
+    padding: 20px;
+  }
+  
+  .admin-login-card {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  
+  .card-header {
+    background: linear-gradient(135deg, #0a2540, #1b6ca8);
+    border: none;
+  }
+  
+  .btn-primary {
+    background-color: #1b6ca8;
+    border-color: #1b6ca8;
+  }
+  
+  .btn-primary:hover {
+    background-color: #134e6f;
+    border-color: #134e6f;
+  }
+  

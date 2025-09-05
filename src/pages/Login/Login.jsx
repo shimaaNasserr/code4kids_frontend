@@ -11,6 +11,8 @@ import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
 
 const Login = () => {
+
+
   const { login } = useAuth();
 
   const navigate = useNavigate();
@@ -131,6 +133,7 @@ const Login = () => {
           response.data.tokens.access,
           formData.rememberMe
         );
+        localStorage.setItem("role", formData.role);
   
         playSound && playSound('success');
   
@@ -152,8 +155,8 @@ const Login = () => {
       if (error.response?.data) {
         const errorMsg = error.response.data.message || error.response.data.detail;
         setLoginError(language === 'en'
-          ? errorMsg || 'Oops! Wrong email or password. Try again!'
-          : errorMsg || 'عذراً! البريد الإلكتروني أو كلمة المرور خاطئة. حاول مرة أخرى!'
+          ? errorMsg || 'invalid email or password. Try again!'
+          : errorMsg || ' البريد الإلكتروني أو كلمة المرور خاطئة. حاول مرة أخرى!'
         );
       } else {
         setLoginError(language === 'en'
