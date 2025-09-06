@@ -1,151 +1,202 @@
+/* ==================== Dashboard Container ==================== */
 .dashboard-container {
-  padding: 5rem 0em;
+  padding: 60px 20px 30px 20px; /* زيادة المسافة من الأعلى للناف بار */
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Baloo 2', cursive;
 }
 
-.courses-section{
-    padding: 1rem;
-}
+/* ==================== Stats Cards ==================== */
 .stats-cards {
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  margin-bottom: 2rem;
+  gap: 15px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
 }
 
 .stat-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.5rem;
+  flex: 1 1 28%;
+  min-width: 140px;
+  background: linear-gradient(135deg, #fef08a 0%, #fcd34d 100%);
+  border-radius: 18px;
+  padding: 20px 15px;
+  color: #1e3a8a;
   text-align: center;
-  flex: 1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-top: 4px solid var(--primary);
+  font-weight: 800;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
-.stat-card h4 {
-  font-size: 1rem;
-  color: var(--gray);
-  /* margin-bottom: 0.5rem; */
+.stat-card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.35);
 }
 
-.stat-card p {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary);
+/* ==================== Section Titles with Gradient ==================== */
+.gradient-text {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  font-size: 1.8rem;
+  margin-bottom: 15px; /* مسافة صغيرة بين العنوان والكروت */
+  text-align: left;
+  animation: gradientText 8s ease infinite;
 }
 
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin:  1.5rem;
-  color: var(--dark);
+@keyframes gradientText {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
+/* ==================== Courses Grid ==================== */
 .courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px; /* مسافة بين الكروت */
+  perspective: 1500px;
+  margin-bottom: 60px; /* مسافة بين الأقسام */
 }
 
+/* ==================== Course Card ==================== */
 .course-card {
-  background: white;
-  border-radius: 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.2), 0 15px 50px rgba(0,0,0,0.1);
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  text-align: center;
-  transition: all 0.3s ease;
-  padding-bottom: 1rem;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
 
 .course-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transform: rotateX(5deg) rotateY(5deg) translateY(-15px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.35), 0 15px 40px rgba(0,0,0,0.2);
 }
 
-.course-thumbnail {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e6edff 100%);
-  padding: 2rem;
+.course-image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 35%;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
 }
 
-.course-icon {
-  font-size: 2rem;
-  color: var(--primary);
-}
-
-.badge {
-  display: inline-block;
-  margin-right: 1.25rem;
-  /* padding: 5rem; */
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.badge-progress {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badge-completed {
-  background: #d4edda;
-  color: #155724;
-}
-
-.kids-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-.kid-card {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem 1rem;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.kid-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-.kid-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.5rem;
-  margin: 0 auto 1rem;
-}
-
-.modal-overlay {
-  position: fixed;
+.course-image {
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.course-card:hover .course-image {
+  transform: scale(1.08);
+}
+
+.course-icon-fallback {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  height: 100%;
+  background: #e2e8f0;
+  font-size: 2rem;
 }
 
-.modal-content {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
+/* Card Body */
+.card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin-bottom: 1.5rem;
+}
+
+.progress {
+  height: 14px;
+  border-radius: 7px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  text-align: right;
+  padding-right: 5px;
+  color: white;
+  font-weight: 700;
+  transition: width 0.6s ease;
+}
+
+/* Button */
+.start-now-button {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  padding: 0.6rem 1rem;
+  margin-top: auto;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.start-now-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+/* Empty Strip */
+.empty-strip {
+  background: #fef9f2;
+  border-radius: 15px;
+  padding: 40px 15px;
+  text-align: center;
+  color: #4a5568;
+  font-weight: 700;
+  margin-bottom: 70px;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 768px) {
+  .courses-grid {
+    justify-content: center;
+  }
+
+  .course-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 576px) {
+  .course-card {
+    width: 100%;
+  }
 }
