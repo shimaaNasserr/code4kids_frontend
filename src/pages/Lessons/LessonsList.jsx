@@ -43,7 +43,6 @@ const LessonsList = () => {
 
   // Fetch lessons for the course
   const fetchLessons = async () => {
-    const { user } = useAuth();
     try {
       const response = await axiosInstance.get('lessons/');
       const courseLessons = response.data.filter(lesson => lesson.course === parseInt(courseId));
