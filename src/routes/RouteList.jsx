@@ -4,7 +4,7 @@ import Login from "../pages/Login/Login";
 import { NotFoundPage } from "../pages/NotFoundPage/NotFoundPage";
 import Register from "../pages/Register/Register";
 import { Layout } from "../pages/Layout/Layout";
-import  Courses  from "../pages/Courses/Courses";
+import Courses from "../pages/Courses/Courses";
 import Profile from "../pages/Profile/Profile";
 import CourseDetails from "../pages/Courses/CourseDetails";
 import LessonsList from "../pages/Lessons/LessonsList";
@@ -12,11 +12,15 @@ import LessonsApp from "../pages/Lessons/LessonsApp";
 import ParentDashboard from "../pages/Dashboard/ParentDashboard";
 import KidDashboard from "../pages/Dashboard/KidDashboard";
 import Games from "../pages/Games/Games";
-import  AdminLogin  from "../pages/AdminLogin/AdminLogin";
-import   AdminDashboard   from "../pages/AdminDashboard/AdminDashboard";
+import AdminLogin from "../pages/AdminLogin/AdminLogin";
+import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import { AdminLayout } from "../pages/Layout/AdminLayout";
 import AdminHome from "../pages/Home/AdminHome";
 import { AdminStatisics } from "../pages/AdminStatisics/AdminStatisics";
+import EditCourse from "../pages/AdminDashboard/EditCourse";
+import EditLesson from "../pages/AdminDashboard/EditLesson";
+import AddCourse from "../pages/AdminDashboard/AddCourse";
+import AddLesson from "../pages/AdminDashboard/AddLesson";
 
 // const role = localStorage.getItem("role");
 
@@ -67,9 +71,9 @@ const route = createBrowserRouter([
   },
   { path: "*", element: <NotFoundPage /> },
 
-//admin
-{ path: "admin/login", element: <AdminLogin /> },
-
+  //admin
+  { path: "admin/login", element: <AdminLogin /> },
+  { path: "/admin/courses/:id/edit", element: <EditCourse /> },
 
   {
     path: "/admin",
@@ -77,17 +81,18 @@ const route = createBrowserRouter([
     children: [
       {
         index: true,
-        element:    
- <AdminHome /> ,
+        element: <AdminHome />,
       },
       { path: "dashboard", element: <AdminDashboard /> },
       { path: "statistics", element: <AdminStatisics /> },
+      { path: "courses/:id/edit", element: <EditCourse /> },
+      { path: "lessons/:id/edit", element: <EditLesson /> },
+      { path: "courses/add-new", element: <AddCourse /> },
+      { path: "lessons/add-new", element: <AddLesson /> },
     ],
   },
 
   { path: "*", element: <NotFoundPage /> },
-
-
 ]);
 
 export default route;
