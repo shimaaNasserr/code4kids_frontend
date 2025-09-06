@@ -2,6 +2,44 @@
 * {
   box-sizing: border-box;
 }
+.child-code-wrapper {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f0f4f8;
+  border: 1px solid #d1d9e0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-right: 12px; 
+}
+
+
+.child-code-text {
+  font-weight: 600;
+  color: #2a2a2a;
+}
+
+.copy-code-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #3b82f6; /* أزرق واضح */
+  transition: color 0.2s ease;
+}
+
+.copy-code-btn:hover {
+  color: #1d4ed8; /* أزرق أغمق عند المرور */
+}
+
+.copy-code-btn svg {
+  stroke: currentColor;
+}
+
 
 .profile-page {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
