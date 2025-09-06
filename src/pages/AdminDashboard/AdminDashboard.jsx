@@ -10,11 +10,15 @@ const AdminDashboard = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteType, setDeleteType] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
+
+
 
   const {
     showModal,
     itemToDelete,
     loading: deleteLoading,
+    toast,
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,
@@ -88,6 +92,27 @@ const AdminDashboard = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      {toast && (
+  <div
+    style={{
+      position: "fixed",
+      top: "20px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      backgroundColor: toast.type === "success" ? "#28a745" : "#dc3545",
+      color: "#fff",
+      padding: "12px 20px",
+      borderRadius: "8px",
+      fontWeight: "bold",
+      zIndex: 9999,
+      boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+    }}
+  >
+    {toast.message}
+  </div>
+)}
+
+
       <ConfirmationModal
         isOpen={showModal}
         onCancel={handleDeleteCancel}

@@ -19,6 +19,9 @@ const EditLesson = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  
 
   useEffect(() => {
     fetchLesson();
@@ -68,11 +71,14 @@ const EditLesson = () => {
     e.preventDefault();
     try {
       await axiosInstance.put(`/lessons/${id}/`, lesson);
-      alert("Lesson updated successfully!");
-      navigate("/admin/dashboard");
+      setSuccessMessage("✅ Lesson updated successfully!");
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+      }, 2000);
+  
     } catch (error) {
       console.error("Error updating lesson:", error);
-      alert("Failed to update lesson");
+      setErrorMessage("❌ Failed to update lesson. Please try again.");
     }
   };
 
@@ -94,6 +100,18 @@ const EditLesson = () => {
       <div className="card shadow-lg">
         <div className="card-body">
           <h1 className="card-title mb-4">Edit Lesson</h1>
+          {successMessage && (
+  <div className="alert alert-success text-center fw-bold mb-4" role="alert">
+    {successMessage}
+  </div>
+)}
+
+{errorMessage && (
+  <div className="alert alert-danger text-center fw-bold mb-4" role="alert">
+    {errorMessage}
+  </div>
+)}
+
           <form onSubmit={handleSubmit}>
             {/* Title */}
             <div className="mb-3">

@@ -10,6 +10,9 @@ const EditCourse = () => {
   const [instructors, setInstructors] = useState([]); // all instructors
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
 
   useEffect(() => {
     fetchCourse();
@@ -124,8 +127,10 @@ const EditCourse = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Course updated successfully!");
-      if (imageFile) {
+      setSuccessMessage("✅ Course updated successfully!");
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+      }, 2000);      if (imageFile) {
         setCourse((prev) => ({
           ...prev,
           image_url: URL.createObjectURL(imageFile),
@@ -134,7 +139,7 @@ const EditCourse = () => {
       navigate("/admin/dashboard");
     } catch (error) {
       console.error("Error details:", error.response?.data || error.message);
-      alert("Failed to update course");
+      setErrorMessage("❌ Failed to update course. Please try again.");
     }
   };
 
@@ -146,6 +151,18 @@ const EditCourse = () => {
       <div className="card shadow-lg">
         <div className="card-body">
           <h1 className="card-title mb-4">Edit Course</h1>
+          {successMessage && (
+  <div className="alert alert-success text-center fw-bold mb-4" role="alert">
+    {successMessage}
+  </div>
+)}
+
+{errorMessage && (
+  <div className="alert alert-danger text-center fw-bold mb-4" role="alert">
+    {errorMessage}
+  </div>
+)}
+
           <form onSubmit={handleSubmit}>
             {/* Title */}
             <div className="mb-3">

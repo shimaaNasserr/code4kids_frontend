@@ -5,6 +5,7 @@ export const useDelete = () => {
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const handleDeleteClick = (item) => {
     setItemToDelete(item);
@@ -15,18 +16,26 @@ export const useDelete = () => {
     setLoading(true);
     try {
       await axiosInstance.delete(endpoint);
-      alert(`${itemToDelete.title || "Item"} deleted successfully!`);
-
+    setToast({
+        message: `${itemToDelete.title || "Item"} deleted successfully!`,
+        type: "success",
+      });
       if (updateStateCallback) {
         updateStateCallback(itemToDelete.id);
       }
     } catch (error) {
       console.error("Error deleting item:", error);
-      alert("Failed to delete item");
-    } finally {
+
+      setToast({
+        message: "❌ Failed to delete item",
+        type: "error",
+      });
+        } finally {
       setLoading(false);
       setShowModal(false);
       setItemToDelete(null);
+      setTimeout(() => setToast(null), 3000);
+
     }
   };
 
@@ -39,6 +48,7 @@ export const useDelete = () => {
     showModal,
     itemToDelete,
     loading,
+    toast,
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,

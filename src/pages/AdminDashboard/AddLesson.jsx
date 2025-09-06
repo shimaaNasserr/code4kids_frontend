@@ -17,6 +17,9 @@ const AddLesson = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
 
   useEffect(() => {
     fetchCourses();
@@ -53,13 +56,15 @@ const AddLesson = () => {
 
     try {
       await axiosInstance.post("/lessons/", lesson);
-      alert("Lesson created successfully!");
-      navigate("/admin/dashboard");
+      setSuccessMessage("✅ Lesson created successfully!");
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+      }, 2000);      navigate("/admin/dashboard");
     } catch (error) {
       console.error("Error creating lesson:", error);
-      alert(
-        "Failed to create lesson: " +
-          (error.response?.data?.detail || error.message)
+      setErrorMessage(
+        "❌ Failed to create lesson: " +
+        (error.response?.data?.detail || error.message)
       );
     } finally {
       setLoading(false);
@@ -86,6 +91,18 @@ const AddLesson = () => {
       <div className="card shadow-lg">
         <div className="card-body">
           <h1 className="card-title mb-4">Add New Lesson</h1>
+          {successMessage && (
+  <div className="alert alert-success text-center fw-bold mb-4" role="alert">
+    {successMessage}
+  </div>
+)}
+
+{errorMessage && (
+  <div className="alert alert-danger text-center fw-bold mb-4" role="alert">
+    {errorMessage}
+  </div>
+)}
+
           <form onSubmit={handleSubmit}>
             {/* Title */}
             <div className="mb-3">
