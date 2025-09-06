@@ -35,7 +35,7 @@ const ProfilePage = () => {
 
         const data = await ProfileAPI.getProfileDashboard();
         setUserData(data);
-
+        console.log('User Info:', data.user_info);
         setFormData({
           first_name: data.user_info.first_name || '',
           last_name: data.user_info.last_name || '',
@@ -202,8 +202,25 @@ const ProfilePage = () => {
             <div className="user-info">
               <div className="user-name-section">
                 <h1 className="user-name">
-                  {user_info.first_name || 'First Name'} {user_info.last_name || 'Last Name'}
+                  {user_info.first_name || user_info.username} {user_info.last_name || ''}
                 </h1>
+
+                {user_info.role === 'Kid' && user_info.child_code && (
+                  <div className="child-code-wrapper">
+                    <span className="child-code-text">{user_info.child_code}</span>
+                    <button 
+                      className="copy-code-btn"
+                      onClick={() => navigator.clipboard.writeText(user_info.child_code)}
+                      title="Copy code"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
                 <div className="user-role">
                   {user_info.role === 'Kid' ? 'Student' :
                    user_info.role === 'Parent' ? 'Parent' : 'Admin'}
@@ -226,7 +243,6 @@ const ProfilePage = () => {
               {profile_info.bio && (
                 <p className="user-bio">{profile_info.bio}</p>
               )}
-
               <button onClick={() => setIsEditing(true)} className="edit-btn">
                 <Edit3 size={16} />
                 Edit Profile
