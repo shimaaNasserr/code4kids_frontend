@@ -144,7 +144,7 @@ const Navbar = () => {
         hoverColor: "#2196f3",
       },
       {
-        to: "/kid-dashboard",
+        to: user.role === "Parent" ? "/parent-dashboard" : "/kid-dashboard",
         text: translations.myProgress,
         icon: <FaTrophy className="nav-icon" />,
         color: "#ffd93d",
