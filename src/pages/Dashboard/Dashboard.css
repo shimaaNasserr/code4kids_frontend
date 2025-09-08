@@ -1,6 +1,6 @@
 /* ==================== Dashboard Container ==================== */
 .dashboard-container {
-  padding: 60px 20px 30px 20px; /* زيادة المسافة من الأعلى للناف بار */
+  padding: 60px 20px 30px 20px; 
   max-width: 1200px;
   margin: auto;
   font-family: 'Baloo 2', cursive;
@@ -199,4 +199,45 @@
   .course-card {
     width: 100%;
   }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.btn-add {
+  background: #4cafef;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-add:hover {
+  background: #3a9bd9;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.btn-confirm {
+  background: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-confirm:hover {
+  background: #218838;
 }
