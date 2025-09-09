@@ -72,9 +72,9 @@ export const Footer = () => {
       <div className="footer-column">
         <h4>{language === 'en' ? 'Support' : 'الدعم'}</h4>
         <ul>
-          <li><Link to="/help">{language === 'en' ? 'Help Center' : 'مركز المساعدة'}</Link></li>
+          <li><Link to="/help-center">{language === 'en' ? 'Help Center' : 'مركز المساعدة'}</Link></li>
           <li><Link to="/faq">{language === 'en' ? 'FAQ' : 'الأسئلة الشائعة'}</Link></li>
-          <li><Link to="/contact">{language === 'en' ? 'Contact Us' : 'اتصل بنا'}</Link></li>
+          <li><Link to="/contact-us">{language === 'en' ? 'Contact Us' : 'اتصل بنا'}</Link></li>
           <li><Link to="/chatbot">{language === 'en' ? 'AI Chatbot' : 'المحادثة الذكية'}</Link></li>
         </ul>
       </div>
@@ -90,12 +90,10 @@ export const Footer = () => {
       </div>
 
       <div className="footer-column">
-        <h4>{language === 'en' ? 'Company' : 'الشركة'}</h4>
+        <h4>{language === 'en' ? 'Platform' : 'المنصة'}</h4>
         <ul>
-          <li><Link to="/about">{language === 'en' ? 'About Us' : 'من نحن'}</Link></li>
-          <li><Link to="/team">{language === 'en' ? 'Our Team' : 'فريقنا'}</Link></li>
-          <li><Link to="/careers">{language === 'en' ? 'Careers' : 'الوظائف'}</Link></li>
-          <li><Link to="/press">{language === 'en' ? 'Press' : 'المركز الإعلامي'}</Link></li>
+          <li><Link to="/about-us">{language === 'en' ? 'About Us' : 'من نحن'}</Link></li>
+          <li><Link to="/our-team">{language === 'en' ? 'Our Team' : 'فريقنا'}</Link></li>
         </ul>
       </div>
     </div>
@@ -107,9 +105,9 @@ export const Footer = () => {
       <div className="footer-legal">
         <p>&copy; 2025 Code4Kids. {language === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}</p>
         <div className="legal-links">
-          <Link to="/privacy">{language === 'en' ? 'Privacy Policy' : 'سياسة الخصوصية'}</Link>
-          <Link to="/terms">{language === 'en' ? 'Terms of Service' : 'شروط الخدمة'}</Link>
-          <Link to="/cookies">{language === 'en' ? 'Cookie Policy' : 'سياسة ملفات تعريف الارتباط'}</Link>
+          <Link to="/privacy-policy">{language === 'en' ? 'Privacy Policy' : 'سياسة الخصوصية'}</Link>
+          <Link to="/terms-of-service">{language === 'en' ? 'Terms of Service' : 'شروط الخدمة'}</Link>
+          <Link to="/cookie-policy">{language === 'en' ? 'Cookie Policy' : 'سياسة ملفات تعريف الارتباط'}</Link>
         </div>
       </div>
       <div className="footer-newsletter">

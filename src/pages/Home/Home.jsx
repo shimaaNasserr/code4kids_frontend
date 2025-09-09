@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
-import { FaRocket, FaGamepad, FaTrophy, FaRobot, FaStar, FaHeart, FaCode, FaPuzzlePiece, FaUsers, FaGift, FaSpinner, FaExclamationTriangle, FaChild, FaGraduationCap, FaGlobe } from 'react-icons/fa';
+import { FaRocket, FaGamepad, FaTrophy, FaRobot, FaStar, FaHeart, FaCode, FaPuzzlePiece, FaUsers, FaGift, FaSpinner, FaExclamationTriangle, FaChild, FaGraduationCap, FaGlobe, FaLock, FaPalette, FaMusic, FaCamera, FaVideo, FaMobile, FaDesktop, FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
 import { useLanguage } from '../../components/NavBar/Navbar';
-import SimpleDragDemo from '../../components/DragDropDemo/SimpleDragDemo';
+import ColorMagicGame from '../../components/ColorMagicGame/ColorMagicGame';
+import LearningJourney from '../../components/LearningJourney/LearningJourney';
+import VisualBreak from '../../components/VisualBreak/VisualBreak';
 import FloatingChatbot from '../../components/FloatingChatbot/FloatingChatbot';
 import axiosInstance from "../../apis/config";
 import './Home.css';
+import './AdventureFeatures.css';
+import './ProgressSection.css';
 
 const EnhancedHome = () => {
   const [courses, setCourses] = useState([]);
@@ -33,7 +37,7 @@ const EnhancedHome = () => {
   
   const { translations, language, playSound, isRTL } = languageContext;
 
-  const token = localStorage.getItem("userToken");
+  const token = localStorage.getItem("userToken") || sessionStorage.getItem("userToken");
   const userId = localStorage.getItem("userId");
   const userName = localStorage.getItem("userName") || (language === 'en' ? 'Young Coder' : 'المبرمج الصغير');
 
@@ -54,6 +58,10 @@ const EnhancedHome = () => {
   };
 
   const [currentMascotMessage, setCurrentMascotMessage] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const [robotPosition, setRobotPosition] = useState('hero'); // 'hero', 'moving', 'chatbot'
+  const [hasMovedToCorner, setHasMovedToCorner] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,6 +71,42 @@ const EnhancedHome = () => {
     }, 4000);
     return () => clearInterval(interval);
   }, [language]);
+
+  // Handle scroll for robot movement
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrollY(currentScrollY);
+      
+      // First time scroll down - move robot to corner permanently
+      if (currentScrollY > 100 && robotPosition === 'hero' && !hasMovedToCorner) {
+        setRobotPosition('moving');
+        setHasMovedToCorner(true);
+        setTimeout(() => {
+          setRobotPosition('chatbot');
+          playSound('success');
+        }, 2000); // 2 second animation duration
+      }
+      // Return robot to hero only when scrolled to very top (0-20px) after it has moved
+      else if (currentScrollY <= 20 && hasMovedToCorner && robotPosition === 'chatbot') {
+        setRobotPosition('moving');
+        setTimeout(() => {
+          setRobotPosition('hero');
+          setHasMovedToCorner(false);
+        }, 1500); // Smooth transition back to hero
+      }
+      // Move back to corner when leaving hero section after returning
+      else if (currentScrollY > 100 && robotPosition === 'hero') {
+        setRobotPosition('moving');
+        setTimeout(() => {
+          setRobotPosition('chatbot');
+        }, 1500); // Smooth transition to corner
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [robotPosition, hasMovedToCorner, playSound]);
 
   useEffect(() => {
     if (token) {
@@ -111,9 +155,10 @@ const EnhancedHome = () => {
     {
       id: 'beginner',
       title: language === 'en' ? 'Beginner Island' : 'جزيرة المبتدئين',
-      description: language === 'en' ? 'Start your coding journey here!' : 'ابدأ رحلة البرمجة هنا!',
+      description: language === 'en' ? 'Start your magical coding adventure! Learn the basics of programming through fun games and interactive challenges that will spark your creativity!' : 'ابدأ مغامرتك السحرية في البرمجة! تعلم أساسيات البرمجة من خلال ألعاب ممتعة وتحديات تفاعلية ستشعل إبداعك!',
       icon: '🏝️',
-      color: '#81C784',
+      color: '#4ECDC4',
+      bgColor: 'linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)',
       level: language === 'en' ? 'Beginner' : 'مبتدئ',
       lessons: 12,
       unlocked: true,
@@ -122,9 +167,10 @@ const EnhancedHome = () => {
     {
       id: 'intermediate', 
       title: language === 'en' ? 'Space Station' : 'محطة الفضاء',
-      description: language === 'en' ? 'Advanced coding adventures!' : 'مغامرات برمجة متقدمة!',
+      description: language === 'en' ? 'Blast off to advanced coding adventures! Build amazing projects and explore the galaxy of programming possibilities!' : 'انطلق في مغامرات برمجة متقدمة! ابني مشاريع رائعة واستكشف مجرة إمكانيات البرمجة!',
       icon: '🚀',
-      color: '#64B5F6', 
+      color: '#667EEA', 
+      bgColor: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
       level: language === 'en' ? 'Intermediate' : 'متوسط',
       lessons: 18,
       unlocked: (userProgress?.completedLessons || 0) >= 10,
@@ -133,9 +179,10 @@ const EnhancedHome = () => {
     {
       id: 'advanced',
       title: language === 'en' ? 'Mystery World' : 'عالم الغموض',
-      description: language === 'en' ? 'Coming soon!' : 'قريباً!',
+      description: language === 'en' ? 'Unlock the secrets of advanced programming! Master complex algorithms and create incredible applications!' : 'اكتشف أسرار البرمجة المتقدمة! أتقن الخوارزميات المعقدة وأنشئ تطبيقات لا تصدق!',
       icon: '🌟',
-      color: '#FFB74D',
+      color: '#F093FB',
+      bgColor: 'linear-gradient(135deg, #F093FB 0%, #F5576C 100%)',
       level: language === 'en' ? 'Advanced' : 'متقدم', 
       lessons: 24,
       unlocked: (userProgress?.completedLessons || 0) >= 25,
@@ -175,32 +222,49 @@ const EnhancedHome = () => {
 
         <div className="hero-content">
           <div className="hero-left">
-            <motion.div
-              className="mascot-container"
-              animate={{ 
-                y: [0, -20, 0],
-                rotate: [0, 5, -5, 0]
-              }}
-              transition={{ 
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <div className="mascot-robot">
-                <FaRobot />
-                <motion.div 
-                  className="mascot-speech"
-                  key={currentMascotMessage}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+            <AnimatePresence>
+              {robotPosition === 'hero' && (
+                <motion.div
+                  className="mascot-container"
+                  initial={{ 
+                    x: hasMovedToCorner ? window.innerWidth - 80 : 0,
+                    y: hasMovedToCorner ? window.innerHeight - 80 : 0,
+                    scale: hasMovedToCorner ? 0.6 : 1
+                  }}
+                  animate={{ 
+                    x: 0,
+                    y: [0, -20, 0],
+                    rotate: [0, 5, -5, 0],
+                    scale: 1
+                  }}
+                  exit={{
+                    x: window.innerWidth - 80,
+                    y: window.innerHeight - 80,
+                    scale: 0.6,
+                    transition: { duration: 2, ease: "easeInOut" }
+                  }}
+                  transition={{ 
+                    duration: hasMovedToCorner ? 1.5 : 3,
+                    repeat: robotPosition === 'hero' ? Infinity : 0,
+                    ease: "easeInOut"
+                  }}
                 >
-                  {mascotMessages[language][currentMascotMessage]}
+                  <div className="mascot-robot">
+                    <FaRobot />
+                    <motion.div 
+                      className="mascot-speech"
+                      key={currentMascotMessage}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      {mascotMessages[language][currentMascotMessage]}
+                    </motion.div>
+                  </div>
                 </motion.div>
-              </div>
-            </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="hero-right">
@@ -305,487 +369,692 @@ const EnhancedHome = () => {
         </div>
       </motion.section>
 
-      {/* Learning Paths Section */}
+      {/* Learning Paths Section - Adventure Journey */}
       <motion.section 
-        className="learning-paths-section"
+        className="adventure-journey-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
       >
-        <div className="section-header">
-          <h2>{language === 'en' ? 'Choose Your Adventure Path!' : 'اختر مسار مغامرتك!'}</h2>
-          <p>{language === 'en' ? 'Each path is designed for different skill levels' : 'كل مسار مصمم لمستويات مهارة مختلفة'}</p>
+        {/* Floating Background Elements */}
+        <div className="adventure-background">
+          <div className="floating-elements">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                className={`floating-element ${i % 4 === 0 ? 'star' : i % 4 === 1 ? 'cloud' : i % 4 === 2 ? 'code' : 'heart'}`}
+                animate={{
+                  y: [0, -20, 0],
+                  x: [0, 10, 0],
+                  rotate: [0, 5, -5, 0],
+                  opacity: [0.3, 0.7, 0.3]
+                }}
+                transition={{
+                  duration: 4 + (i % 3),
+                  repeat: Infinity,
+                  delay: i * 0.5
+                }}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="paths-grid">
-          {learningPaths.map((path, index) => (
-            <motion.div
-              key={path.id}
-              className={`path-card ${!path.unlocked ? 'locked' : ''}`}
-              style={{ '--path-color': path.color }}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
-              whileHover={path.unlocked ? { 
-                scale: 1.05, 
-                y: -10,
-                boxShadow: `0 20px 40px ${path.color}40`
-              } : {}}
-              onClick={() => {
-                if (path.unlocked) {
-                  playSound('success');
-                  navigate('/courses');
-                }
-              }}
-            >
-              <div className="path-icon">{path.icon}</div>
-              <h3>{path.title}</h3>
-              <p>{path.description}</p>
-              <div className="path-info">
-                <span className="path-level">{path.level}</span>
-                <span className="path-lessons">
-                  {path.lessons} {language === 'en' ? 'lessons' : 'درس'}
-                </span>
-              </div>
-              
-              {path.unlocked && path.progress > 0 && (
-                <div className="path-progress">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${(path.progress / path.lessons) * 100}%` }}
-                    />
-                  </div>
-                  <span className="progress-text">
-                    {Math.round((path.progress / path.lessons) * 100)}% {language === 'en' ? 'Complete' : 'مكتمل'}
-                  </span>
-                </div>
-              )}
-              <motion.button
-                className={`path-button ${!path.unlocked ? 'locked' : ''}`}
-                disabled={!path.unlocked}
-                whileHover={path.unlocked ? { scale: 1.1 } : {}}
-                whileTap={path.unlocked ? { scale: 0.9 } : {}}
-              >
-                {path.unlocked 
-                  ? (language === 'en' ? 'Explore' : 'استكشف')
-                  : (language === 'en' ? 'Coming Soon' : 'قريباً')}
-              </motion.button>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
-
-      {/* Interactive Coding Teaser - Now Working! */}
-      <motion.section 
-        className="coding-teaser-section"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        <SimpleDragDemo />
-      </motion.section>
-
-      {/* Features Showcase */}
-      <motion.section 
-        className="features-showcase"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        <div className="features-grid">
-          {[
-            {
-              icon: <FaRobot />,
-              title: language === 'en' ? 'AI Buddy' : 'الصديق الذكي',
-              description: language === 'en' ? 'Ask me anything about coding!' : 'اسألني أي شيء عن البرمجة!',
-              color: '#FF6B9D',
-              action: () => playSound('success') // Chatbot is now floating, no modal needed
-            },
-            {
-              icon: <FaTrophy />,
-              title: language === 'en' ? 'Rewards' : 'المكافآت', 
-              description: language === 'en' ? 'Earn Cool Badges!' : 'احصل على شارات رائعة!',
-              color: '#FFD93D',
-              action: () => navigate('/progress')
-            },
-            {
-              icon: <FaGamepad />,
-              title: language === 'en' ? 'Games' : 'الألعاب',
-              description: language === 'en' ? 'Play & Learn!' : 'العب وتعلم!',
-              color: '#4ECDC4',
-              action: () => navigate('/games')
-            },
-            {
-              icon: <FaUsers />,
-              title: language === 'en' ? 'Parents' : 'الوالدين',
-              description: language === 'en' ? 'Track Progress' : 'تتبع التقدم',
-              color: '#A8E6CF',
-              action: () => navigate('/parent-dashboard')
-            }
-          ].map((feature, index) => (
-            <motion.div
-              key={index}
-              className="feature-card"
-              style={{ '--feature-color': feature.color }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              whileHover={{ 
-                scale: 1.05, 
-                y: -10,
-                boxShadow: `0 15px 30px ${feature.color}40`
-              }}
-              onClick={() => {
-                playSound('success');
-                feature.action();
-              }}
-            >
-              <motion.div 
-                className="feature-icon"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.5 }}
-              >
-                {feature.icon}
-              </motion.div>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-              <motion.button
-                className="feature-button"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                {language === 'en' ? 'Try Now' : 'جرب الآن'}
-              </motion.button>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
-
-      {/* Modern Features Section - Horizontal Scrolling */}
-      <motion.section 
-        className="modern-features-section"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
         <div className="section-container">
           <motion.div
-            className="section-header"
+            className="section-header adventure-journey-header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2>🚀 {language === 'en' ? 'Choose Your Adventure Path!' : 'اختر مسار مغامرتك!'} ✨</h2>
+            <p>{language === 'en' ? 'Embark on an epic coding journey through magical worlds!' : 'انطلق في رحلة برمجة ملحمية عبر عوالم سحرية!'}</p>
+          </motion.div>
+
+          {/* Adventure Path Journey */}
+          <div className="adventure-journey-path">
+            {/* Visual Pathway */}
+            <div className="journey-pathway">
+              <svg className="pathway-svg" viewBox="0 0 100 800" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FFD93D" />
+                    <stop offset="50%" stopColor="#FF6B9D" />
+                    <stop offset="100%" stopColor="#4ECDC4" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M50 50 Q80 200 50 350 Q20 500 50 650 Q80 750 50 800"
+                  stroke="url(#pathGradient)"
+                  strokeWidth="4"
+                  strokeDasharray="10,5"
+                  fill="none"
+                  opacity="0.6"
+                />
+                {/* Pathway Stars */}
+                {[150, 350, 550].map((y, i) => (
+                  <motion.circle
+                    key={i}
+                    cx="50"
+                    cy={y}
+                    r="8"
+                    fill="#FFD93D"
+                    initial={{ scale: 0, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: i * 0.3 + 1, duration: 0.5 }}
+                  />
+                ))}
+              </svg>
+            </div>
+
+            {/* Adventure Levels */}
+            <div className="journey-levels">
+              {learningPaths.map((path, index) => (
+                <motion.div
+                  key={path.id}
+                  className={`journey-level ${index % 2 === 0 ? 'level-right' : 'level-left'} ${!path.unlocked ? 'locked' : ''}`}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? 100 : -100 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.4, duration: 0.8, type: "spring", bounce: 0.3 }}
+                >
+                  <div className="level-content">
+                    {/* Card Side */}
+                    <motion.div 
+                      className="level-card"
+                      style={{ 
+                        '--level-color': path.color,
+                        '--level-bg': path.bgColor
+                      }}
+                      whileHover={path.unlocked ? { 
+                        scale: 1.05, 
+                        y: -15,
+                        rotateY: index % 2 === 0 ? -5 : 5,
+                        boxShadow: `0 25px 50px ${path.color}40`
+                      } : {}}
+                      onClick={() => {
+                        if (path.unlocked) {
+                          playSound('success');
+                          navigate('/courses');
+                        }
+                      }}
+                    >
+                      <div className="card-glow"></div>
+                      <motion.div 
+                        className="level-icon-container"
+                        whileHover={{ 
+                          rotate: [0, -10, 10, 0],
+                          scale: 1.2
+                        }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <div className="level-icon">{path.icon}</div>
+                        <div className="icon-particles">
+                          {[...Array(6)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className="particle"
+                              animate={{
+                                scale: [0, 1, 0],
+                                y: [0, -20, -40],
+                                opacity: [0, 1, 0]
+                              }}
+                              transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                delay: i * 0.3
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                      
+                      {!path.unlocked && (
+                        <div className="lock-overlay">
+                          <FaLock className="lock-icon" />
+                        </div>
+                      )}
+                    </motion.div>
+
+                    {/* Text Side */}
+                    <div className="level-details">
+                      <motion.h3 
+                        className="level-title"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.4 + 0.2 }}
+                      >
+                        {path.title}
+                      </motion.h3>
+                      
+                      <motion.p 
+                        className="level-description"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.4 + 0.3 }}
+                      >
+                        {path.description}
+                      </motion.p>
+                      
+                      <motion.div 
+                        className="level-stats"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.4 + 0.4 }}
+                      >
+                        <div className="stat-item">
+                          <FaGraduationCap />
+                          <span>{path.level}</span>
+                        </div>
+                        <div className="stat-item">
+                          <FaCode />
+                          <span>{path.lessons} {language === 'en' ? 'lessons' : 'درس'}</span>
+                        </div>
+                      </motion.div>
+                      
+                      {path.unlocked && path.progress > 0 && (
+                        <motion.div 
+                          className="level-progress"
+                          initial={{ opacity: 0, width: 0 }}
+                          whileInView={{ opacity: 1, width: '100%' }}
+                          transition={{ delay: index * 0.4 + 0.6, duration: 1 }}
+                        >
+                          <div className="progress-track">
+                            <motion.div 
+                              className="progress-fill" 
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${(path.progress / path.lessons) * 100}%` }}
+                              transition={{ delay: index * 0.4 + 0.8, duration: 1.5 }}
+                            />
+                          </div>
+                          <span className="progress-label">
+                            {Math.round((path.progress / path.lessons) * 100)}% {language === 'en' ? 'Complete' : 'مكتمل'}
+                          </span>
+                        </motion.div>
+                      )}
+                      
+                      <motion.button
+                        className={`level-explore-btn ${!path.unlocked ? 'locked' : ''}`}
+                        disabled={!path.unlocked}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.4 + 0.7 }}
+                        whileHover={path.unlocked ? { 
+                          scale: 1.1,
+                          boxShadow: `0 10px 30px ${path.color}50`
+                        } : {}}
+                        whileTap={path.unlocked ? { scale: 0.95 } : {}}
+                      >
+                        {!path.unlocked ? (
+                          <>
+                            <FaLock />
+                            {language === 'en' ? 'Coming Soon' : 'قريباً'}
+                          </>
+                        ) : (
+                          <>
+                            <FaRocket />
+                            {language === 'en' ? 'Start Adventure!' : 'ابدأ المغامرة!'}
+                          </>
+                        )}
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Visual Break Section - Animated Robot Journey */}
+      <motion.section 
+        className="visual-break-section"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <div className="break-container">
+          {/* Animated Robot */}
+          <motion.div
+            className="journey-robot"
+            animate={{
+              x: ['-100px', 'calc(100vw + 100px)']
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            <FaRobot />
+            {/* Robot Trail */}
+            <div className="robot-trail"></div>
+          </motion.div>
+
+          {/* Floating Programming Elements */}
+          <div className="floating-code-elements">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                className={`code-element ${i % 4 === 0 ? 'bracket' : i % 4 === 1 ? 'star' : i % 4 === 2 ? 'code-tag' : 'gear'}`}
+                animate={{
+                  y: [0, -20, 0],
+                  rotate: [0, 360],
+                  opacity: [0.3, 1, 0.3],
+                  scale: [0.8, 1.2, 0.8]
+                }}
+                transition={{
+                  duration: 3 + (i % 3),
+                  repeat: Infinity,
+                  delay: i * 0.5
+                }}
+                style={{
+                  left: `${10 + (i * 8)}%`,
+                  top: `${20 + (i % 3) * 20}%`
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Central Motivational Text */}
+          <motion.div
+            className="break-content"
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8, type: "spring", bounce: 0.4 }}
+          >
+            <h3>
+              {language === 'en' 
+                ? '🚀 Continue the Adventure... There\'s More to Discover! ✨' 
+                : '🚀 تابع المغامرة... هناك المزيد لتكتشفه! ✨'}
+            </h3>
+          </motion.div>
+
+
+          {/* Glowing Particles */}
+          <div className="glowing-particles">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="particle"
+                animate={{
+                  y: [0, -100, 0],
+                  x: [0, Math.random() * 200 - 100, 0],
+                  opacity: [0, 1, 0],
+                  scale: [0, 1, 0]
+                }}
+                transition={{
+                  duration: 4 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 4
+                }}
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Color Magic Game - Interactive Demo */}
+      <ColorMagicGame 
+        language={language} 
+        playSound={playSound}
+      />
+
+      {/* Learning Journey Section */}
+      <LearningJourney />
+
+      {/* Visual Break */}
+      <VisualBreak variant="journey" />
+
+
+      {/* Game-Style Features Section - Horizontal Scrolling */}
+      <motion.section 
+        className="game-features-section"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        {/* Background Elements */}
+        <div className="game-background">
+          <div className="floating-game-elements">
+            {[...Array(15)].map((_, i) => (
+              <motion.div
+                key={i}
+                className={`game-element game-${i % 5}`}
+                animate={{
+                  y: [0, -30, 0],
+                  rotate: [0, 360],
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{
+                  duration: 4 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 2,
+                  ease: "easeInOut"
+                }}
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`
+                }}
+              >
+                {i % 5 === 0 && '⭐'}
+                {i % 5 === 1 && '💎'}
+                {i % 5 === 2 && '🎯'}
+                {i % 5 === 3 && '🚀'}
+                {i % 5 === 4 && '⚡'}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div className="game-container">
+          <motion.div
+            className="game-header"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2>{language === 'en' ? 'Why Choose Code4Kids?' : 'لماذا تختار Code4Kids؟'}</h2>
-            <p>{language === 'en' ? 'Discover the amazing features that make learning programming fun and engaging!' : 'اكتشف المميزات الرائعة التي تجعل تعلم البرمجة ممتعاً وجذاباً!'}</p>
+            <h2>
+              {language === 'en' ? (
+                <>🎮 Power-Up Your Skills! ⚡</>
+              ) : (
+                <>🎮 قوّي مهاراتك! ⚡</>
+              )}
+            </h2>
+            <p>
+              {language === 'en' 
+                ? 'Collect amazing features and unlock your coding superpowers!'
+                : 'اجمع المميزات الرائعة وافتح قوى البرمجة الخارقة!'
+              }
+            </p>
           </motion.div>
 
-          <div className="features-scroll-container">
-            <motion.div 
-              className="features-scroll-track"
-              drag="x"
-              dragConstraints={{ left: -800, right: 0 }}
-              dragElastic={0.1}
-            >
+          {/* Horizontal Scroll Container */}
+          <div className="features-scroll-wrapper">
+            <div className="features-scroll-container">
               {[
                 {
-                  icon: <FaChild />,
-                  title: language === 'en' ? 'Kid-Friendly Interface' : 'واجهة صديقة للأطفال',
-                  description: language === 'en' ? 'Colorful and animated visuals designed specifically for young learners with intuitive navigation and engaging elements.' : 'رسوم ملونة ومتحركة مصممة خصيصاً للمتعلمين الصغار مع تنقل بديهي وعناصر جذابة.',
-                  color: '#FF6B9D',
-                  gradient: 'linear-gradient(135deg, #FF6B9D, #FF8E9B)'
+                  shape: 'hexagon',
+                  icon: '🤖',
+                  title: language === 'en' ? 'AI Buddy' : 'الصديق الذكي',
+                  subtitle: language === 'en' ? 'Smart Helper' : 'مساعد ذكي',
+                  description: language === 'en' ? 'Your coding companion that helps 24/7!' : 'رفيق البرمجة الذي يساعدك 24/7!',
+                  color: '#9B59B6',
+                  gradient: 'linear-gradient(135deg, #9B59B6, #8E44AD)',
+                  level: 'LEGENDARY'
                 },
                 {
-                  icon: <FaGraduationCap />,
-                  title: language === 'en' ? 'Structured Learning Paths' : 'مسارات تعلم منظمة',
-                  description: language === 'en' ? 'Age and skill-based learning paths from Beginner to Intermediate levels, ensuring progressive skill development.' : 'مسارات تعلم مبنية على العمر والمهارة من المبتدئ إلى المتوسط، مما يضمن تطوير المهارات التدريجي.',
-                  color: '#4ECDC4',
-                  gradient: 'linear-gradient(135deg, #4ECDC4, #45B7D1)'
+                  shape: 'circle',
+                  icon: '🎮',
+                  title: language === 'en' ? 'Game Learning' : 'تعلم بالألعاب',
+                  subtitle: language === 'en' ? 'Play & Code' : 'العب وبرمج',
+                  description: language === 'en' ? 'Turn coding into epic adventures!' : 'حول البرمجة إلى مغامرات ملحمية!',
+                  color: '#E67E22',
+                  gradient: 'linear-gradient(135deg, #E67E22, #D35400)',
+                  level: 'EPIC'
                 },
                 {
-                  icon: <FaPuzzlePiece />,
-                  title: language === 'en' ? 'Interactive Lessons & Quizzes' : 'دروس تفاعلية واختبارات',
-                  description: language === 'en' ? 'Engaging interactive lessons with short quizzes after each topic to reinforce learning and track understanding.' : 'دروس تفاعلية جذابة مع اختبارات قصيرة بعد كل موضوع لتعزيز التعلم وتتبع الفهم.',
-                  color: '#FFD93D',
-                  gradient: 'linear-gradient(135deg, #FFD93D, #F8B500)'
+                  shape: 'diamond',
+                  icon: '🏆',
+                  title: language === 'en' ? 'Achievements' : 'الإنجازات',
+                  subtitle: language === 'en' ? 'Collect & Win' : 'اجمع واربح',
+                  description: language === 'en' ? 'Earn badges and show off your skills!' : 'احصل على شارات واستعرض مهاراتك!',
+                  color: '#3498DB',
+                  gradient: 'linear-gradient(135deg, #3498DB, #2980B9)',
+                  level: 'RARE'
                 },
                 {
-                  icon: <FaGamepad />,
-                  title: language === 'en' ? 'Game-Based Learning' : 'تعلم قائم على الألعاب',
-                  description: language === 'en' ? 'Learn programming through drag-and-drop coding blocks similar to Scratch, making coding feel like playing games.' : 'تعلم البرمجة من خلال كتل برمجة بالسحب والإفلات مشابهة لـ Scratch، مما يجعل البرمجة تبدو مثل اللعب.',
-                  color: '#A8E6CF',
-                  gradient: 'linear-gradient(135deg, #A8E6CF, #7FCDCD)'
+                  shape: 'octagon',
+                  icon: '🎨',
+                  title: language === 'en' ? 'Creative Studio' : 'استوديو الإبداع',
+                  subtitle: language === 'en' ? 'Build & Create' : 'ابن وأبدع',
+                  description: language === 'en' ? 'Create amazing games and apps!' : 'أنشئ ألعاباً وتطبيقات رائعة!',
+                  color: '#27AE60',
+                  gradient: 'linear-gradient(135deg, #27AE60, #229954)',
+                  level: 'EPIC'
                 },
                 {
-                  icon: <FaRobot />,
-                  title: language === 'en' ? 'AI-Powered Assistant' : 'مساعد ذكي مدعوم بالذكاء الاصطناعي',
-                  description: language === 'en' ? 'Smart chatbot assistant providing real-time guidance, answering questions, and helping kids navigate lessons and challenges.' : 'مساعد ذكي يوفر إرشادات فورية ويجيب على الأسئلة ويساعد الأطفال في التنقل عبر الدروس والتحديات.',
-                  color: '#C44569',
-                  gradient: 'linear-gradient(135deg, #C44569, #F8B500)'
+                  shape: 'star',
+                  icon: '👨‍👩‍👧‍👦',
+                  title: language === 'en' ? 'Family Hub' : 'مركز العائلة',
+                  subtitle: language === 'en' ? 'Track Progress' : 'تتبع التقدم',
+                  description: language === 'en' ? 'Parents join the coding adventure!' : 'الوالدان ينضمان لمغامرة البرمجة!',
+                  color: '#E74C3C',
+                  gradient: 'linear-gradient(135deg, #E74C3C, #C0392B)',
+                  level: 'RARE'
                 },
                 {
-                  icon: <FaUsers />,
-                  title: language === 'en' ? 'Parent/Teacher Dashboard' : 'لوحة تحكم الوالدين/المعلمين',
-                  description: language === 'en' ? 'Comprehensive dashboard for parents and teachers to track children\'s progress, view achievements, and monitor learning activities.' : 'لوحة تحكم شاملة للوالدين والمعلمين لتتبع تقدم الأطفال وعرض الإنجازات ومراقبة أنشطة التعلم.',
-                  color: '#54A0FF',
-                  gradient: 'linear-gradient(135deg, #54A0FF, #5F27CD)'
-                },
-                {
-                  icon: <FaTrophy />,
-                  title: language === 'en' ? 'Badge & Reward System' : 'نظام الشارات والمكافآت',
-                  description: language === 'en' ? 'Motivating badge and reward system that celebrates achievements and encourages continuous learning and skill development.' : 'نظام شارات ومكافآت محفز يحتفل بالإنجازات ويشجع على التعلم المستمر وتطوير المهارات.',
-                  color: '#5F27CD',
-                  gradient: 'linear-gradient(135deg, #5F27CD, #341F97)'
+                  shape: 'pentagon',
+                  icon: '🛡️',
+                  title: language === 'en' ? 'Safe Zone' : 'المنطقة الآمنة',
+                  subtitle: language === 'en' ? 'Protected Fun' : 'متعة محمية',
+                  description: language === 'en' ? 'Learn in a safe, kid-friendly space!' : 'تعلم في مساحة آمنة وصديقة للأطفال!',
+                  color: '#F39C12',
+                  gradient: 'linear-gradient(135deg, #F39C12, #E67E22)',
+                  level: 'LEGENDARY'
                 }
               ].map((feature, index) => (
                 <motion.div
                   key={index}
-                  className="modern-feature-card"
+                  className={`game-feature-card ${feature.shape}-card`}
                   style={{ 
                     '--feature-color': feature.color,
                     '--feature-gradient': feature.gradient
                   }}
-                  initial={{ opacity: 0, x: 50, scale: 0.9 }}
-                  whileInView={{ opacity: 1, x: 0, scale: 1 }}
-                  transition={{ delay: index * 0.15, duration: 0.7 }}
+                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: index * 0.15, duration: 0.6, type: "spring", bounce: 0.4 }}
                   viewport={{ once: true }}
                   whileHover={{ 
-                    scale: 1.05, 
-                    y: -15,
-                    boxShadow: `0 25px 50px ${feature.color}30`,
+                    scale: 1.1, 
+                    y: -20,
+                    rotateZ: feature.shape === 'circle' ? 0 : 5,
                     transition: { duration: 0.3 }
                   }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <div className="feature-card-background"></div>
-                  <motion.div 
-                    className="modern-feature-icon"
-                    whileHover={{ 
-                      rotate: [0, -10, 10, -10, 0],
-                      scale: 1.2
-                    }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    {feature.icon}
-                  </motion.div>
-                  <div className="feature-content">
+                  {/* Level Badge */}
+                  <div className="level-badge">
+                    <span>{feature.level}</span>
+                  </div>
+
+                  {/* Shape Container */}
+                  <div className={`shape-container ${feature.shape}`}>
+                    {/* Animated Border */}
+                    <motion.div 
+                      className="animated-border"
+                      animate={{
+                        rotate: [0, 360]
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                    />
+                    
+                    {/* Icon */}
+                    <motion.div 
+                      className="game-icon"
+                      whileHover={{ 
+                        scale: 1.3,
+                        rotate: [0, -15, 15, -15, 0]
+                      }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      <span className="icon-emoji">{feature.icon}</span>
+                      <div className="icon-shine"></div>
+                    </motion.div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="game-content">
                     <h3>{feature.title}</h3>
+                    <span className="game-subtitle">{feature.subtitle}</span>
                     <p>{feature.description}</p>
                   </div>
-                  <motion.div 
-                    className="feature-glow"
-                    animate={{
-                      opacity: [0.5, 1, 0.5],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      delay: index * 0.5
-                    }}
-                  />
+
+                  {/* Power Meter */}
+                  <div className="power-meter">
+                    <div className="meter-fill"></div>
+                    <span className="power-text">
+                      {language === 'en' ? 'POWER' : 'قوة'}
+                    </span>
+                  </div>
+
+                  {/* Particle Effects */}
+                  <div className="particle-effects">
+                    {[...Array(8)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className={`particle particle-${i}`}
+                        animate={{
+                          scale: [0, 1, 0],
+                          opacity: [0, 1, 0],
+                          y: [0, -30, -60]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: i * 0.2 + index * 0.1
+                        }}
+                      />
+                    ))}
+                  </div>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </div>
-          
+
+          {/* Scroll Indicator */}
           <div className="scroll-indicator">
             <motion.div 
               className="scroll-hint"
-              animate={{ x: [0, 20, 0] }}
+              animate={{ x: [0, 30, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <span>{language === 'en' ? 'Swipe to explore →' : 'اسحب للاستكشاف ←'}</span>
+              <span>
+                {language === 'en' ? '👆 Drag to explore more powers!' : '👆 اسحب لاستكشاف المزيد من القوى!'}
+              </span>
             </motion.div>
           </div>
+
+          {/* Call to Action */}
+          <motion.div 
+            className="game-cta"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <motion.button
+              className="unlock-powers-btn"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 20px 50px rgba(155, 89, 182, 0.4)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/register')}
+            >
+              {language === 'en' ? '🔓 Unlock All Powers!' : '🔓 افتح جميع القوى!'}
+            </motion.button>
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* Dashboard Preview Section */}
+      {/* Join Family CTA Section */}
       <motion.section 
-        className="dashboard-preview-section"
+        className="join-family-cta-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
       >
-        <div className="section-container">
-          <motion.div
-            className="section-header"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2>{language === 'en' ? 'Track Your Progress!' : 'تتبع تقدمك!'}</h2>
-            <p>{language === 'en' ? 'See how much you\'ve learned and celebrate your achievements!' : 'شاهد كم تعلمت واحتفل بإنجازاتك!'}</p>
-          </motion.div>
-
-          <div className="dashboard-preview-grid">
-            {/* Kid Progress View */}
+        <div className="join-family-container">
+          <div className="join-family-content">
             <motion.div
-              className="dashboard-card kid-progress"
+              className="join-family-left"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <div className="card-header">
-                <FaChild className="card-icon" />
-                <h3>{language === 'en' ? 'My Progress' : 'تقدمي'}</h3>
-              </div>
-              <div className="progress-content">
-                <div className="progress-circle">
-                  <div className="progress-fill" style={{ '--progress': '75%' }}>
-                    <span className="progress-text">75%</span>
-                  </div>
-                </div>
-                <div className="progress-stats">
-                  <div className="stat-item">
-                    <span className="stat-number">12</span>
-                    <span className="stat-label">{language === 'en' ? 'Lessons' : 'دروس'}</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-number">8</span>
-                    <span className="stat-label">{language === 'en' ? 'Badges' : 'شارات'}</span>
-                  </div>
-                </div>
-              </div>
+              <h2>
+                {language === 'en' ? (
+                  <>
+                    Want to become<br />
+                    a part of the<br />
+                    <span className="brand-highlight">Code4Kids</span> family?
+                  </>
+                ) : (
+                  <>
+                    هل تريد أن تصبح<br />
+                    جزءاً من عائلة<br />
+                    <span className="brand-highlight">كود للأطفال</span>؟
+                  </>
+                )}
+              </h2>
             </motion.div>
 
-            {/* Parent Dashboard View */}
             <motion.div
-              className="dashboard-card parent-dashboard"
+              className="join-family-right"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <div className="card-header">
-                <FaUsers className="card-icon" />
-                <h3>{language === 'en' ? 'Parent Dashboard' : 'لوحة تحكم الوالدين'}</h3>
-              </div>
-              <div className="dashboard-content">
-                <div className="chart-container">
-                  <div className="chart-title">{language === 'en' ? 'Weekly Activity' : 'النشاط الأسبوعي'}</div>
-                  <div className="chart-bars">
-                    <div className="chart-bar" style={{ height: '60%' }}></div>
-                    <div className="chart-bar" style={{ height: '80%' }}></div>
-                    <div className="chart-bar" style={{ height: '45%' }}></div>
-                    <div className="chart-bar" style={{ height: '90%' }}></div>
-                    <div className="chart-bar" style={{ height: '70%' }}></div>
-                    <div className="chart-bar" style={{ height: '85%' }}></div>
-                    <div className="chart-bar" style={{ height: '75%' }}></div>
-                  </div>
-                  <div className="chart-labels">
-                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                  </div>
-                </div>
-                <div className="dashboard-stats">
-                  <div className="stat-item">
-                    <span className="stat-number">3.5</span>
-                    <span className="stat-label">{language === 'en' ? 'Hours/week' : 'ساعات/أسبوع'}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Call to Action Card */}
-            <motion.div
-              className="dashboard-card cta-card"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="card-header">
-                <FaRocket className="card-icon" />
-                <h3>{language === 'en' ? 'Ready to Start?' : 'مستعد للبدء؟'}</h3>
-              </div>
-              <div className="cta-content">
-                <p>{language === 'en' ? 'Join thousands of kids learning to code!' : 'انضم إلى آلاف الأطفال الذين يتعلمون البرمجة!'}</p>
-                <motion.button
-                  className="start-trial-btn"
-                  onClick={() => {
-                    playSound && playSound('success');
-                    navigate('/register');
-                  }}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <FaRocket />
-                  {language === 'en' ? 'Start Free Trial' : 'ابدأ التجربة المجانية'}
-                </motion.button>
-              </div>
+              <p>
+                {language === 'en' 
+                  ? 'Join thousands of students all over the world in learning to code. Take part in awesome free events, giveaways, and more!'
+                  : 'انضم إلى آلاف الطلاب حول العالم في تعلم البرمجة. شارك في فعاليات مجانية رائعة وهدايا والمزيد!'
+                }
+              </p>
+              
+              <motion.button
+                className="join-family-btn"
+                onClick={() => {
+                  playSound && playSound('success');
+                  navigate('/register');
+                }}
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 15px 35px rgba(255, 165, 0, 0.4)"
+                }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                {language === 'en' ? 'Sign me up!' : 'سجلني!'}
+              </motion.button>
             </motion.div>
           </div>
-        </div>
-      </motion.section>
 
-      {/* Call to Action */}
-      <motion.section 
-        className="cta-section"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        <div className="cta-content">
-          <motion.h2
-            animate={{ 
-              color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd93d', '#ff6b6b']
-            }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
-            {language === 'en' ? 'Ready to Start Your Coding Journey?' : 'مستعد لبدء رحلة البرمجة؟'}
-          </motion.h2>
-          
-          <div className="cta-buttons">
-            {!token ? (
-              <>
-                <motion.button
-                  className="cta-primary"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    playSound('success');
-                    navigate('/register');
-                  }}
-                >
-                  <FaRocket />
-                  {language === 'en' ? 'Sign Up' : 'اشترك'}
-                </motion.button>
-                
-                <motion.button
-                  className="cta-secondary"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    playSound('click');
-                    navigate('/login');
-                  }}
-                >
-                  {language === 'en' ? 'Log In' : 'تسجيل الدخول'}
-                </motion.button>
-              </>
-            ) : (
-              <motion.button
-                className="cta-primary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  playSound('success');
-                  navigate('/courses');
+          {/* Background decorative elements */}
+          <div className="join-family-decorations">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className={`decoration decoration-${i % 4}`}
+                animate={{
+                  y: [0, -20, 0],
+                  rotate: [0, 10, -10, 0],
+                  opacity: [0.3, 0.7, 0.3]
                 }}
-              >
-                <FaTrophy />
-                {language === 'en' ? 'Continue Learning' : 'واصل التعلم'}
-              </motion.button>
-            )}
+                transition={{
+                  duration: 4 + (i % 3),
+                  repeat: Infinity,
+                  delay: i * 0.5
+                }}
+              />
+            ))}
           </div>
         </div>
       </motion.section>
@@ -833,7 +1102,7 @@ const EnhancedHome = () => {
       </AnimatePresence>
    
       
-      {/* Floating Chatbot - Single Instance */}
+      {/* FloatingChatbot Component */}
       <FloatingChatbot />
     </div>
   );
