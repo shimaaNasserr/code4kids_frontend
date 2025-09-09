@@ -29,6 +29,8 @@ import TermsOfService from '../pages/TermsOfService/TermsOfService';
 import CookiePolicy from '../pages/CookiePolicy/CookiePolicy';
 import AboutUs from '../pages/AboutUs/AboutUs';
 import OurTeam from '../pages/OurTeam/OurTeam';
+import { AdminCategories } from "../pages/AdminCategories/AdminCategories";
+import { AdminProfile } from "../pages/AdminProfile/AdminProfile";
 
 // const role = localStorage.getItem("role");
 
@@ -97,14 +99,18 @@ const route = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminHome />,
+        element: <AdminStatistics />,
       },
-      { path: "dashboard", element: <AdminDashboard /> },
-      { path: "statistics", element: <AdminStatistics /> },
+      { path: "users", element: <AdminStatistics /> },
+      { path: "courses", element: <AdminDashboard /> },
       { path: "courses/:id/edit", element: <EditCourse /> },
       { path: "lessons/:id/edit", element: <EditLesson /> },
       { path: "courses/add-new", element: <AddCourse /> },
       { path: "lessons/add-new", element: <AddLesson /> },
+      { path: "categories", element: <AdminCategories /> },
+      { path: "profile", element: <AdminProfile /> },
+
+
     ],
   },
 

@@ -53,11 +53,11 @@ export default function AdminLogin() {
         password: formData.password,
       });
   
-      const { access, refresh, user } = res.data;
+      const { access, refresh, role } = res.data;
       localStorage.setItem("userToken", access);
       localStorage.setItem("refresh_token", refresh);
-      localStorage.setItem("role", user.role);
-      localStorage.setItem("userId", user.id);
+      localStorage.setItem("role", role);
+      // localStorage.setItem("userId", user.id);
   
       navigate("/admin");
     }catch (err) {
