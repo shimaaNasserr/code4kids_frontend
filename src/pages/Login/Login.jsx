@@ -124,29 +124,29 @@ const Login = () => {
       });
   
       if (response.data.message === 'Login successful') {
+        const { user, tokens } = response.data;
+
         login(
           {
-            id: response.data.user.id,
-            username: response.data.user.username || response.data.user.email,
-            role: formData.role,
+            id: user.id,
+            username: user.username || user.email,
+            role: user.role,
           },
-          response.data.tokens.access,
-          formData.rememberMe
+          tokens.access,
+          formData.rememberMe,
+          tokens.refresh
         );
-        localStorage.setItem("role", formData.role);
-  
         playSound && playSound('success');
   
-        // Redirect based on role
-        switch (formData.role) {
-          case 'Kid':
-            navigate('/');
+        switch (user.role) {
+          case "Kid":
+            navigate("/");
             break;
-          case 'Parent':
-            navigate('/parent-dashboard');
+          case "Parent":
+            navigate("/parent-dashboard");
             break;
           default:
-            navigate('/');
+            navigate("/");
         }
       }
     } catch (error) {

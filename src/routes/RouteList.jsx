@@ -16,7 +16,7 @@ import AdminLogin from "../pages/AdminLogin/AdminLogin";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import { AdminLayout } from "../pages/Layout/AdminLayout";
 import AdminHome from "../pages/Home/AdminHome";
-import { AdminStatisics } from "../pages/AdminStatisics/AdminStatisics";
+import AdminStatistics from "../pages/AdminStatistics/AdminStatistics"; // ✅ مصححة
 import EditCourse from "../pages/AdminDashboard/EditCourse";
 import EditLesson from "../pages/AdminDashboard/EditLesson";
 import AddCourse from "../pages/AdminDashboard/AddCourse";
@@ -84,7 +84,7 @@ const route = createBrowserRouter([
         element: <AdminHome />,
       },
       { path: "dashboard", element: <AdminDashboard /> },
-      { path: "statistics", element: <AdminStatisics /> },
+      { path: "statistics", element: <AdminStatistics /> }, 
       { path: "courses/:id/edit", element: <EditCourse /> },
       { path: "lessons/:id/edit", element: <EditLesson /> },
       { path: "courses/add-new", element: <AddCourse /> },

@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('userToken'); //統一 الاسم userToken
+    const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,8 +33,12 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem('refresh_token');
+        const refreshToken =
+          localStorage.getItem('refresh_token') || sessionStorage.getItem('refresh_token');
 
+        if (!refreshToken) {
+          return Promise.reject(error);
+        }
         const res = await axios.post(
           'http://127.0.0.1:8000/api/token/refresh/',
           { refresh: refreshToken },
@@ -46,7 +50,8 @@ axiosInstance.interceptors.response.use(
         );
 
         const newAccessToken = res.data.access;
-        localStorage.setItem('userToken', newAccessToken); // نحفظه بنفس الاسم
+        const storage = localStorage.getItem('refresh_token') ? localStorage : sessionStorage;
+        storage.setItem('userToken', newAccessToken);
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -57,6 +62,8 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('userId');
         // window.location.replace('/login'); 
+        sessionStorage.removeItem('userToken');
+        sessionStorage.removeItem('refresh_token');
         return Promise.reject(refreshError);
       }
     }

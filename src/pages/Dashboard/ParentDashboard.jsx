@@ -12,10 +12,10 @@ const ParentDashboard = () => {
   useEffect(() => {
     const fetchChildren = async () => {
       try {
-        const res = await axiosInstance.get("/users/my-children/");
+        const res = await axiosInstance.get("accounts/my-children/");
         setKids(res.data);
       } catch (err) {
-        console.error("Error fetching children:", err);
+        console.error("Error fetching children:", err.response?.data || err.message);
       }
     };
     fetchChildren();
@@ -24,14 +24,17 @@ const ParentDashboard = () => {
   // ✅ Link child by code
   const handleAddChild = async () => {
     try {
-      await axios.post("/api/accounts/link-child/", { child_code });
+      const res = await axiosInstance.post("accounts/link-child/", { child_code: childCode });
       setShowAddModal(false);
       setChildCode("");
       // Re-fetch children after adding
-      const res = await axios.get("/api/accounts/my-children/");
-      setKids(res.data);
+      const r2 = await axiosInstance.get("accounts/my-children/");
+      console.log("Children:", r2.data); // ✅ تأكدي إن الداتا جاية
+      setKids(r2.data);
+      alert(res.data.message || "Child linked.");
     } catch (err) {
-      alert("❌ Invalid child code or already linked.");
+      const msg = err.response?.data?.detail || err.response?.data?.error || err.response?.data || err.message;
+      alert("❌ " + (typeof msg === "string" ? msg : JSON.stringify(msg)));
     }
   };
 
@@ -67,24 +70,31 @@ const ParentDashboard = () => {
       {selectedKid && (
         <div className="modal-overlay" onClick={() => setSelectedKid(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-gradient">{selectedKid.kid_name}'s Dashboard</h3>
+            <h3 className="text-gradient">{selectedKid.first_name}'s Dashboard</h3>
+
             <div className="stats-cards">
               <div className="stat-card">
-                <h4>Total Courses</h4>
-                <p>{selectedKid.total_courses}</p>
-              </div>
-              <div className="stat-card">
-                <h4>Completed Lessons</h4>
-                <p>{selectedKid.total_completed_lessons}</p>
-              </div>
-              <div className="stat-card">
                 <h4>Points</h4>
-                <p>{selectedKid.kid_points}</p>
+                <p>{selectedKid.profile.points}</p>
+              </div>
+              <div className="stat-card">
+                <h4>Courses Enrolled</h4>
+                <p>{selectedKid.enrolled_courses.length}</p>
               </div>
             </div>
+
+            <h4>Enrolled Courses</h4>
+            <ul>
+              {selectedKid.enrolled_courses.map((course) => (
+                <li key={course.course}>
+                  {course.course_title} - {course.progress_percentage}%
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       )}
+
 
       {/* ✅ Add Child Modal */}
       {showAddModal && (
