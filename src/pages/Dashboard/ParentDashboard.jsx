@@ -70,31 +70,24 @@ const ParentDashboard = () => {
       {selectedKid && (
         <div className="modal-overlay" onClick={() => setSelectedKid(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-gradient">{selectedKid.first_name}'s Dashboard</h3>
-
+            <h3 className="text-gradient">{selectedKid.kid_name}'s Dashboard</h3>
             <div className="stats-cards">
               <div className="stat-card">
-                <h4>Points</h4>
-                <p>{selectedKid.profile.points}</p>
+                <h4>Total Courses</h4>
+                <p>{selectedKid.total_courses}</p>
               </div>
               <div className="stat-card">
-                <h4>Courses Enrolled</h4>
-                <p>{selectedKid.enrolled_courses.length}</p>
+                <h4>Completed Lessons</h4>
+                <p>{selectedKid.total_completed_lessons}</p>
+              </div>
+              <div className="stat-card">
+                <h4>Points</h4>
+                <p>{selectedKid.kid_points}</p>
               </div>
             </div>
-
-            <h4>Enrolled Courses</h4>
-            <ul>
-              {selectedKid.enrolled_courses.map((course) => (
-                <li key={course.course}>
-                  {course.course_title} - {course.progress_percentage}%
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       )}
-
 
       {/* ✅ Add Child Modal */}
       {showAddModal && (
