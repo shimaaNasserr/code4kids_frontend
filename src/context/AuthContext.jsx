@@ -27,29 +27,32 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userData, jwtToken, rememberMe = false) => {
+  const login = (userData, jwtToken, rememberMe = false, refreshToken = null) => {
     setUser(userData);
     setToken(jwtToken);
 
-    if (rememberMe) {
-      localStorage.setItem("userToken", jwtToken);
-      localStorage.setItem("userId", userData.id);
-      localStorage.setItem("userName", userData.username || userData.email);
-      localStorage.setItem("userRole", userData.role);
-      localStorage.setItem("rememberMe", "true");
-    } else {
-      sessionStorage.setItem("userToken", jwtToken);
-      sessionStorage.setItem("userId", userData.id);
-      sessionStorage.setItem("userName", userData.username || userData.email);
-      sessionStorage.setItem("userRole", userData.role);
+    const storage = rememberMe ? localStorage : sessionStorage;
+
+    storage.setItem("userToken", jwtToken);
+    storage.setItem("userId", userData.id);
+    storage.setItem("userName", userData.username || userData.email);
+    storage.setItem("userRole", userData.role);
+    storage.setItem("rememberMe", rememberMe ? "true" : "false");
+
+    if (refreshToken) {
+      storage.setItem("refresh_token", refreshToken);
     }
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.clear();
-    sessionStorage.clear();
+    ["userToken", "userId", "userName", "userRole", "rememberMe"].forEach(
+      (key) => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      }
+    );
   };
 
   return (
