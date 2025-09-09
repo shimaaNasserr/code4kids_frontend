@@ -1,15 +1,14 @@
 /* admin  */
 .admin-content {
-    margin-left: 240px; /* نفس عرض السايدبار */
-    padding: 20px;
-    min-height: 100vh;
-    background: #f9fafb;
-    overflow-x: hidden; /* يمنع الـ scroll الأفقي */
-    transition: margin-left 0.3s ease;
-  }
-  
-  /* لو السايدبار متقفل */
-  .admin-sidebar.collapsed ~ .admin-content {
-    margin-left: 70px;
-  }
-  
+  margin-left: 240px; /* نفس عرض السايدبار */
+  /* padding: 20px; */
+  min-height: 100vh;
+  background: #f9fafb;
+  overflow-x: hidden; /* يمنع الـ scroll الأفقي */
+  transition: margin-left 0.3s ease;
+}
+
+/* لو السايدبار متقفل */
+.admin-sidebar.collapsed ~ .admin-content {
+  margin-left: 70px;
+}

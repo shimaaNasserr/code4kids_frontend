@@ -12,8 +12,6 @@ const AdminDashboard = () => {
   const [deleteType, setDeleteType] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(null);
 
-
-
   const {
     showModal,
     itemToDelete,
@@ -91,27 +89,25 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       {toast && (
-  <div
-    style={{
-      position: "fixed",
-      top: "20px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      backgroundColor: toast.type === "success" ? "#28a745" : "#dc3545",
-      color: "#fff",
-      padding: "12px 20px",
-      borderRadius: "8px",
-      fontWeight: "bold",
-      zIndex: 9999,
-      boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-    }}
-  >
-    {toast.message}
-  </div>
-)}
-
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: toast.type === "success" ? "#28a745" : "#dc3545",
+            color: "#fff",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            fontWeight: "bold",
+            zIndex: 9999,
+            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
 
       <ConfirmationModal
         isOpen={showModal}
@@ -120,7 +116,7 @@ const AdminDashboard = () => {
         itemName={itemToDelete?.title}
         loading={deleteLoading}
       />
-      <div className="container d-flex justify-content-center gap-3 mb-4">
+      <div className="container d-flex justify-content-center gap-3 mb-4 mt-4">
         <Link className="text-decoration-none" to={"/admin/courses/add-new"}>
           <button className="btn-primary" style={{ borderRadius: "50px" }}>
             Add new course
@@ -132,7 +128,10 @@ const AdminDashboard = () => {
       </div>
       {/* Courses Table */}
       <h2 className="text-xl font-semibold mb-2 text-center">Courses</h2>
-      <div className="w-full">
+      <div
+        className="w-full mb-4"
+        style={{ maxHeight: "400px", overflowY: "auto" }}
+      >
         <table
           className="w-full border mb-3"
           style={{ margin: "0 auto", width: "80vw" }}
@@ -175,7 +174,10 @@ const AdminDashboard = () => {
 
       {/* Lessons Table */}
       <h2 className="text-xl font-semibold text-center">Lessons</h2>
-      <div className="w-full">
+      <div
+        className="w-full mb-4"
+        style={{ maxHeight: "400px", overflowY: "auto" }}
+      >
         <table
           className="w-full border mb-3"
           style={{ margin: "0 auto", width: "80vw" }}

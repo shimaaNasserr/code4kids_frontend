@@ -1,8 +1,8 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import { Footer } from '../../components/Footer/Footer'
-import AdminNavbar from '../../components/NavBar/AdminNavbar'
-import './Layout.css'
+import React from "react";
+import { Outlet } from "react-router-dom";
+import { Footer } from "../../components/Footer/Footer";
+import AdminNavbar from "../../components/NavBar/AdminNavbar";
+import "./Layout.css";
 
 export const AdminLayout = () => {
   return (
@@ -14,5 +14,5 @@ export const AdminLayout = () => {
         <Footer />
       </div>
     </>
-  )
-}
+  );
+};

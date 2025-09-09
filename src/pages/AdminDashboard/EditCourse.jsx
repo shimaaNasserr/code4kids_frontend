@@ -13,7 +13,6 @@ const EditCourse = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-
   useEffect(() => {
     fetchCourse();
     fetchCategories();
@@ -130,7 +129,8 @@ const EditCourse = () => {
       setSuccessMessage("✅ Course updated successfully!");
       setTimeout(() => {
         navigate("/admin/dashboard");
-      }, 2000);      if (imageFile) {
+      }, 2000);
+      if (imageFile) {
         setCourse((prev) => ({
           ...prev,
           image_url: URL.createObjectURL(imageFile),
@@ -152,16 +152,22 @@ const EditCourse = () => {
         <div className="card-body">
           <h1 className="card-title mb-4">Edit Course</h1>
           {successMessage && (
-  <div className="alert alert-success text-center fw-bold mb-4" role="alert">
-    {successMessage}
-  </div>
-)}
+            <div
+              className="alert alert-success text-center fw-bold mb-4"
+              role="alert"
+            >
+              {successMessage}
+            </div>
+          )}
 
-{errorMessage && (
-  <div className="alert alert-danger text-center fw-bold mb-4" role="alert">
-    {errorMessage}
-  </div>
-)}
+          {errorMessage && (
+            <div
+              className="alert alert-danger text-center fw-bold mb-4"
+              role="alert"
+            >
+              {errorMessage}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             {/* Title */}
@@ -274,7 +280,7 @@ const EditCourse = () => {
               >
                 Save Changes
               </button>
-              <Link to={`/admin/dashboard`} className=" text-decoration-none">
+              <Link to={`/admin/courses`} className=" text-decoration-none">
                 <button
                   type="submit"
                   className="btn btn-danger shadow-none px-4"
