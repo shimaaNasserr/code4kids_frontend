@@ -117,7 +117,7 @@ const route = createBrowserRouter([
       { path: "courses/add-new", element: <AddCourse /> },
       { path: "lessons/add-new", element: <AddLesson /> },
       { path: "categories", element: <AdminCategories /> },
-      { path: "profile", element: <AdminProfile /> },
+      { path: "profile", element: <Profile /> },
 
 
     ],
