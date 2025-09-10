@@ -1,0 +1,21 @@
+/* Progress Summary Styles */
+.progress-summary {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 16px;
+  border: 2px solid rgba(78, 205, 196, 0.2);
+}
+
+.progress-text-large {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4ECDC4;
+  margin-bottom: 0.5rem;
+}
+
+.progress-subtitle {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 500;
+}

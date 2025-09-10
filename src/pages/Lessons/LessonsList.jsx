@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Play, 
-  CheckCircle, 
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Play,
+  CheckCircle,
   Clock,
   BookOpen,
   ArrowLeft,
   ChevronRight,
-  Lock
-} from 'lucide-react';
-import axiosInstance from '../../apis/config';
-import Navbar from '../../components/NavBar/Navbar';
-import './lessons.css';
-import { useAuth } from '../../context/AuthContext';
+  Lock,
+} from "lucide-react";
+import axiosInstance from "../../apis/config";
+import Navbar from "../../components/NavBar/Navbar";
+import "./lessons.css";
+import { useAuth } from "../../context/AuthContext";
 
 const LessonsList = () => {
   const { id: courseId } = useParams();
   const navigate = useNavigate();
-  
+
   // States
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -30,13 +30,13 @@ const LessonsList = () => {
       const response = await axiosInstance.get(`courses/${courseId}/`);
       setCourse(response.data);
     } catch (err) {
-      console.error('Error fetching course:', err);
+      console.error("Error fetching course:", err);
       if (err.response?.status === 404) {
         setError(`Course with ID ${courseId} not found`);
       } else if (err.response?.status === 401) {
-        setError('Please login to access this course');
+        setError("Please login to access this course");
       } else {
-        setError('Failed to load course details');
+        setError("Failed to load course details");
       }
     }
   };
@@ -44,12 +44,14 @@ const LessonsList = () => {
   // Fetch lessons for the course
   const fetchLessons = async () => {
     try {
-      const response = await axiosInstance.get('lessons/');
-      const courseLessons = response.data.filter(lesson => lesson.course === parseInt(courseId));
+      const response = await axiosInstance.get("lessons/");
+      const courseLessons = response.data.filter(
+        (lesson) => lesson.course === parseInt(courseId)
+      );
       setLessons(courseLessons.sort((a, b) => a.order - b.order));
     } catch (err) {
-      console.error('Error fetching lessons:', err);
-      setError('Failed to load lessons');
+      console.error("Error fetching lessons:", err);
+      setError("Failed to load lessons");
     }
   };
 
@@ -61,12 +63,12 @@ const LessonsList = () => {
       try {
         await Promise.all([fetchCourse(), fetchLessons()]);
       } catch (err) {
-        setError('Failed to load course data');
+        setError("Failed to load course data");
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     if (courseId) {
       loadData();
     }
@@ -79,7 +81,7 @@ const LessonsList = () => {
 
   // Get completed lessons count
   const getCompletedLessonsCount = () => {
-    return lessons.filter(lesson => lesson.is_completed).length;
+    return lessons.filter((lesson) => lesson.is_completed).length;
   };
 
   // Get progress percentage
@@ -111,10 +113,7 @@ const LessonsList = () => {
         <div className="modern-error">
           <h3>⚠️ Error</h3>
           <p>{error}</p>
-          <button 
-            onClick={() => navigate('/courses')}
-            className="back-btn"
-          >
+          <button onClick={() => navigate("/courses")} className="back-btn">
             <ArrowLeft size={16} />
             Back to Courses
           </button>
@@ -128,19 +127,37 @@ const LessonsList = () => {
       <Navbar />
 
       {/* Back Button */}
-      <button 
-        onClick={() => navigate('/courses')}
-        className="back-button"
-      >
+      <button onClick={() => navigate("/courses")} className="back-button">
         <ArrowLeft size={16} />
         Back to Courses
       </button>
 
       {/* Course Info Header */}
-      <div className="course-info-header">
-        <div className="course-details">
-          <h1 className="course-title">{course?.title}</h1>
-          <p className="course-description">{course?.description}</p>
+      <div
+        className="course-info-header"
+        style={{
+          backgroundImage: `url(${course?.image_url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div
+          className="position-absolute top-0 start-0 w-100 h-100"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5);" }}
+        ></div>
+        <div className="course-details position-relative">
+          <h1
+            className="course-title"
+            style={{ textShadow: "0px 2px 4px rgba(0, 0, 0, 0.6)" }}
+          >
+            {course?.title}
+          </h1>
+          <p
+            className="course-description"
+            style={{ textShadow: "0px 2px 4px rgba(0, 0, 0, 0.6)" }}
+          >
+            {course?.description}
+          </p>
           <div className="course-meta">
             <div className="meta-item">
               <BookOpen className="meta-icon" size={16} />
@@ -152,9 +169,9 @@ const LessonsList = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Progress Section */}
-        <div className="progress-section">
+        <div className="progress-section position-relative">
           <div className="progress-circle">
             <svg className="circular-chart" viewBox="0 0 36 36">
               <path
@@ -176,7 +193,10 @@ const LessonsList = () => {
             </svg>
           </div>
           <div className="progress-text">
-            <div className="completed-count">
+            <div
+              className="completed-count"
+              style={{ textShadow: "0px 2px 4px rgba(0, 0, 0, 0.6)" }}
+            >
               {getCompletedLessonsCount()}/{lessons.length}
             </div>
             <div>Lessons Completed</div>
@@ -190,16 +210,18 @@ const LessonsList = () => {
           <BookOpen className="title-icon" size={24} />
           <span>Course Lessons</span>
         </div>
-        
+
         {lessons.length > 0 ? (
           <div className="lessons-grid">
             {lessons.map((lesson, index) => {
               const isLocked = isLessonLocked(index);
-              
+
               return (
-                <div 
+                <div
                   key={lesson.id}
-                  className={`lesson-card ${lesson.is_completed ? 'completed' : ''} ${isLocked ? 'locked' : ''}`}
+                  className={`lesson-card ${
+                    lesson.is_completed ? "completed" : ""
+                  } ${isLocked ? "locked" : ""}`}
                   onClick={() => !isLocked && navigateToLesson(lesson.id)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -212,7 +234,7 @@ const LessonsList = () => {
                       <span>{lesson.order}</span>
                     )}
                   </div>
-                  
+
                   <div className="lesson-content">
                     <h3 className="lesson-title">{lesson.title}</h3>
                     <p className="lesson-description">{lesson.description}</p>
@@ -229,16 +251,20 @@ const LessonsList = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="lesson-action">
                     {isLocked ? (
-                      <div className="locked-message">Complete previous lesson</div>
+                      <div className="locked-message">
+                        Complete previous lesson
+                      </div>
                     ) : (
                       <div className="action-button start">
-                        {lesson.is_completed ? 'Review' : 'Start'}
+                        {lesson.is_completed ? "Review" : "Start"}
                       </div>
                     )}
-                    {!isLocked && <ChevronRight className="chevron-icon" size={20} />}
+                    {!isLocked && (
+                      <ChevronRight className="chevron-icon" size={20} />
+                    )}
                   </div>
                 </div>
               );

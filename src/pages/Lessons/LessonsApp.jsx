@@ -1,68 +1,112 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, CheckCircle, FileText, Clock, ChevronRight, Trophy, Lightbulb, Zap, Award, Star, Sparkles, Check, X, AlertTriangle, HelpCircle } from 'lucide-react';
+import { 
+  Play, 
+  CheckCircle,
+  FileText, 
+  Clock, 
+  ChevronRight, 
+  Trophy, 
+  Lightbulb, 
+  Zap, 
+  Star, 
+  Sparkles, 
+  Check, 
+  X, 
+  AlertTriangle, 
+  HelpCircle,
+  Upload,
+  Download,
+  Award,
+  Target,
+  BookOpen,
+  Users,
+  BarChart3,
+  ArrowLeft,
+  ArrowRight,
+  Lock,
+  Unlock,
+  Heart,
+  Flame,
+  Gem,
+  Map,
+  MessageCircle,
+  Settings,
+  Volume2,
+  Bookmark,
+  Share2,
+  ThumbsUp
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import axiosInstance from '../../apis/config';
 import Navbar from '../../components/NavBar/Navbar';
-import './LessonsApp.css';
-
-// Mock data for gamification
-const initialBadges = [
-  { id: 1, name: 'First Steps', earned: true, icon: '1️⃣' },
-  { id: 2, name: 'Code Wizard', earned: true, icon: '🧙' },
-  { id: 3, name: 'Bug Hunter', earned: false, icon: '🐛' },
-  { id: 4, name: 'Syntax Master', earned: false, icon: '✨' },
-];
-
-const mascotMessages = [
-  "Great job! You're a coding superstar! ⭐",
-  "Keep going! You're learning so much! 🚀",
-  "Wow! You're really getting the hang of this! 🌟",
-  "Amazing work! Let's tackle the next challenge! 💪",
-  "You're doing fantastic! Keep it up! 🎯"
-];
-
-const hintMessages = [
-  "Check if you've closed all your brackets and parentheses.",
-  "Remember to use the correct variable names from the instructions.",
-  "Try breaking the problem down into smaller steps.",
-  "Look at the error message for clues about what might be wrong."
-];
+import { useAuth } from '../../context/AuthContext';
+import './lessons.css';
+import './adventure-dashboard.css';
+import './progress-styles.css';
+import './assignments-styles.css';
 
 const LessonsApp = () => {
   const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
-  useEffect(() => {
-    const token = localStorage.getItem('userToken');
-    if (!token) {
-      navigate('/login'); // يوديني صفحة اللوجين
-    }
-  }, [navigate]);
+  const { user, token, isLoading: authLoading } = useAuth();
   
-  // Lesson states
+  // Authentication check
+  useEffect(() => {
+    if (!authLoading && (!user || !token)) {
+      navigate('/login');
+    }
+  }, [user, token, authLoading, navigate]);
+  
+  // Main states
   const [lesson, setLesson] = useState(null);
   const [course, setCourse] = useState(null);
   const [assignments, setAssignments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [otherLessons, setOtherLessons] = useState([]);
+  const [lessonCompletion, setLessonCompletion] = useState(null);
+  const [progress, setProgress] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
   // UI states
-  const [activeTab, setActiveTab] = useState('lesson');
+  const [activeTab, setActiveTab] = useState('description');
   const [code, setCode] = useState('// Write your code here\nconsole.log(\'Hello, Coder!\');');
   const [output, setOutput] = useState('');
   const [showHint, setShowHint] = useState(false);
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
-  const [points, setPoints] = useState(150);
   const [showMascotMessage, setShowMascotMessage] = useState(false);
-  const [badges, setBadges] = useState(initialBadges);
   const [isHintExpanded, setIsHintExpanded] = useState(false);
+  const [submissionText, setSubmissionText] = useState('');
+  const [submissionFile, setSubmissionFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Refs
   const mascotTimeout = useRef(null);
   const previewRef = useRef(null);
   const codeEditorRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Hint messages based on lesson content
+  const hintMessages = [
+    "Check if you've closed all your brackets and parentheses.",
+    "Remember to use the correct variable names from the instructions.",
+    "Try breaking the problem down into smaller steps.",
+    "Look at the error message for clues about what might be wrong.",
+    "Make sure you're using the right data types.",
+    "Check your spelling and syntax carefully."
+  ];
+
+  // Mascot messages for encouragement
+  const mascotMessages = [
+    "Great job! You're a coding superstar! ⭐",
+    "Keep going! You're learning so much! 🚀",
+    "Wow! You're really getting the hang of this! 🌟",
+    "Amazing work! Let's tackle the next challenge! 💪",
+    "You're doing fantastic! Keep it up! 🎯",
+    "Excellent! You're becoming a coding wizard! 🧙‍♂️"
+  ];
 
   // Show random mascot message
   const showRandomMascotMessage = () => {
@@ -76,6 +120,120 @@ const LessonsApp = () => {
       setShowMascotMessage(false);
     }, 5000);
   };
+
+  // Fetch lesson data
+  const fetchLesson = async () => {
+    try {
+      const response = await axiosInstance.get(`lessons/${lessonId}/`);
+      setLesson(response.data);
+    } catch (err) {
+      console.error('Error fetching lesson:', err);
+      setError('Failed to load lesson data');
+    }
+  };
+
+  // Fetch course data
+  const fetchCourse = async () => {
+    try {
+      const response = await axiosInstance.get(`courses/${courseId}/`);
+      setCourse(response.data);
+    } catch (err) {
+      console.error('Error fetching course:', err);
+      setError('Failed to load course data');
+    }
+  };
+
+  // Fetch other lessons in the course
+  const fetchOtherLessons = async () => {
+    try {
+      const response = await axiosInstance.get('lessons/');
+      const courseLessons = response.data.filter(
+        lesson => lesson.course === parseInt(courseId)
+      );
+      setOtherLessons(courseLessons.sort((a, b) => a.order - b.order));
+    } catch (err) {
+      console.error('Error fetching lessons:', err);
+    }
+  };
+
+  // Fetch assignments for current lesson
+  const fetchAssignments = async () => {
+    try {
+      const response = await axiosInstance.get(`lessons/${lessonId}/assignments/`);
+      setAssignments(response.data);
+    } catch (err) {
+      console.error('Error fetching assignments:', err);
+      setAssignments([]);
+    }
+  };
+
+  // Fetch submissions for assignments
+  const fetchSubmissions = async () => {
+    try {
+      const response = await axiosInstance.get('submissions/');
+      const userSubmissions = response.data.filter(submission => 
+        assignments.some(assignment => assignment.id === submission.assignment)
+      );
+      setSubmissions(userSubmissions);
+    } catch (err) {
+      console.error('Error fetching submissions:', err);
+      setSubmissions([]);
+    }
+  };
+
+  // Fetch lesson completion status
+  const fetchLessonCompletion = async () => {
+    try {
+      const response = await axiosInstance.get(`lessons/${lessonId}/completion/`);
+      setLessonCompletion(response.data);
+    } catch (err) {
+      console.log('No completion data found');
+      setLessonCompletion(null);
+    }
+  };
+
+  // Fetch progress data
+  const fetchProgress = async () => {
+    try {
+      const response = await axiosInstance.get(`progress/child-dashboard/`);
+      const courseProgress = response.data.find(p => p.course === parseInt(courseId));
+      setProgress(courseProgress);
+    } catch (err) {
+      console.error('Error fetching progress:', err);
+    }
+  };
+
+  // Load all data when component mounts
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          fetchCourse(),
+          fetchLesson(),
+          fetchOtherLessons(),
+          fetchAssignments(),
+          fetchLessonCompletion(),
+          fetchProgress(),
+        ]);
+      } catch (err) {
+        setError('Failed to load lesson data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (courseId && lessonId) {
+      loadData();
+    }
+  }, [courseId, lessonId]);
+
+  // Fetch submissions when assignments change
+  useEffect(() => {
+    if (assignments.length > 0) {
+      fetchSubmissions();
+    }
+  }, [assignments]);
 
   // Handle running code
   const handleRunCode = () => {
@@ -103,12 +261,8 @@ const LessonsApp = () => {
         message: 'Great job! Your code ran successfully!' 
       });
       
-      // Show mascot message and award points
+      // Show mascot message
       showRandomMascotMessage();
-      setPoints(prev => prev + 10);
-      
-      // Check for achievements
-      checkForAchievements();
       
     } catch (err) {
       setOutput(`Error: ${err.message}`);
@@ -116,24 +270,6 @@ const LessonsApp = () => {
         type: 'error', 
         message: 'Oops! There was an error in your code. Try again!' 
       });
-    }
-  };
-
-  // Check for achievements
-  const checkForAchievements = () => {
-    // Example: Award "Code Wizard" badge after 3 successful runs
-    const successfulRuns = points / 10; // Simplified example
-    if (successfulRuns >= 3) {
-      const updatedBadges = [...badges];
-      const codeWizardBadge = updatedBadges.find(b => b.id === 2);
-      if (codeWizardBadge && !codeWizardBadge.earned) {
-        codeWizardBadge.earned = true;
-        setBadges(updatedBadges);
-        setFeedback({
-          type: 'success',
-          message: '🏆 Achievement Unlocked: Code Wizard!'
-        });
-      }
     }
   };
 
@@ -156,137 +292,80 @@ const LessonsApp = () => {
     setCode(e.target.value);
   };
 
-  // Fetch course data
-  const fetchCourse = async () => {
-    try {
-      const response = await axiosInstance.get(`courses/${courseId}/`);
-      setCourse(response.data);
-    } catch (err) {
-      console.error('Error fetching course:', err);
-      setError('Failed to load course data');
-    }
-  };
-
-  // Fetch lesson data
-  const fetchLesson = async () => {
-    try {
-      const response = await axiosInstance.get(`lessons/${lessonId}/`);
-      setLesson(response.data);
-    } catch (err) {
-      console.error('Error fetching lesson:', err);
-      setError('Failed to load lesson data');
-    }
-  };
-
-  // Fetch other lessons in the course
-  const fetchOtherLessons = async () => {
-    try {
-      const response = await axiosInstance.get('lessons/');
-      const courseLessons = response.data.filter(
-        lesson => lesson.course === parseInt(courseId)
-      );
-      setOtherLessons(courseLessons.sort((a, b) => a.order - b.order));
-    } catch (err) {
-      console.error('Error fetching lessons:', err);
-    }
-  };
-
-  // Fetch assignments for current lesson
-  const fetchAssignments = async () => {
-    try {
-      let response;
-      try {
-        response = await axiosInstance.get(`lessons/${lessonId}/assignments/`);
-      } catch (err1) {
-        try {
-          response = await axiosInstance.get('assignments/');
-          response.data = response.data.filter(
-            assignment => assignment.lesson === parseInt(lessonId)
-          );
-        } catch (err2) {
-          console.warn('Assignments endpoint not available, using empty array');
-          setAssignments([]);
-          return;
-        }
-      }
-      setAssignments(response.data);
-    } catch (err) {
-      console.error('Error fetching assignments:', err);
-      setAssignments([]);
-    }
-  };
-
-  // Fetch submissions for assignments
-  const fetchSubmissions = async () => {
-    try {
-      const response = await axiosInstance.get('submissions/');
-      const userSubmissions = response.data.filter(submission => 
-        assignments.some(assignment => assignment.id === submission.assignment)
-      );
-      setSubmissions(userSubmissions);
-    } catch (err) {
-      console.error('Error fetching submissions:', err);
-      setSubmissions([]);
-    }
-  };
-
-  // Load all data when component mounts
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        await Promise.all([
-          fetchCourse(),
-          fetchLesson(),
-          fetchOtherLessons(),
-          fetchAssignments(),
-        ]);
-      } catch (err) {
-        setError('Failed to load lesson data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (courseId && lessonId) {
-      loadData();
-    }
-  }, [courseId, lessonId]);
-
-  // Fetch submissions when assignments change
-  useEffect(() => {
-    if (assignments.length > 0) {
-      fetchSubmissions();
-    }
-  }, [assignments]);
-
-  // Get submission for a specific assignment
-  const getSubmissionForAssignment = (assignmentId) => {
-    return submissions.find(sub => sub.assignment === assignmentId);
-  };
-
   // Handle lesson completion
   const handleLessonComplete = async () => {
     try {
-      let response;
-      try {
-        response = await axiosInstance.put(`lessons/${lessonId}/`, {
-          ...lesson,
-          is_completed: true
-        });
-      } catch (putError) {
-        try {
-          response = await axiosInstance.post(`lessons/${lessonId}/complete/`);
-        } catch (postError) {
-          console.warn('API update failed, updating locally only');
-          setLesson(prev => ({ ...prev, is_completed: true }));
-          return;
-        }
-      }
-      setLesson(prev => ({ ...prev, is_completed: true }));
+      const response = await axiosInstance.post(`lessons/${lessonId}/complete/`, {
+        time_spent_minutes: 10, // You can calculate this based on actual time
+        notes: 'Completed successfully'
+      });
+      
+      setLessonCompletion(response.data);
+      setFeedback({
+        type: 'success',
+        message: '🎉 Congratulations! Lesson completed successfully!'
+      });
+      
+      showRandomMascotMessage();
+      
+      // Refresh progress data
+      fetchProgress();
+      
     } catch (err) {
       console.error('Error marking lesson as complete:', err);
-      setLesson(prev => ({ ...prev, is_completed: true }));
+      setFeedback({
+        type: 'error',
+        message: 'Failed to mark lesson as complete. Please try again.'
+      });
+    }
+  };
+
+  // Handle assignment submission
+  const handleAssignmentSubmit = async (assignmentId) => {
+    setIsSubmitting(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('assignment', assignmentId);
+      formData.append('student', user.id);
+      
+      if (submissionText) {
+        formData.append('text', submissionText);
+      }
+      
+      if (submissionFile) {
+        formData.append('file', submissionFile);
+      }
+      
+      const response = await axiosInstance.post('submissions/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      setFeedback({
+        type: 'success',
+        message: 'Assignment submitted successfully! 🎉'
+      });
+      
+      // Refresh submissions
+      fetchSubmissions();
+      
+      // Clear form
+      setSubmissionText('');
+      setSubmissionFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+    } catch (err) {
+      console.error('Error submitting assignment:', err);
+      setFeedback({
+        type: 'error',
+        message: 'Failed to submit assignment. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -295,14 +374,37 @@ const LessonsApp = () => {
     navigate(`/courses/${courseId}/lessons/${newLessonId}`);
   };
 
+  // Get submission for a specific assignment
+  const getSubmissionForAssignment = (assignmentId) => {
+    return submissions.find(sub => sub.assignment === assignmentId);
+  };
+
+  // Check if lesson is locked (previous lesson not completed)
+  const isLessonLocked = (lessonIndex) => {
+    if (lessonIndex === 0) return false;
+    return !otherLessons[lessonIndex - 1]?.is_completed;
+  };
+
+  // Get progress percentage
+  const getProgressPercentage = () => {
+    if (!progress) return 0;
+    return Math.round(progress.progress_percentage || 0);
+  };
+
   // Loading state
   if (isLoading) {
     return (
-      <div className="modern-lessons-container">
+      <div className="lessons-app-container">
         <Navbar />
         <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading lesson...</p>
+          <motion.div 
+            className="spinner"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          >
+            🎯
+          </motion.div>
+          <p>Loading amazing lesson...</p>
         </div>
       </div>
     );
@@ -311,7 +413,7 @@ const LessonsApp = () => {
   // Error state
   if (error) {
     return (
-      <div className="modern-lessons-container">
+      <div className="lessons-app-container">
         <Navbar />
         <div className="error-container">
           <h3>⚠️ Error</h3>
@@ -320,7 +422,7 @@ const LessonsApp = () => {
             onClick={() => navigate(`/courses`)}
             className="btn btn-primary"
           >
-            Back to Course
+            Back to Courses
           </button>
         </div>
       </div>
@@ -329,272 +431,317 @@ const LessonsApp = () => {
 
   // Main content
   return (
-    <div className="lessons-app-container mt-5 py-5">
+    <div className="adventure-learning-dashboard">
+      <Navbar />
       
-      {/* Left Panel - Instructions & Code */}
-      <div className="lessons-panel">
-        <div className="lesson-header">
-          <h1 className="lesson-title">{lesson?.title || 'Loading...'}</h1>
-          <p className="lesson-description">
-            {lesson?.description || 'Loading lesson description...'}
-          </p>
+
+      {/* Three Column Layout */}
+      <div className="dashboard-content">
+        {/* Left Sidebar - Course Navigation */}
+        <div className="left-sidebar">
+          {/* Course Map */}
+          <div className="course-map-section">
+            <h3 className="section-title">
+              <Map size={18} />
+              Course Map
+            </h3>
+            <div className="course-map">
+              {otherLessons.map((lessonItem, index) => {
+                const isLocked = isLessonLocked(index);
+                const isCurrentLesson = lessonItem.id === parseInt(lessonId);
+                const isCompleted = lessonItem.is_completed;
+                return (
+                  <div 
+                    key={lessonItem.id}
+                    className={`map-lesson-node ${
+                      isCurrentLesson ? 'current' : 
+                      isCompleted ? 'completed' : 
+                      isLocked ? 'locked' : 'available'
+                    }`}
+                    onClick={() => !isLocked && !isCurrentLesson && navigateToLesson(lessonItem.id)}
+                  >
+                    <div className="node-icon">
+                      {isCurrentLesson ? '🎯' : 
+                       isCompleted ? '✅' : 
+                       isLocked ? '🔒' : '📚'}
+                    </div>
+                    <div className="node-info">
+                      <span className="node-title">{lessonItem.title}</span>
+                      <span className="node-order">Lesson {lessonItem.order}</span>
+                    </div>
+                    {index < otherLessons.length - 1 && <div className="connection-line"></div>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Course Instructor */}
+          <div className="instructor-section">
+            <h3 className="section-title">
+              <Users size={18} />
+              Course Instructor
+            </h3>
+            <div className="instructor-info">
+              {course?.instructors && course.instructors.length > 0 ? (
+                course.instructors.map((instructor, index) => (
+                  <div key={index} className="instructor-item">
+                    <div className="instructor-details">
+                      <span className="instructor-name">{instructor.name}</span>
+                      <span className="instructor-specialization">{instructor.specialization}</span>
+                      <span className="instructor-experience">{instructor.years_of_experience} years experience</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="instructor-placeholder">
+                  <div className="instructor-details">
+                    <span className="instructor-name">Course Instructor</span>
+                    <span className="instructor-specialization">Programming Expert</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Tabs */}
-        <div className="lesson-tabs">
-          <button
-            className={`tab-btn ${activeTab === 'lesson' ? 'active' : ''}`}
-            onClick={() => setActiveTab('lesson')}
-          >
-            <Play size={16} /> Lesson
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'assignments' ? 'active' : ''}`}
-            onClick={() => setActiveTab('assignments')}
-          >
-            <FileText size={16} /> Assignments ({assignments.length})
-          </button>
-        </div>
+        {/* Main Content - Lesson */}
+        <div className="main-content">
+          {/* Lesson Header */}
+          <div className="lesson-header">
+            <div className="lesson-breadcrumb">
+              <button onClick={() => navigate(`/courses/${courseId}/lessons`)} className="breadcrumb-btn">
+                <ArrowLeft size={16} />
+                Back to Course
+              </button>
+              <ChevronRight size={14} />
+              <span>Lesson {lesson?.order}</span>
+            </div>
+            <h1 className="lesson-title">{lesson?.title}</h1>
+            <div className="lesson-meta">
+              <div className="meta-badge">
+                <Clock size={14} />
+                {lesson?.duration_minutes || 10} min
+              </div>
+              <div className="meta-badge">
+                <Target size={14} />
+                {lesson?.level || 'Beginner'}
+              </div>
+            </div>
+          </div>
 
-        {/* Lesson Content */}
-        {activeTab === 'lesson' ? (
-          <>
-            {/* Video or Content */}
+          {/* Enhanced Video Player */}
+          <div className="enhanced-video-section">
             {lesson?.video_url ? (
-              <div className="video-container">
-                <div className="video-wrapper">
+              <div className="smart-video-player">
+                <div className="video-container">
                   <iframe
                     src={lesson.video_url}
                     title="Lesson Video"
                     allowFullScreen
+                    className="video-iframe"
                   ></iframe>
+                  <div className="video-controls">
+                    <button className="control-btn">
+                      <Volume2 size={16} />
+                    </button>
+                    <button className="control-btn">
+                      <Bookmark size={16} />
+                    </button>
+                    <button className="control-btn">
+                      <Share2 size={16} />
+                    </button>
+                  </div>
                 </div>
                 <div className="video-info">
-                  <Clock size={14} /> {lesson.duration_minutes || '10'} minutes
+                  <div className="video-stats">
+                    <Clock size={16} /> {lesson.duration_minutes || 10} minutes
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="content-container">
-                <div className="content-text">
-                  {lesson?.content || 'No content available for this lesson.'}
-                </div>
+              <div className="content-placeholder">
+                <BookOpen size={48} />
+                <h3>Interactive Content</h3>
+                <p>{lesson?.content || 'No content available for this lesson.'}</p>
               </div>
             )}
+          </div>
 
-            {/* Code Editor */}
-            <div className="code-editor-container">
-              <div className="editor-header">
-                <span className="editor-filename">code.js</span>
-                <div className="editor-actions">
-                  <button 
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => setCode('// Write your code here\nconsole.log(\'Hello, Coder!\');')}
-                  >
-                    Reset
-                  </button>
-                </div>
-              </div>
-              <textarea
-                ref={codeEditorRef}
-                className="code-editor"
-                value={code}
-                onChange={handleCodeChange}
-                spellCheck="false"
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="action-buttons">
-              <button 
-                className="btn btn-primary"
-                onClick={handleRunCode}
-              >
-                <Zap size={16} /> Run Code
+          {/* Interactive Content */}
+          <div className="interactive-content">
+            <div className="content-tabs">
+              <button className={`tab-btn ${activeTab === 'description' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('description')}>
+                Description
               </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={handleShowHint}
-              >
-                <Lightbulb size={16} /> {showHint ? 'Next Hint' : 'Get Hint'}
+              <button className={`tab-btn ${activeTab === 'notes' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('notes')}>
+                Notes
               </button>
             </div>
 
-            {/* Hint System */}
-            {showHint && (
-              <div className="hint-container">
-                <div 
-                  className="hint-header"
-                  onClick={() => setIsHintExpanded(!isHintExpanded)}
-                >
-                  <span>💡 Hint {currentHintIndex + 1}/{hintMessages.length}</span>
-                  <span>{isHintExpanded ? '▲' : '▼'}</span>
+            <div className="tab-content">
+              {activeTab === 'description' && (
+                <div className="description-content">
+                  <p>{lesson?.description || 'وصف الدرس غير متوفر.'}</p>
+                  {lesson?.content && (
+                    <div className="detailed-content">
+                      <h4>Lesson Content</h4>
+                      <div>{lesson.content}</div>
+                    </div>
+                  )}
                 </div>
-                {isHintExpanded && (
-                  <div className="hint-content">
-                    <p>{hintMessages[currentHintIndex]}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Feedback Message */}
-            {feedback.message && (
-              <div className={`feedback-message feedback-${feedback.type}`}>
-                {feedback.type === 'success' ? (
-                  <Check className="feedback-icon" />
-                ) : (
-                  <X className="feedback-icon" />
-                )}
-                <span>{feedback.message}</span>
-              </div>
-            )}
-
-            {/* Complete Lesson Button */}
-            <div className="completion-section">
-              {!lesson?.is_completed ? (
-                <button
-                  onClick={handleLessonComplete}
-                  className="btn btn-primary"
-                >
-                  <CheckCircle size={20} /> Complete Lesson
-                </button>
-              ) : (
-                <div className="completed-message">
-                  <CheckCircle size={20} /> Lesson Completed! ✨
+              )}
+              {activeTab === 'notes' && (
+                <div className="notes-content">
+                  <textarea 
+                    placeholder="Take notes during the lesson..."
+                    className="notes-textarea"
+                  ></textarea>
                 </div>
               )}
             </div>
-          </>
-        ) : (
-          /* Assignments Tab */
-          <div className="assignments-container">
-            <h3 className="assignments-title">Assignments</h3>
-            {assignments.length > 0 ? (
-              assignments.map((assignment) => {
-                const submission = getSubmissionForAssignment(assignment.id);
-                return (
-                  <div key={assignment.id} className="assignment-card">
-                    <div className="assignment-header">
-                      <h4 className="assignment-title">{assignment.title}</h4>
-                      {submission ? (
-                        submission.grade !== null && submission.grade !== undefined ? (
-                          <span className="status-badge success">
-                            <Trophy size={14} /> {submission.grade}/100
-                          </span>
+          </div>
+
+        </div>
+
+        {/* Right Panel - Interactive Features */}
+        <div className="right-panel">
+          {/* Quick Actions */}
+          <div className="quick-actions-panel">
+            <h3 className="panel-title">Quick Actions</h3>
+            <div className="action-grid">
+              <button className="action-card" onClick={handleLessonComplete}>
+                {!lessonCompletion ? (
+                  <>
+                    <CheckCircle size={24} />
+                    <span>Complete Lesson</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="completion-circle">
+                      <div className="completion-dot"></div>
+                    </div>
+                    <span>Completed!</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Assignments */}
+          {assignments && assignments.length > 0 && (
+            <div className="assignments-panel">
+              <h3 className="panel-title">
+                <FileText size={18} />
+                Assignments
+              </h3>
+              <div className="assignments-list">
+                {assignments.map((assignment, index) => {
+                  const submission = getSubmissionForAssignment(assignment.id);
+                  return (
+                    <div key={assignment.id} className="assignment-item">
+                      <div className="assignment-header">
+                        <span className="assignment-title">{assignment.title}</span>
+                        {submission ? (
+                          <div className="assignment-status completed">
+                            <CheckCircle size={16} />
+                            <span>Submitted</span>
+                          </div>
                         ) : (
-                          <span className="status-badge warning">
-                            <Clock size={14} /> Under Review
-                          </span>
-                        )
-                      ) : (
-                        <span className="status-badge default">
-                          <Clock size={14} /> Not Submitted
-                        </span>
+                          <div className="assignment-status pending">
+                            <Clock size={16} />
+                            <span>Pending</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="assignment-description">{assignment.description}</p>
+                      {assignment.due_date && (
+                        <div className="assignment-due-date">
+                          <Clock size={14} />
+                          Due: {new Date(assignment.due_date).toLocaleDateString()}
+                        </div>
                       )}
                     </div>
-                    <p className="assignment-question">{assignment.question}</p>
-                    <div className="assignment-footer">
-                      <span className="assignment-due">
-                        Due: {new Date(assignment.due_date).toLocaleDateString()}
-                      </span>
-                      <button 
-                        className="btn btn-sm btn-primary"
-                        onClick={() => {
-                          // Handle assignment submission
-                          alert('Assignment submission would open here');
-                        }}
-                      >
-                        {submission ? 'View Submission' : 'Submit Work'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="no-assignments">
-                <p>No assignments for this lesson yet.</p>
+                  );
+                })}
               </div>
-            )}
+            </div>
+          )}
+
+          {/* Progress Stats */}
+          <div className="stats-panel">
+            <h3 className="panel-title">Your Progress</h3>
+            <div className="progress-summary">
+              <div className="progress-text-large">
+                {otherLessons.filter(l => l.is_completed).length} / {otherLessons.length} Lessons
+              </div>
+              <div className="progress-subtitle">
+                Keep going! You're doing great!
+              </div>
+            </div>
           </div>
-        )}
+
+
+
+        </div>
       </div>
 
-      {/* Right Panel - Preview & Gamification */}
-      <div className="preview-panel">
-        {/* Gamification Bar */}
-        <div className="gamification-bar">
-          <div className="points-display">
-            <span className="points-icon">✨</span>
-            <span>{points} XP</span>
-          </div>
-          <div className="badges-container">
-            {badges.map(badge => (
-              <div 
-                key={badge.id} 
-                className={`badge-icon ${badge.earned ? 'earned' : ''}`}
-                title={badge.name}
-              >
-                {badge.icon}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Preview Content */}
-        <div className="preview-container">
-          <div className="preview-header">
-            <h3 className="preview-title">Output</h3>
-          </div>
-          <div className="preview-content" ref={previewRef}>
-            {output || 'Your output will appear here when you run your code.'}
-          </div>
-        </div>
-
-        {/* Mascot */}
-        <div 
-          className="mascot bounce"
-          onClick={showRandomMascotMessage}
-        >
-          <img 
-            src="/mascot.png" 
-            alt="Coding Mascot" 
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = 'https://cdn3d.iconscout.com/3d/premium/thumb/boy-using-laptop-3025716-2526907.png';
-            }}
-          />
-        </div>
-
-        {/* Mascot Message */}
-        {showMascotMessage && (
-          <div className="mascot-message">
-            {mascotMessages[Math.floor(Math.random() * mascotMessages.length)]}
-          </div>
-        )}
-
-        {/* Other Lessons */}
-        <div className="other-lessons">
-          <h4>More Lessons</h4>
-          <div className="lessons-list">
-            {otherLessons
-              .filter(l => l.id !== parseInt(lessonId))
-              .slice(0, 3)
-              .map(lesson => (
-                <div 
-                  key={lesson.id}
-                  className="lesson-item"
-                  onClick={() => navigateToLesson(lesson.id)}
-                >
-                  <div className="lesson-icon">
-                    {lesson.is_completed ? '✅' : '📚'}
-                  </div>
-                  <span className="lesson-title">{lesson.title}</span>
-                  <ChevronRight size={14} className="chevron" />
-                </div>
-              ))}
-          </div>
-        </div>
+      
+      {/* Floating Mascot */}
+      <div 
+        className="floating-mascot"
+        onClick={showRandomMascotMessage}
+      >
+        <img 
+          src="/mascot.png" 
+          alt="AI Assistant" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://cdn3d.iconscout.com/3d/premium/thumb/boy-using-laptop-3025716-2526907.png';
+          }}
+        />
+        <div className="mascot-pulse"></div>
       </div>
+
+      {/* Mascot Message */}
+      {showMascotMessage && (
+        <AnimatePresence>
+          <motion.div 
+            className="mascot-message-bubble"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          >
+            <div className="message-content">
+              {mascotMessages[Math.floor(Math.random() * mascotMessages.length)]}
+            </div>
+            <div className="message-arrow"></div>
+          </motion.div>
+        </AnimatePresence>
+      )}
+      
+      {/* Feedback Notifications */}
+      {feedback.message && (
+        <AnimatePresence>
+          <motion.div 
+            className={`floating-notification notification-${feedback.type}`}
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 300 }}
+          >
+            <div className="notification-icon">
+              {feedback.type === 'success' ? (
+                <Check size={20} />
+              ) : (
+                <X size={20} />
+              )}
+            </div>
+            <span className="notification-text">{feedback.message}</span>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 };
