@@ -11,12 +11,13 @@ import LessonsList from "../pages/Lessons/LessonsList";
 import LessonsApp from "../pages/Lessons/LessonsApp";
 import ParentDashboard from "../pages/Dashboard/ParentDashboard";
 import KidDashboard from "../pages/Dashboard/KidDashboard";
+import ChildDashboardForParent from "../pages/Dashboard/ChildDashboardForParent";
 import Games from "../pages/Games/Games";
 import AdminLogin from "../pages/AdminLogin/AdminLogin";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import { AdminLayout } from "../pages/Layout/AdminLayout";
 import AdminHome from "../pages/Home/AdminHome";
-import AdminStatistics from "../pages/AdminStatistics/AdminStatistics";
+import AdminStatistics from "../pages/AdminStatistics/AdminStatistics"; 
 import EditCourse from "../pages/AdminDashboard/EditCourse";
 import EditLesson from "../pages/AdminDashboard/EditLesson";
 import AddCourse from "../pages/AdminDashboard/AddCourse";
@@ -72,6 +73,14 @@ const route = createBrowserRouter([
         element: <KidDashboard />,
       },
       {
+        path: "/dashboard/child/:kidId",
+        element: <KidDashboard />,
+      },
+      {
+        path: "/parent-dashboard/child/:kidId",
+        element: <ChildDashboardForParent />,
+      },
+      {
         path: "profile",
         element: <Profile />,
       },
@@ -108,7 +117,7 @@ const route = createBrowserRouter([
       { path: "courses/add-new", element: <AddCourse /> },
       { path: "lessons/add-new", element: <AddLesson /> },
       { path: "categories", element: <AdminCategories /> },
-      { path: "profile", element: <AdminProfile /> },
+      { path: "profile", element: <Profile /> },
 
 
     ],

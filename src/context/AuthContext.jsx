@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // نقرأ من localStorage أو sessionStorage
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
         role: savedUserRole,
       });
     }
+    setIsLoading(false);
   }, []);
 
   const login = (userData, jwtToken, rememberMe = false, refreshToken = null) => {
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

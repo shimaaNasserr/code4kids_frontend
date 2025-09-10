@@ -133,10 +133,31 @@ const LessonsList = () => {
       </button>
 
       {/* Course Info Header */}
-      <div className="course-info-header">
-        <div className="course-details">
-          <h1 className="course-title">{course?.title}</h1>
-          <p className="course-description">{course?.description}</p>
+      <div
+        className="course-info-header"
+        style={{
+          backgroundImage: `url(${course?.image_url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div
+          className="position-absolute top-0 start-0 w-100 h-100"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5);" }}
+        ></div>
+        <div className="course-details position-relative">
+          <h1
+            className="course-title"
+            style={{ textShadow: "0px 2px 4px rgba(0, 0, 0, 0.6)" }}
+          >
+            {course?.title}
+          </h1>
+          <p
+            className="course-description"
+            style={{ textShadow: "0px 2px 4px rgba(0, 0, 0, 0.6)" }}
+          >
+            {course?.description}
+          </p>
           <div className="course-meta">
             <div className="meta-item">
               <BookOpen className="meta-icon" size={16} />
@@ -150,7 +171,7 @@ const LessonsList = () => {
         </div>
 
         {/* Progress Section */}
-        <div className="progress-section">
+        <div className="progress-section position-relative">
           <div className="progress-circle">
             <svg className="circular-chart" viewBox="0 0 36 36">
               <path
@@ -172,7 +193,10 @@ const LessonsList = () => {
             </svg>
           </div>
           <div className="progress-text">
-            <div className="completed-count">
+            <div
+              className="completed-count"
+              style={{ textShadow: "0px 2px 4px rgba(0, 0, 0, 0.6)" }}
+            >
               {getCompletedLessonsCount()}/{lessons.length}
             </div>
             <div>Lessons Completed</div>
