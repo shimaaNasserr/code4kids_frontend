@@ -1,39 +1,48 @@
+// src/pages/Dashboard/ParentDashboard.jsx
 import React, { useEffect, useState } from "react";
+import { FaUserGraduate } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../apis/config";
 import "./Dashboard.css";
 
 const ParentDashboard = () => {
-  const [kids, setKids] = useState([]);
-  const [selectedKid, setSelectedKid] = useState(null);
+  const [children, setChildren] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [childCode, setChildCode] = useState("");
+  const navigate = useNavigate();
 
-  // ✅ Fetch children from backend
-  useEffect(() => {
-    const fetchChildren = async () => {
-      try {
-        const res = await axiosInstance.get("accounts/my-children/");
-        setKids(res.data);
-      } catch (err) {
-        console.error("Error fetching children:", err.response?.data || err.message);
+  const fetchChildren = async () => {
+    try {
+      const res = await axiosInstance.get("/progress/parent-dashboard/");
+      console.log("Parent Dashboard Response:", res.data); // سطر الطباعة للتأكد
+      if (res.data && Array.isArray(res.data.children)) {
+        setChildren(res.data.children);
+      } else {
+        console.warn("⚠️ Unexpected response format: ", res.data);
+        setChildren([]);
       }
-    };
+    } catch (err) {
+      console.error("fetchChildren error:", err.response?.data || err.message);
+    }
+  };
+
+  useEffect(() => {
     fetchChildren();
   }, []);
 
-  // ✅ Link child by code
   const handleAddChild = async () => {
+    if (!childCode.trim()) {
+      alert("أدخل كود الطفل");
+      return;
+    }
     try {
-      const res = await axiosInstance.post("accounts/link-child/", { child_code: childCode });
+      const res = await axiosInstance.post("/accounts/link-child/", { child_code: childCode });
       setShowAddModal(false);
       setChildCode("");
-      // Re-fetch children after adding
-      const r2 = await axiosInstance.get("accounts/my-children/");
-      console.log("Children:", r2.data); // ✅ تأكدي إن الداتا جاية
-      setKids(r2.data);
-      alert(res.data.message || "Child linked.");
+      await fetchChildren();
+      alert(res.data.message || "Child linked");
     } catch (err) {
-      const msg = err.response?.data?.detail || err.response?.data?.error || err.response?.data || err.message;
+      const msg = err.response?.data?.error || err.response?.data || err.message;
       alert("❌ " + (typeof msg === "string" ? msg : JSON.stringify(msg)));
     }
   };
@@ -41,72 +50,70 @@ const ParentDashboard = () => {
   return (
     <div className="dashboard-container container">
       <div className="header">
-        <h2>Your Children</h2>
-        <button className="btn-add" onClick={() => setShowAddModal(true)}>
-          + Add Child
-        </button>
+        <h2 className="text-gradient">Your Children</h2>
       </div>
 
       <div className="kids-grid">
-        {kids.map((kid) => (
+        {children.map((kid) => (
           <div
-            key={kid.kid}
+            key={kid.id}
             className="kid-card"
-            onClick={() => setSelectedKid(kid)}
+            onClick={() => navigate(`/parent-dashboard/child/${kid.id}`)}
           >
-            <div className="kid-avatar">
-              {kid.kid_avatar ? (
-                <img src={kid.kid_avatar} alt="Kid Avatar" />
+            <div className="kid-avatar-container">
+              {kid.avatar ? (
+                <img src={kid.avatar} alt={kid.name} className="kid-avatar-img" />
               ) : (
-                <i className="fas fa-user-graduate"></i>
+                <div className="kid-avatar-fallback">
+                     <FaUserGraduate className="kid-avatar-icon" />
+                </div>
               )}
             </div>
-            <h4>{kid.kid_name}</h4>
+            <div className="kid-name">{kid.name}</div>
           </div>
         ))}
+
+        {/* Add-child card */}
+        <div className="kid-card add-card" onClick={() => setShowAddModal(true)}>
+          <div className="kid-avatar-container">
+            <div className="kid-avatar-fallback">+</div>
+          </div>
+          <div className="kid-name text-gradient">Add Child</div>
+        </div>
       </div>
 
-      {/* ✅ Kid Dashboard Modal */}
-      {selectedKid && (
-        <div className="modal-overlay" onClick={() => setSelectedKid(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-gradient">{selectedKid.kid_name}'s Dashboard</h3>
-            <div className="stats-cards">
-              <div className="stat-card">
-                <h4>Total Courses</h4>
-                <p>{selectedKid.total_courses}</p>
-              </div>
-              <div className="stat-card">
-                <h4>Completed Lessons</h4>
-                <p>{selectedKid.total_completed_lessons}</p>
-              </div>
-              <div className="stat-card">
-                <h4>Points</h4>
-                <p>{selectedKid.kid_points}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ✅ Add Child Modal */}
+      {/* Add child modal */}
       {showAddModal && (
         <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-gradient">Add Child</h3>
+            
             <input
               type="text"
               placeholder="Enter child code"
               value={childCode}
               onChange={(e) => setChildCode(e.target.value)}
-              className="input"
+              className="input-child-code"
             />
-            <button className="btn-confirm" onClick={handleAddChild}>
-              Link Child
-            </button>
+
+            <div className="modal-buttons">
+              <button
+                className="btn-link"
+                onClick={handleAddChild}
+              >
+                Link
+              </button>
+              <button
+                className="btn-cancel"
+                onClick={() => setShowAddModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
+
     </div>
   );
 };

@@ -58,10 +58,10 @@
   z-index: 1;
   display: flex;
   flex-direction: row-reverse;
-  gap: 3rem;
+  gap: 2rem;
   align-items: flex-start;
   justify-content: center;
-  padding: 3rem 2rem 2rem;
+  padding: 1.5rem 1rem 1rem;
   margin: 0 auto;
   min-height: 100vh;
   box-sizing: border-box;
@@ -74,7 +74,7 @@
   background: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 1.5rem 2rem;
+  padding: 1.25rem 1.25rem;
   position: relative;
   width: 100%;
   max-width: 500px;
@@ -82,7 +82,7 @@
   transition: var(--transition);
   flex-shrink: 0;
   box-sizing: border-box;
-  margin: 2rem 0;
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
   z-index: 2;
@@ -136,28 +136,31 @@
 
 /* Form group styles */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   width: 100%;
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 2rem;
+  grid-template-columns: 100px 1fr;
+  gap: 1rem;
   align-items: center;
   position: relative;
+  justify-items: start;
 }
 
 .form-group label {
-  font-weight: 500;
-  color: #4a5568;
-  font-size: 0.9rem;
-  text-align: right;
+  font-weight: 700;
+  color: #0f172a; /* dark slate for high contrast */
+  font-size: 1rem;
+  text-align: left;
   white-space: nowrap;
-  padding-right: 1rem;
+  padding-right: 0;
+  padding-left: 0.5rem;
   position: relative;
   overflow: visible;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   height: 100%;
+  opacity: 1;
 }
 
 /* Center the button and text below it */
@@ -367,7 +370,7 @@
 @media (max-width: 992px) {
   .register-container {
     flex-direction: column-reverse;
-    padding: 1rem 1rem 3rem;
+    padding: 1rem 1rem 2rem;
     min-height: auto;
   }
   
@@ -393,14 +396,15 @@
   }
   
   .form-group {
-    grid-template-columns: 120px 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: 100px 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
   
   .form-group label {
-    text-align: right;
-    padding-right: 1.25rem;
+    text-align: left;
+    padding-right: 0;
+    padding-left: 0.5rem;
     margin-bottom: 0;
   }
 }
@@ -545,9 +549,32 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--text-color);
-  font-weight: 600;
-  font-size: 0.95rem;
+  color: #0f172a; /* reinforce stronger contrast */
+  font-weight: 700;
+  font-size: 1rem;
+  opacity: 1;
+}
+
+/* Hard-left align labels inside the register form regardless of parent alignment */
+.register-card .form-group { 
+  justify-items: start; 
+  text-align: left; 
+}
+.register-card .form-group label {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-self: start;
+}
+
+/* Force label color inside the register card in case a global parent sets white */
+.register-card .form-group label {
+  color: #0f172a !important;
+}
+
+/* Improve placeholder contrast too */
+.register-card .form-control::placeholder {
+  color: #64748b;
+  opacity: 1;
 }
 
 .form-control {
@@ -634,17 +661,7 @@ select.form-control {
   padding: 1rem 0;
 }
 
-.role-selection::before {
-  content: '👋';
-  position: absolute;
-  top: -15px;
-  left: 10px;
-  font-size: 1.5rem;
-  transform: rotate(-15deg);
-  z-index: 2;
-  background: white;
-  padding: 0 10px;
-}
+.role-selection::before { display: none; }
 
 .role-selection h4 {
   text-align: center;
@@ -708,6 +725,10 @@ select.form-control {
   z-index: 1;
 }
 
+/* Arrange Parent left, Kid right explicitly on wide screens */
+.role-options .role-option:first-child { order: 1; }
+.role-options .role-option:last-child { order: 2; }
+
 .role-option::before {
   content: '';
   position: absolute;
@@ -727,14 +748,14 @@ select.form-control {
 }
 
 .role-option .icon {
-  width: 50px;
-  height: 50px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f0f4ff;
   border-radius: 14px;
-  font-size: 1.75rem;
+  font-size: 1.1rem;
   color: #6C63FF;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px -1px rgba(108, 99, 255, 0.1);
@@ -798,9 +819,9 @@ select.form-control {
   }
   
   .role-option .icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1.5rem;
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
   }
 }
 

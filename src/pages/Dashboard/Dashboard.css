@@ -8,19 +8,17 @@
 
 /* ==================== Stats Cards ==================== */
 .stats-cards {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 50px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 25px; 
+  margin-bottom: 50px; 
+  margin-top: 25px; 
 }
 
-.stat-card {
-  flex: 1 1 28%;
-  min-width: 140px;
-  background: linear-gradient(135deg, #fef08a 0%, #fcd34d 100%);
+.stat-card{
+  background: linear-gradient(135deg, #fef08a 0%, #fcd34d 100%); 
   border-radius: 18px;
-  padding: 20px 15px;
+  padding: 25px 20px;
   color: #1e3a8a;
   text-align: center;
   font-weight: 800;
@@ -34,45 +32,31 @@
   box-shadow: 0 20px 45px rgba(0,0,0,0.35);
 }
 
-/* ==================== Section Titles with Gradient ==================== */
-.gradient-text {
-  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 800;
-  font-size: 1.8rem;
-  margin-bottom: 15px; /* مسافة صغيرة بين العنوان والكروت */
-  text-align: left;
-  animation: gradientText 8s ease infinite;
+/* ==================== Section Titles ==================== */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 20px; 
 }
 
-@keyframes gradientText {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
 
 /* ==================== Courses Grid ==================== */
 .courses-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px; /* مسافة بين الكروت */
-  perspective: 1500px;
-  margin-bottom: 60px; /* مسافة بين الأقسام */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-bottom: 60px;
 }
 
-/* ==================== Course Card ==================== */
 .course-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
   border-radius: 20px;
   background: #fff;
   box-shadow: 0 10px 35px rgba(0,0,0,0.2), 0 15px 50px rgba(0,0,0,0.1);
-  width: 280px;
-  display: flex;
-  flex-direction: column;
   cursor: pointer;
   overflow: hidden;
-  transform-style: preserve-3d;
   transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
 
@@ -185,59 +169,215 @@
 }
 
 /* ==================== Responsive ==================== */
+@media (max-width: 1024px) {
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .courses-grid {
-    justify-content: center;
-  }
-
-  .course-card {
-    width: 45%;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 576px) {
-  .course-card {
-    width: 100%;
+  .courses-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-.header {
+/* Kids Grid */
+.kids-grid {
   display: flex;
-  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+/* Kid Card */
+.kid-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  padding: 20px 15px;
+  width: 170px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.kid-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* Avatar */
+.kid-avatar-container {
+  width: 95px;
+  height: 95px;
+  margin: 0 auto 12px auto;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e0e7ff;
+  display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
+  justify-content: center;
 }
 
-.btn-add {
-  background: #4cafef;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-add:hover {
-  background: #3a9bd9;
-}
-
-.input {
+.kid-avatar-icon {
+  font-size: 2.5rem; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 0.5rem;
-  margin: 1rem 0;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  height: 100%;
+  color: #475569; 
 }
 
-.btn-confirm {
-  background: #28a745;
+.kid-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kid-avatar-fallback {
+  font-size: 2rem;
+  color: #475569;
+}
+
+/* Kid Name */
+.kid-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1e3a8a;
+  margin-top: 6px;
+}
+
+/* Add Child Card */
+.kid-card.add-card {
+  border: 2px dashed #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.kid-card.add-card:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.add-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: #6a11cb;
+}
+
+.add-child-btn {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 12px;
+}
+
+.add-child-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 20px;
+  width: 350px;
+  max-width: 90%;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.2), 0 15px 50px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.input-child-code {
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-link {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
 }
 
-.btn-confirm:hover {
-  background: #218838;
+.btn-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+
+/* زر Cancel */
+.btn-cancel {
+  background: #ddd;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-cancel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
 }

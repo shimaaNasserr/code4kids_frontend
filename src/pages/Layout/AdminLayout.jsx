@@ -1,17 +1,18 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import { Footer } from '../../components/Footer/Footer'
-import AdminNavbar from '../../components/NavBar/AdminNavbar'
+import React from "react";
+import { Outlet } from "react-router-dom";
+import { Footer } from "../../components/Footer/Footer";
+import AdminNavbar from "../../components/NavBar/AdminNavbar";
+import "./Layout.css";
 
 export const AdminLayout = () => {
   return (
     <>
-<AdminNavbar />
-            <div className=" mt-5">
-        <Outlet />
+      <AdminNavbar />
 
-    </div>
-    <Footer />
+      <div className="admin-content">
+        <Outlet />
+        <Footer />
+      </div>
     </>
-  )
-}
+  );
+};

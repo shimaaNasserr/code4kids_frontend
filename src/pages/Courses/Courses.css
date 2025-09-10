@@ -15,7 +15,7 @@
 }
 
 .course-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -184,7 +184,14 @@
 
 /* Gradient text for headings */
 .gradient-text {
-  background: linear-gradient(90deg, #FF6B6B 0%, #FFA3A3 25%, #FFD166 50%, #06D6A0 75%, #118AB2 100%);
+  background: linear-gradient(
+    90deg,
+    #ff6b6b 0%,
+    #ffa3a3 25%,
+    #ffd166 50%,
+    #06d6a0 75%,
+    #118ab2 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -193,14 +200,14 @@
   display: block;
   width: 100%;
   font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 0;
   line-height: 1.2;
 }
 
 /* Subtitle gradient */
 .lead.text-muted {
-  background: linear-gradient(90deg, #6A11CB 0%, #2575FC 100%);
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -213,9 +220,15 @@
 }
 
 @keyframes gradientText {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Buttons */
@@ -248,39 +261,49 @@
   box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
 }
 
-.start-btn::before, .continue-btn::before {
-  content: '';
+.start-btn::before,
+.continue-btn::before {
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.3)
+  );
   transform: translateX(-100%) skewX(-15deg);
   transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
   z-index: -1;
 }
 
-.start-btn:hover, .continue-btn:hover {
+.start-btn:hover,
+.continue-btn:hover {
   transform: translateY(-3px) scale(1.02) !important;
   box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3) !important;
 }
 
-.start-btn:hover::before, .continue-btn:hover::before {
+.start-btn:hover::before,
+.continue-btn:hover::before {
   transform: translateX(100%) skewX(-15deg);
 }
 
-.start-btn:active, .continue-btn:active {
+.start-btn:active,
+.continue-btn:active {
   transform: translateY(1px) scale(0.98) !important;
   box-shadow: 0 2px 10px rgba(79, 70, 229, 0.2) !important;
 }
 
 /* RTL adjustments for buttons */
-.rtl .start-btn, .rtl .continue-btn {
+.rtl .start-btn,
+.rtl .continue-btn {
   flex-direction: row-reverse;
 }
 
-.rtl .start-btn .fa-play, .rtl .continue-btn .fa-play {
+.rtl .start-btn .fa-play,
+.rtl .continue-btn .fa-play {
   margin-right: 0;
   margin-left: 0.5rem;
 }
@@ -306,7 +329,9 @@
 
 /* Loading Spinner */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spinner-grow {
@@ -318,16 +343,17 @@
   .course-card {
     margin-bottom: 20px;
   }
-  
+
   .course-image-container {
     height: 160px;
   }
-  
+
   .course-card .card-title {
     font-size: 1.1rem;
   }
-  
-  .start-btn, .continue-btn {
+
+  .start-btn,
+  .continue-btn {
     padding: 10px 15px !important;
     font-size: 0.9rem !important;
   }
@@ -346,9 +372,15 @@
 }
 
 @keyframes cardHoverPulse {
-  0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-  50% { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); }
-  100% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+  0% {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  100% {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .course-card {
@@ -364,12 +396,24 @@
 }
 
 /* Staggered animation for cards */
-.course-card:nth-child(1) { animation-delay: 0.1s; }
-.course-card:nth-child(2) { animation-delay: 0.2s; }
-.course-card:nth-child(3) { animation-delay: 0.3s; }
-.course-card:nth-child(4) { animation-delay: 0.4s; }
-.course-card:nth-child(5) { animation-delay: 0.5s; }
-.course-card:nth-child(6) { animation-delay: 0.6s; }
+.course-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.course-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.course-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.course-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.course-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.course-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
@@ -384,11 +428,11 @@
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   .course-card .card-title {
     font-size: 1.15rem;
   }
-  
+
   .course-card .card-text {
     font-size: 0.88rem;
     -webkit-line-clamp: 3;
@@ -400,16 +444,17 @@
   .course-card {
     border-radius: 15px !important;
   }
-  
+
   .course-image-container {
     height: 140px;
   }
-  
+
   .course-card .card-body {
     padding: 15px;
   }
-  
-  .start-btn, .continue-btn {
+
+  .start-btn,
+  .continue-btn {
     padding: 10px 15px !important;
     font-size: 0.8rem !important;
   }
@@ -423,12 +468,23 @@
     border: 1px solid #eee !important;
     margin-bottom: 1.5rem;
   }
-  
+
   .course-card:hover {
     transform: none !important;
   }
-  
-  .start-btn, .continue-btn {
+
+  .start-btn,
+  .continue-btn {
     display: none !important;
   }
+}
+
+.pagination .page-item .page-link {
+  color: #007bff; /* default text */
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #42806f; /* green background */
+  border-color: #42806f;
+  color: white;
 }

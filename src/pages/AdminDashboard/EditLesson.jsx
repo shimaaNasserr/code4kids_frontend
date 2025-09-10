@@ -21,7 +21,6 @@ const EditLesson = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  
 
   useEffect(() => {
     fetchLesson();
@@ -75,7 +74,6 @@ const EditLesson = () => {
       setTimeout(() => {
         navigate("/admin/dashboard");
       }, 2000);
-  
     } catch (error) {
       console.error("Error updating lesson:", error);
       setErrorMessage("❌ Failed to update lesson. Please try again.");
@@ -101,16 +99,22 @@ const EditLesson = () => {
         <div className="card-body">
           <h1 className="card-title mb-4">Edit Lesson</h1>
           {successMessage && (
-  <div className="alert alert-success text-center fw-bold mb-4" role="alert">
-    {successMessage}
-  </div>
-)}
+            <div
+              className="alert alert-success text-center fw-bold mb-4"
+              role="alert"
+            >
+              {successMessage}
+            </div>
+          )}
 
-{errorMessage && (
-  <div className="alert alert-danger text-center fw-bold mb-4" role="alert">
-    {errorMessage}
-  </div>
-)}
+          {errorMessage && (
+            <div
+              className="alert alert-danger text-center fw-bold mb-4"
+              role="alert"
+            >
+              {errorMessage}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             {/* Title */}
@@ -228,7 +232,7 @@ const EditLesson = () => {
               >
                 Save Changes
               </button>
-              <Link to="/admin/dashboard" className="text-decoration-none">
+              <Link to="/admin/courses" className="text-decoration-none">
                 <button
                   type="button"
                   className="btn btn-danger shadow-none px-4"

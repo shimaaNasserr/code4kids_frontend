@@ -1,14 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { 
-  FaHome, FaUserAstronaut, FaSignInAlt, FaSignOutAlt, FaLaptopCode, FaUsersCog, FaUserGraduate 
+import {
+  FaHome,
+  FaUserAstronaut,
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaLaptopCode,
+  FaUsersCog,
+  FaUserGraduate,
 } from "react-icons/fa";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { IoMdClose } from "react-icons/io";
 import "./AdminNavbar.css";
 
-const AdminNavbar = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+const AdminSidebar = () => {
+  const [collapsed, setCollapsed] = useState(false);
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
@@ -17,91 +21,69 @@ const AdminNavbar = () => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("refresh");
     localStorage.removeItem("role");
-
     navigate("/admin/login");
   };
 
   const navItems = [
-    { to: "/admin", text: "Home", icon: <FaHome className="admin-nav-icon" /> },
-    { to: "/admin/dashboard", text: "Dashboard", icon: <FaUserGraduate className="admin-nav-icon" /> },
-    { to: "/admin/statistics", text: "Statistics", icon: <FaUsersCog className="admin-nav-icon" /> },
-    ...(userId ? [{ to: "/admin/profile", text: "Profile", icon: <FaUserAstronaut className="admin-nav-icon" /> }] : [])
+    { to: "/admin", text: "Dashboard", icon: <FaHome /> },
+    { to: "/admin/users", text: "Users", icon: <FaUserGraduate /> },
+    { to: "/admin/courses", text: "Courses", icon: <FaUsersCog /> },
+    { to: "/admin/categories", text: "Categories", icon: <FaUsersCog /> },
+    ...(userId
+      ? [{ to: "/admin/profile", text: "Profile", icon: <FaUserAstronaut /> }]
+      : []),
   ];
 
-  const authItems = userId 
-    ? [{ text: "Logout", onClick: handleLogout, icon: <FaSignOutAlt className="admin-nav-icon" /> }]
-    : [
-        { to: "/admin/login", text: "Login" , icon: <FaSignInAlt className="admin-nav-icon admin-loginBtn" /> },
-      ];
+  const authItems = userId
+    ? [{ text: "Logout", onClick: handleLogout, icon: <FaSignOutAlt /> }]
+    : [{ to: "/admin/login", text: "Login", icon: <FaSignInAlt /> }];
 
   return (
-    <nav className="admin-navbar mb-5">
-      <div className="admin-navbar-container">
-        <div className="admin-navbar-brand">
-          <FaLaptopCode className="admin-logo-icon" />
-          <NavLink to="/admin" className="admin-navbar-logo">
-            Code4Kids
-          </NavLink>
-        </div>
-
-        {/* Mobile menu button */}
-        <button 
-          className={`admin-menu-button ${menuOpen ? 'open' : ''}`} 
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
+    <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
+      {/* Header */}
+      <div className="sidebar-header">
+        <FaLaptopCode className="sidebar-logo" />
+        {!collapsed && <h2 className="sidebar-title">Code4Kids</h2>}
+        <button
+          className="collapse-btn"
+          onClick={() => setCollapsed(!collapsed)}
         >
-          {menuOpen ? <IoMdClose /> : <GiHamburgerMenu />}
+          {collapsed ? "»" : "«"}
         </button>
-
-        {/* Navigation Links */}
-        <div className={`admin-nav-links ${menuOpen ? 'show' : ''}`}>
-          <ul className="admin-nav-menu">
-            {navItems.map((item, index) => (
-              <li key={index} className="admin-nav-item">
-                <NavLink 
-                  to={item.to} 
-                  className="admin-nav-link"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-
-          {/* Authentication Buttons */}
-          <div className="admin-auth-buttons">
-            {authItems.map((item, index) => (
-              item.to ? (
-                <NavLink
-                  key={index}
-                  to={item.to}
-                  className={`admin-auth-button ${item.text.toLowerCase()}`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </NavLink>
-              ) : (
-                <button
-                  key={index}
-                  className="admin-auth-button admin-logout"
-                  onClick={() => {
-                    item.onClick();
-                    setMenuOpen(false);
-                  }}
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </button>
-              )
-            ))}
-          </div>
-        </div>
       </div>
-    </nav>
+
+      {/* Navigation */}
+      <nav className="sidebar-menu">
+        <ul>
+          {navItems.map((item, index) => (
+            <li key={index}>
+              <NavLink to={item.to} className="sidebar-link">
+                {item.icon}
+                {!collapsed && <span>{item.text}</span>}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* Footer (Auth buttons) */}
+      <div className="sidebar-footer">
+        {authItems.map((item, index) =>
+          item.to ? (
+            <NavLink key={index} to={item.to} className="sidebar-link">
+              {item.icon}
+              {!collapsed && <span>{item.text}</span>}
+            </NavLink>
+          ) : (
+            <button key={index} onClick={item.onClick} className="sidebar-link">
+              {item.icon}
+              {!collapsed && <span>{item.text}</span>}
+            </button>
+          )
+        )}
+      </div>
+    </aside>
   );
 };
 
-export default AdminNavbar;
+export default AdminSidebar;

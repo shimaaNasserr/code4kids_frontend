@@ -219,23 +219,35 @@ const Register = () => {
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="role">I am a</label>
-              <select
-                id="role"
-                name="role"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.role}
-                className={`form-control ${formik.touched.role && formik.errors.role ? 'is-invalid' : ''}`}
-              >
-                <option value="">Select a role</option>
-                {roles.map((role) => (
-                  <option key={role.value} value={role.value}>
-                    {role.label}
-                  </option>
-                ))}
-              </select>
+            {/* Role selection cards (Parent left, Kid right) */}
+            <div className="role-selection">
+              <h4>I am a</h4>
+              <div className="role-options" style={{ justifyContent: 'space-between' }}>
+                <div
+                  className={`role-option ${formik.values.role === 'Parent' ? 'active' : ''}`}
+                  onClick={() => formik.setFieldValue('role', 'Parent')}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') formik.setFieldValue('role', 'Parent'); }}
+                  aria-pressed={formik.values.role === 'Parent'}
+                >
+                  <div className="icon">👨‍👩‍👧‍👦</div>
+                  <div>Parent</div>
+                  <div className="checkmark">✓</div>
+                </div>
+                <div
+                  className={`role-option ${formik.values.role === 'Kid' ? 'active' : ''}`}
+                  onClick={() => formik.setFieldValue('role', 'Kid')}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') formik.setFieldValue('role', 'Kid'); }}
+                  aria-pressed={formik.values.role === 'Kid'}
+                >
+                  <div className="icon">🧒</div>
+                  <div>Kid</div>
+                  <div className="checkmark">✓</div>
+                </div>
+              </div>
               {formik.touched.role && formik.errors.role && (
                 <div className="error-message">{formik.errors.role}</div>
               )}

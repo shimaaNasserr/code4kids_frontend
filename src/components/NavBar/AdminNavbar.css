@@ -1,245 +1,117 @@
-/* Navbar Container */
-.admin-navbar {
-  background: linear-gradient(135deg, #003c57 0%, #005f73 100%);
-  padding: 0.8rem 2rem;
+.admin-sidebar {
   position: fixed;
-  width: 100%;
   top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
-}
-
-.admin-navbar-container {
-  max-width: 1400px;
-  margin: 0 auto;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background: linear-gradient(180deg, #003c57, #005f73);
+  color: #fff;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-family: Arial, sans-serif;
 }
 
-/* Logo/Brand */
-.admin-navbar-brand {
+.admin-sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar-header {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  text-decoration: none;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 10px;
 }
 
-.admin-logo-icon {
-  font-size: 2.2rem;
+.sidebar-logo {
+  font-size: 24px;
   color: #0a9396;
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  flex: 1;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
   transition: transform 0.3s ease;
 }
 
-.admin-navbar-logo {
-  color: white;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.admin-navbar-brand:hover .admin-logo-icon {
-  transform: rotate(10deg) scale(1.1);
-}
-
-.admin-navbar-brand:hover .admin-navbar-logo {
-  transform: translateY(-2px);
-}
-
-/* Menu Button */
-.admin-menu-button {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: all 0.3s ease;
-  z-index: 1001;
-}
-
-.admin-menu-button:hover {
+.collapse-btn:hover {
+  transform: scale(1.2);
   color: #0a9396;
-  transform: scale(1.1);
 }
 
-/* Navigation Links */
-.admin-nav-links {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
+/* Menu */
+.sidebar-menu {
+  flex: 1;
+  padding: 20px 0;
 }
 
-.admin-nav-menu {
-  display: flex;
-  gap: 1.5rem;
+.sidebar-menu ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.admin-nav-item {
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.admin-nav-item:hover {
-  transform: translateY(-3px);
-}
-
-.admin-nav-link {
-  color: white;
-  text-decoration: none;
-  font-size: 1.1rem;
-  font-weight: 600;
+.sidebar-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.1);
+  gap: 12px;
+  padding: 12px 20px;
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+  font-size: 15px;
+  border-radius: 8px;
+  margin: 5px 10px;
 }
 
-.admin-nav-link:hover,
-.admin-nav-link.active {
-  background: rgba(255, 255, 255, 0.2);
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: rgba(255, 255, 255, 0.15);
   color: #64ca85;
-  transform: scale(1.05);
 }
 
-.admin-nav-icon {
-  font-size: 1.2rem;
-  transition: transform 0.3s ease;
+.sidebar-footer {
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.admin-nav-link:hover .admin-nav-icon {
-  transform: scale(1.2) rotate(10deg);
+/* Collapsed Mode */
+.admin-sidebar.collapsed .sidebar-title,
+.admin-sidebar.collapsed .sidebar-link span {
+  display: none;
 }
-
-/* Auth Buttons */
-.admin-auth-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-left: 1rem;
-}
-
-.admin-auth-button {
+.sidebar-footer button.sidebar-link {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  text-align: left;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 1rem;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #e5e7eb;
+  font-size: 15px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  border: 2px solid transparent;
 }
 
-.admin-auth-button.login {
-  background: #337357;
-  color: white;
+.sidebar-footer button.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #64ca85;
 }
 
-.admin-auth-button.register {
-  background: #0A1D56;
-  color: white;
-}
-
-.admin-auth-button.logout {
-  background: #C93A4C;
-  color: white;
-  border: none;
-}
-
-.admin-auth-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive Styles */
-@media (max-width: 992px) {
-  .admin-menu-button {
-    display: block;
-  }
-
-  .admin-nav-links {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    height: 100vh;
-    width: 80%;
-    max-width: 350px;
-    background: linear-gradient(135deg, #003c57 0%, #005f73 100%);
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 6rem 2rem 2rem;
-    transition: right 0.4s ease-in-out;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-  }
-
-  .admin-nav-links.show {
-    right: 0;
-  }
-
-  .admin-nav-menu {
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 2rem;
-  }
-
-  .admin-auth-buttons {
-    flex-direction: column;
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .admin-auth-button {
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .admin-navbar-brand {
-    z-index: 1002;
-  }
-}
-
-/* Animation for nav items */
-@keyframes admin-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.admin-nav-item:hover {
-  animation: admin-bounce 0.5s ease;
-}
-
-/* Special effect for active link */
-.admin-nav-link.active {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .admin-navbar {
-    padding: 0.8rem 1rem;
-  }
-
-  .admin-navbar-logo {
-    font-size: 1.7rem;
-  }
-
-  .admin-logo-icon {
-    font-size: 1.8rem;
-  }
-}

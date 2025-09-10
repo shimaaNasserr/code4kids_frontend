@@ -20,7 +20,6 @@ const AddLesson = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-
   useEffect(() => {
     fetchCourses();
   }, []);
@@ -59,12 +58,13 @@ const AddLesson = () => {
       setSuccessMessage("✅ Lesson created successfully!");
       setTimeout(() => {
         navigate("/admin/dashboard");
-      }, 2000);      navigate("/admin/dashboard");
+      }, 2000);
+      navigate("/admin/dashboard");
     } catch (error) {
       console.error("Error creating lesson:", error);
       setErrorMessage(
         "❌ Failed to create lesson: " +
-        (error.response?.data?.detail || error.message)
+          (error.response?.data?.detail || error.message)
       );
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ const AddLesson = () => {
 
   if (error) {
     return (
-      <div className="container mb-5" style={{ marginTop: "8rem" }}>
+      <div className="container mb-5" style={{ marginTop: "2rem" }}>
         <div className="alert alert-danger" role="alert">
           <h4 className="alert-heading">Error</h4>
           <p>{error}</p>
@@ -87,21 +87,27 @@ const AddLesson = () => {
   }
 
   return (
-    <div className="container mb-5" style={{ marginTop: "8rem" }}>
+    <div className="container mb-5" style={{ marginTop: "2rem" }}>
       <div className="card shadow-lg">
         <div className="card-body">
           <h1 className="card-title mb-4">Add New Lesson</h1>
           {successMessage && (
-  <div className="alert alert-success text-center fw-bold mb-4" role="alert">
-    {successMessage}
-  </div>
-)}
+            <div
+              className="alert alert-success text-center fw-bold mb-4"
+              role="alert"
+            >
+              {successMessage}
+            </div>
+          )}
 
-{errorMessage && (
-  <div className="alert alert-danger text-center fw-bold mb-4" role="alert">
-    {errorMessage}
-  </div>
-)}
+          {errorMessage && (
+            <div
+              className="alert alert-danger text-center fw-bold mb-4"
+              role="alert"
+            >
+              {errorMessage}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             {/* Title */}
@@ -244,7 +250,7 @@ const AddLesson = () => {
                   "Create Lesson"
                 )}
               </button>
-              <Link to="/admin/dashboard" className="text-decoration-none">
+              <Link to="/admin/courses" className="text-decoration-none">
                 <button
                   type="button"
                   className="btn btn-danger shadow-none px-4"
