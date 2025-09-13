@@ -40,10 +40,10 @@ const ParentDashboard = () => {
       setShowAddModal(false);
       setChildCode("");
       await fetchChildren();
-      alert(res.data.message || "Child linked");
+      // alert(res.data.message || "Child linked");
     } catch (err) {
       const msg = err.response?.data?.error || err.response?.data || err.message;
-      alert("❌ " + (typeof msg === "string" ? msg : JSON.stringify(msg)));
+      // alert("❌ " + (typeof msg === "string" ? msg : JSON.stringify(msg)));
     }
   };
 
