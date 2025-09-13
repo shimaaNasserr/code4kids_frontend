@@ -2,20 +2,22 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../apis/config";
 import {
   PieChart, Pie, Cell, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  LineChart, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from "recharts";
-import { FaUsers, FaChild, FaUserTie, FaBook, FaChalkboardTeacher } from "react-icons/fa";
+import { FaUsers, FaChild, FaUserTie, FaBook, FaChalkboardTeacher, FaUserGraduate, FaChartLine } from "react-icons/fa";
 import "./AdminStatistics.css";
 
 export default function AdminStatistics() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
     axiosInstance.get("admin/statistics/")
       .then(res => {
         setStats(res.data);
+        setFilteredUsers(res.data.top_kids.concat(res.data.top_parents || []));
         setLoading(false);
       })
       .catch(err => {
@@ -24,26 +26,50 @@ export default function AdminStatistics() {
       });
   }, []);
 
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    if (!stats) return;
+
+    const allUsers = stats.top_kids.concat(stats.top_parents || []);
+    const results = allUsers.filter(u =>
+      u.username?.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredUsers(results);
+  };
+
   if (loading) return <div className="admin-stats-container">⏳ Loading statistics...</div>;
   if (!stats) return <div className="admin-stats-container">⚠️ Failed to load data</div>;
 
-  // Data
   const userData = [
     { name: "Parents", value: stats.total_parents },
     { name: "Kids", value: stats.total_kids },
+    { name: "Active Kids (5 days)", value: stats.active_kids_last_5_days },
   ];
-  const COLORS = ["#ef476f", "#06d6a0"];
+  const COLORS = ["#ef476f", "#ffd166", "#06d6a0"];
 
-  const courseLessonData = [
-    { name: "Courses", value: stats.total_courses },
-    { name: "Lessons", value: stats.total_lessons },
+  // Example: Courses vs Months (dummy data if backend not yet provides it)
+  const coursesVsMonthsData = stats.courses_vs_months || [
+    { name: "Jan", "Course A": 5, "Course B": 3, "Course C": 7 },
+    { name: "Feb", "Course A": 8, "Course B": 2, "Course C": 6 },
+    { name: "Mar", "Course A": 10, "Course B": 5, "Course C": 8 },
   ];
 
   return (
     <div className="admin-stats-container">
-      <h2 className="page-title">📊 Platform Statistics</h2>
+      <h2 className="page-title">📊 Admin Dashboard</h2>
 
-      {/* Cards */}
+      {/* Search */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search user by username..."
+          value={searchInput}
+          onChange={handleSearch}
+        />
+      </div>
+
+      {/* Stats Cards */}
       <div className="stats-cards">
         <div className="stat-card card-users">
           <FaUsers className="icon" />
@@ -60,6 +86,11 @@ export default function AdminStatistics() {
           <h5>Kids</h5>
           <h3>{stats.total_kids}</h3>
         </div>
+        <div className="stat-card card-active-kids">
+          <FaChild className="icon" />
+          <h5>Active Kids (5 days)</h5>
+          <h3>{stats.active_kids_last_5_days}</h3>
+        </div>
         <div className="stat-card card-courses">
           <FaBook className="icon" />
           <h5>Courses</h5>
@@ -74,9 +105,9 @@ export default function AdminStatistics() {
 
       {/* Charts */}
       <div className="charts">
-        {/* Pie Chart */}
-        <div className="chart-card">
-          <h4>👨‍👩‍👧 User Distribution</h4>
+        {/* Users Pie Chart */}
+        <div className="chart-card full-width">
+          <h4>👨‍👩‍👧 Users Distribution</h4>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={userData} cx="50%" cy="50%" outerRadius={100} label dataKey="value">
@@ -90,38 +121,45 @@ export default function AdminStatistics() {
           </ResponsiveContainer>
         </div>
 
-        {/* Bar Chart */}
-        <div className="chart-card">
-          <h4>📚 Courses vs Lessons</h4>
+        {/* Top Courses & Top Active Users */}
+        <div className="chart-row">
+          <div className="chart-card half-width">
+            <h4><FaChartLine /> Top Courses</h4>
+            <ul className="list">
+              {stats.top_courses.map((c, i) => (
+                <li key={i}>{c.title} - {c.completions_count} completions</li>
+              ))}
+            </ul>
+          </div>
+          <div className="chart-card half-width">
+            <h4><FaUserGraduate /> Top Active Users</h4>
+            <ul className="list">
+              {(searchInput ? filteredUsers : stats.top_kids).map((u, i) => (
+                <li key={i}>{u.username} - {u.completed_lessons_count || 0} lessons</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Courses vs Months Bar Chart */}
+        <div className="chart-card full-width">
+          <h4>📊 Courses vs Months</h4>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={courseLessonData}>
+            <BarChart data={coursesVsMonthsData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Bar dataKey="value" fill="#1b6ca8" />
+              <Legend />
+              {/* Dynamically add a Bar for each course */}
+              {Object.keys(coursesVsMonthsData[0] || {})
+                .filter(k => k !== "name")
+                .map((course, i) => (
+                  <Bar key={i} dataKey={course} fill={["#06d6a0","#ef476f","#ffd166"][i % 3]} />
+                ))
+              }
             </BarChart>
           </ResponsiveContainer>
-        </div>
-
-        {/* Top Courses */}
-        <div className="chart-card">
-          <h4>🔥 Top Courses</h4>
-          <ul className="list">
-            {stats.top_courses.map((c, i) => (
-              <li key={i}>{c.title} - {c.enrollments} enrollments</li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Top Kids */}
-        <div className="chart-card">
-          <h4>⭐ Top Active Kids</h4>
-          <ul className="list">
-            {stats.top_kids.map((k, i) => (
-              <li key={i}>{k.username} - {k.completed_lessons} lessons</li>
-            ))}
-          </ul>
         </div>
       </div>
     </div>

@@ -26,7 +26,6 @@ const AdminSidebar = () => {
 
   const navItems = [
     { to: "/admin", text: "Dashboard", icon: <FaHome /> },
-    { to: "/admin/users", text: "Users", icon: <FaUserGraduate /> },
     { to: "/admin/courses", text: "Courses", icon: <FaUsersCog /> },
     { to: "/admin/categories", text: "Categories", icon: <FaUsersCog /> },
     ...(userId
