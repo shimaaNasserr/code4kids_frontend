@@ -280,13 +280,13 @@ const Courses = () => {
                     <p className="card-text">{details.description}</p>
                   </OverlayTrigger>
 
-                  <div className="progress-container mt-3">
+                  {/* <div className="progress-container mt-3">
                     <small className="d-flex justify-content-between mb-1">
                       <span>{progress.completedText}</span>
                       <span className="text-primary">{progress.text}</span>
                     </small>
                     <ProgressBar now={progress.percent} variant="success" />
-                  </div>
+                  </div> */}
 
                   <motion.div
                     className="start-button-container"
@@ -294,7 +294,7 @@ const Courses = () => {
                     whileTap={{ scale: 0.98 }}
                   >
                     <Button
-                      className="w-100 py-2 mt-3 start-now-button"
+                      className="w-100 py-2 mt-3 start-now-button m-auto"
                       onClick={() => navigate(`/courses/${course.id}/lessons`)}
                     >
                       <div className="d-flex align-items-center justify-content-center">
