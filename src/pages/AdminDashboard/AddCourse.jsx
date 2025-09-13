@@ -328,7 +328,7 @@ const AddCourse = () => {
                   "Create Course"
                 )}
               </button>
-              <Link to="/admin/courses" className="text-decoration-none">
+              <Link to="/admin/categories" className="text-decoration-none">
                 <button
                   type="button"
                   className="btn btn-danger shadow-none px-4"

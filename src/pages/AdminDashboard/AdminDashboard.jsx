@@ -10,7 +10,6 @@ const AdminDashboard = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteType, setDeleteType] = useState(null);
-  const [deleteSuccess, setDeleteSuccess] = useState(null);
 
   const {
     showModal,
@@ -116,16 +115,7 @@ const AdminDashboard = () => {
         itemName={itemToDelete?.title}
         loading={deleteLoading}
       />
-      <div className="container d-flex justify-content-center gap-3 mb-4 mt-4">
-        <Link className="text-decoration-none" to={"/admin/courses/add-new"}>
-          <button className="btn-primary" style={{ borderRadius: "50px" }}>
-            Add new course
-          </button>
-        </Link>
-        <Link className="text-decoration-none" to={"/admin/lessons/add-new"}>
-          <button className="btn btn-info text-white">Add new lesson</button>
-        </Link>
-      </div>
+      <div className="container d-flex justify-content-center gap-3 mb-4 mt-4"></div>
       {/* Courses Table */}
       <h2 className="text-xl font-semibold mb-2 text-center">Courses</h2>
       <div

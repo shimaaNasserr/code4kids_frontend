@@ -117,7 +117,8 @@ function CourseDetails() {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundColor: "rgba(71, 54, 83, 0.5)",
+            backgroundColor: "rgba(71, 54, 83, 0.7)", // darker overlay
+            zIndex: 1, // ensure it's below the text
           }}
         ></div>
 

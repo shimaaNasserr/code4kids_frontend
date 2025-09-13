@@ -26,7 +26,7 @@ const AdminSidebar = () => {
 
   const navItems = [
     { to: "/admin", text: "Dashboard", icon: <FaHome /> },
-    { to: "/admin/courses", text: "Courses", icon: <FaUsersCog /> },
+    // { to: "/admin/courses", text: "Courses", icon: <FaUsersCog /> },
     { to: "/admin/categories", text: "Categories", icon: <FaUsersCog /> },
     ...(userId
       ? [{ to: "/admin/profile", text: "Profile", icon: <FaUserAstronaut /> }]
@@ -64,6 +64,47 @@ const AdminSidebar = () => {
           ))}
         </ul>
       </nav>
+
+      {!collapsed && (
+        <div className="p-3">
+          <div className="dropdown w-100">
+            <button
+              className="btn btn-outline-primary w-100 dropdown-toggle"
+              type="button"
+              id="actionsDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style={{ color: "#64CA80", backgroundColor: "#265D73" }}
+            >
+              + New
+            </button>
+            <ul
+              className="dropdown-menu"
+              aria-labelledby="actionsDropdown"
+              style={{ width: "100%" }}
+            >
+              <li>
+                <NavLink
+                  to="/admin/categories/add-new"
+                  className="dropdown-item"
+                >
+                  Add Category
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/admin/courses/add-new" className="dropdown-item">
+                  Add Course
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/admin/lessons/add-new" className="dropdown-item">
+                  Add Lesson
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Footer (Auth buttons) */}
       <div className="sidebar-footer">

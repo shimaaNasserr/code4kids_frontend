@@ -14,24 +14,27 @@ import KidDashboard from "../pages/Dashboard/KidDashboard";
 import ChildDashboardForParent from "../pages/Dashboard/ChildDashboardForParent";
 import Games from "../pages/Games/Games";
 import AdminLogin from "../pages/AdminLogin/AdminLogin";
-import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
+// import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import { AdminLayout } from "../pages/Layout/AdminLayout";
 import AdminHome from "../pages/Home/AdminHome";
-import AdminStatistics from "../pages/AdminStatistics/AdminStatistics"; 
+import AdminStatistics from "../pages/AdminStatistics/AdminStatistics";
 import EditCourse from "../pages/AdminDashboard/EditCourse";
 import EditLesson from "../pages/AdminDashboard/EditLesson";
 import AddCourse from "../pages/AdminDashboard/AddCourse";
 import AddLesson from "../pages/AdminDashboard/AddLesson";
-import HelpCenter from '../pages/HelpCenter/HelpCenter';
-import FAQ from '../pages/FAQ/FAQ';
-import ContactUs from '../pages/ContactUs/ContactUs';
-import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
-import TermsOfService from '../pages/TermsOfService/TermsOfService';
-import CookiePolicy from '../pages/CookiePolicy/CookiePolicy';
-import AboutUs from '../pages/AboutUs/AboutUs';
-import OurTeam from '../pages/OurTeam/OurTeam';
+import HelpCenter from "../pages/HelpCenter/HelpCenter";
+import FAQ from "../pages/FAQ/FAQ";
+import ContactUs from "../pages/ContactUs/ContactUs";
+import PrivacyPolicy from "../pages/PrivacyPolicy/PrivacyPolicy";
+import TermsOfService from "../pages/TermsOfService/TermsOfService";
+import CookiePolicy from "../pages/CookiePolicy/CookiePolicy";
+import AboutUs from "../pages/AboutUs/AboutUs";
+import OurTeam from "../pages/OurTeam/OurTeam";
 import { AdminCategories } from "../pages/AdminCategories/AdminCategories";
 import { AdminProfile } from "../pages/AdminProfile/AdminProfile";
+import CategoryPage from "../pages/AdminCategories/CategoryPage";
+import LessonsPage from "../pages/AdminCategories/LessonsPage";
+import AddCategory from "../pages/AdminCategories/AddCategory";
 
 // const role = localStorage.getItem("role");
 
@@ -111,15 +114,16 @@ const route = createBrowserRouter([
         element: <AdminStatistics />,
       },
       { path: "users", element: <AdminStatistics /> },
-      { path: "courses", element: <AdminDashboard /> },
+      // { path: "courses", element: <AdminDashboard /> },
       { path: "courses/:id/edit", element: <EditCourse /> },
       { path: "lessons/:id/edit", element: <EditLesson /> },
       { path: "courses/add-new", element: <AddCourse /> },
       { path: "lessons/add-new", element: <AddLesson /> },
+      { path: "categories/add-new", element: <AddCategory /> },
       { path: "categories", element: <AdminCategories /> },
       { path: "profile", element: <Profile /> },
-
-
+      { path: "categories/:id/courses", element: <CategoryPage /> },
+      { path: "courses/:id/lessons", element: <LessonsPage /> },
     ],
   },
 

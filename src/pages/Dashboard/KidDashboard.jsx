@@ -26,13 +26,30 @@ const KidDashboard = () => {
   }, []);
 
   if (loading)
-    return <div className="dashboard-loading">⏳ Loading...</div>;
-  if (error)
-    return <div className="dashboard-error">{error}</div>;
+    return (
+      <div
+        className="dashboard-loading"
+        style={{ marginTop: "8rem", textAlign: "center" }}
+      >
+        <div
+          className="d-flex justify-content-center align-items-center "
+          style={{ height: "50vh", width: "95vw", overflowY: "hidden" }}
+        >
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  if (error) return <div className="dashboard-error">{error}</div>;
 
   const total = progressData.length;
-  const completedList = progressData.filter((c) => Number(c.progress_percentage) === 100);
-  const inProgressList = progressData.filter((c) => Number(c.progress_percentage) < 100);
+  const completedList = progressData.filter(
+    (c) => Number(c.progress_percentage) === 100
+  );
+  const inProgressList = progressData.filter(
+    (c) => Number(c.progress_percentage) < 100
+  );
 
   const renderCourseCard = (item, index) => {
     const c = item.course || {};
@@ -73,10 +90,7 @@ const KidDashboard = () => {
               <span className="progress-label">{percent}% Completed</span>
             </small>
             <div className="progress">
-              <div
-                className="progress-bar"
-                style={{ width: `${percent}%` }}
-              >
+              <div className="progress-bar" style={{ width: `${percent}%` }}>
                 {percent > 0 ? `${percent}%` : ""}
               </div>
             </div>
@@ -90,7 +104,11 @@ const KidDashboard = () => {
               c.id && navigate(`/courses/${c.id}/lessons`);
             }}
           >
-            {percent > 0 && percent < 100 ? "▶️ Continue" : percent === 100 ? "🏆 Review" : "🚀 Start"}
+            {percent > 0 && percent < 100
+              ? "▶️ Continue"
+              : percent === 100
+              ? "🏆 Review"
+              : "🚀 Start"}
           </button>
         </div>
       </motion.div>
@@ -101,18 +119,31 @@ const KidDashboard = () => {
     <div className="dashboard-container">
       {/* Stats Cards */}
       <div className="stats-cards">
-        <div className="stat-card stat-total">📚<p>Total</p><h4>{total}</h4></div>
-        <div className="stat-card stat-completed">🏆<p>Completed</p><h4>{completedList.length}</h4></div>
-        <div className="stat-card stat-progress">🚀<p>In Progress</p><h4>{inProgressList.length}</h4></div>
+        <div className="stat-card stat-total">
+          📚<p>Total</p>
+          <h4>{total}</h4>
+        </div>
+        <div className="stat-card stat-completed">
+          🏆<p>Completed</p>
+          <h4>{completedList.length}</h4>
+        </div>
+        <div className="stat-card stat-progress">
+          🚀<p>In Progress</p>
+          <h4>{inProgressList.length}</h4>
+        </div>
       </div>
 
       {/* In Progress */}
       <div className="section-block">
         <h3 className="section-title gradient-text">🚀 In Progress</h3>
         {inProgressList.length === 0 ? (
-          <div className="empty-strip">No courses in progress… start a course now!</div>
+          <div className="empty-strip">
+            No courses in progress… start a course now!
+          </div>
         ) : (
-          <div className="courses-grid">{inProgressList.map(renderCourseCard)}</div>
+          <div className="courses-grid">
+            {inProgressList.map(renderCourseCard)}
+          </div>
         )}
       </div>
 
@@ -122,7 +153,9 @@ const KidDashboard = () => {
         {completedList.length === 0 ? (
           <div className="empty-strip">No completed courses yet 👏</div>
         ) : (
-          <div className="courses-grid">{completedList.map(renderCourseCard)}</div>
+          <div className="courses-grid">
+            {completedList.map(renderCourseCard)}
+          </div>
         )}
       </div>
     </div>

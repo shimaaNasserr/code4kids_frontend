@@ -136,15 +136,18 @@ const LessonsList = () => {
       <div
         className="course-info-header"
         style={{
-          backgroundImage: `url(${course?.image_url})`,
+          backgroundImage: `linear-gradient(
+      rgba(0, 0, 0, 0.4), 
+      rgba(0, 0, 0, 0.2)
+    ), url(${course?.image_url})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div
+        {/* <div
           className="position-absolute top-0 start-0 w-100 h-100"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5);" }}
-        ></div>
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.34)" }}
+        ></div> */}
         <div className="course-details position-relative">
           <h1
             className="course-title"

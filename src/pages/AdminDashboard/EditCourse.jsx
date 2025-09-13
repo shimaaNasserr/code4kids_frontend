@@ -71,10 +71,6 @@ const EditCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Debug: Check what's in course.categories
-    console.log("Current course categories:", course.categories);
-    console.log("Current course object:", course);
-
     try {
       const formData = new FormData();
       formData.append("title", course.title);
@@ -116,19 +112,13 @@ const EditCourse = () => {
         if (i?.id != null) formData.append("instructor_ids", i.id);
       });
 
-      // ✅ log all entries
-      console.log("All FormData entries:");
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
       await axiosInstance.put(`admin/courses/${id}/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setSuccessMessage("✅ Course updated successfully!");
       setTimeout(() => {
-        navigate("/admin/dashboard");
+        navigate("/admin/categories");
       }, 2000);
       if (imageFile) {
         setCourse((prev) => ({
@@ -280,7 +270,7 @@ const EditCourse = () => {
               >
                 Save Changes
               </button>
-              <Link to={`/admin/courses`} className=" text-decoration-none">
+              <Link to={`/admin/categories`} className=" text-decoration-none">
                 <button
                   type="submit"
                   className="btn btn-danger shadow-none px-4"

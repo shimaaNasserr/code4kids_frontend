@@ -72,7 +72,7 @@ const EditLesson = () => {
       await axiosInstance.put(`/lessons/${id}/`, lesson);
       setSuccessMessage("✅ Lesson updated successfully!");
       setTimeout(() => {
-        navigate("/admin/dashboard");
+        navigate("/admin/categories");
       }, 2000);
     } catch (error) {
       console.error("Error updating lesson:", error);
@@ -94,7 +94,7 @@ const EditLesson = () => {
     );
 
   return (
-    <div className="container mb-5" style={{ marginTop: "8rem" }}>
+    <div className="container mb-5" style={{ marginTop: "2rem" }}>
       <div className="card shadow-lg">
         <div className="card-body">
           <h1 className="card-title mb-4">Edit Lesson</h1>
@@ -232,7 +232,7 @@ const EditLesson = () => {
               >
                 Save Changes
               </button>
-              <Link to="/admin/courses" className="text-decoration-none">
+              <Link to="/admin/categories" className="text-decoration-none">
                 <button
                   type="button"
                   className="btn btn-danger shadow-none px-4"

@@ -19,6 +19,10 @@
   width: 70px;
 }
 
+.admin-sidebar .dropdown-toggle::after {
+  display: none !important;
+}
+
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -114,4 +118,3 @@
   background: rgba(255, 255, 255, 0.15);
   color: #64ca85;
 }
-
